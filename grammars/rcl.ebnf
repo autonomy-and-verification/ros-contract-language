@@ -1,8 +1,6 @@
 start: node_clause+
 
-node_clause: NODE_NAME "{"  contract_block+  "}" 
-
-contract_block: contract+
+node_clause: NODE_NAME "{"  contract+  "}"
 
 contract: "{" TOPIC ";" TYPE ";" GUARANTEE "}"
 
