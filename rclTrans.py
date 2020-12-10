@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 try:
     input = raw_input   # For Python2 compatibility
 except NameError:
@@ -15,11 +18,13 @@ argParser.add_argument("-o", help="The output file for the translation")
 
 args = argParser.parse_args()
 
-GRAMMAR=file.open(args.grammar)
-CONTRACT=file.open(args.contract)
+GRAMMAR = open(args.grammar).read()
+CONTRACT = open(args.contract).read()
 
-## Read the GRAMMAR and add it to the parser
-parser = Lark(GRAMMAR.read())
+
+
+## Add the GRAMMAR to the parser
+parser = Lark(GRAMMAR)
 
 
 print(parser.parse(CONTRACT).pretty())

@@ -1,16 +1,17 @@
-start: node_spec+
+start: node_clause+
 
-node_spec: NODE_NAME "{"  contract_clause+  "}"
+node_clause: NODE_NAME "{"  contract_block+  "}" 
 
-contract_clause: contract+
-
+contract_block: contract+
 
 contract: "{" TOPIC ";" TYPE ";" GUARANTEE "}"
 
+NODE_NAME: LETTER+
 TOPIC: LETTER+
 TYPE: LETTER+
-GUARANTEE: LETTER+
 
+
+GUARANTEE: LETTER+
 
 
 %import common.LETTER
