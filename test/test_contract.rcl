@@ -1,0 +1,7 @@
+Interface {
+
+{haveMoved; bool; if haveMoved is true then plan is emptyset }
+
+{atGoal; bool; if atGoal is true then haveMove is true }
+
+}

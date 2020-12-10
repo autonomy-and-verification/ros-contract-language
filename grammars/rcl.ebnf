@@ -1,0 +1,19 @@
+start: node_spec+
+
+node_spec: NODE_NAME "{"  contract_clause+  "}"
+
+contract_clause: contract+
+
+
+contract: "{" TOPIC ";" TYPE ";" GUARANTEE "}"
+
+TOPIC: LETTER+
+TYPE: LETTER+
+GUARANTEE: LETTER+
+
+
+
+%import common.LETTER
+%import common.INT -> NUMBER
+%import common.WS
+%ignore WS
