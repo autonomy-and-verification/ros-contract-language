@@ -1,0 +1,53 @@
+start: node_clause+
+
+node_clause: NODE_NAME "{"  contract+  "}"
+
+contract: "{" TOPIC ";" TYPE ";" formula "}"
+
+NODE_NAME: LETTER+
+TOPIC: LETTER+
+TYPE: LETTER+
+
+formula: atomic_formula
+        | "not" formula
+        | formula "and" formula
+        | formula "or" formula
+        | formula "->" formula
+        | formula "<=>" formula
+        | "(" formula ")"
+        | "forall" VARIABLE formula
+        | "exists" VARIABLE formula
+
+atomic_formula  : "TRUE"
+                | "FALSE"
+                | term "==" term
+                | term "!=" term
+                | PRED_NAME "(" term+ ")" -> predicate
+
+
+term : VARIABLE
+      | CONSTANT
+      | FUNC_NAME "(" term+ ")" -> function
+      
+
+
+VARIABLE : FOL_NAME
+CONSTANT: FOL_NAME
+
+
+FUNC_NAME: (LCASE_LETTER|DIGIT) ("'"|"'""_"|LETTER|DIGIT)*
+PRED_NAME: (UCASE_LETTER|DIGIT) ("'"|"'""_"|LETTER|DIGIT)*
+
+
+FOL_NAME: ("'"|"'""_"|LETTER|DIGIT) ("'"|"'""_"|LETTER|DIGIT)*
+
+%import common.DIGIT
+%import common.LETTER
+%import common.UCASE_LETTER
+%import common.LCASE_LETTER
+
+
+%import common.LETTER
+%import common.INT -> NUMBER
+%import common.WS
+%ignore WS
