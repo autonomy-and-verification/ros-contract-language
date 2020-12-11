@@ -25,7 +25,9 @@ argParser.add_argument("-p", help="The output file for the translation", type=bo
 ## Parse the Args
 args = argParser.parse_args()
 
-GRAMMAR = open(args.grammar).read()
+grammar_loc = "grammars/" + args.grammar +".lark"
+
+GRAMMAR = open(grammar_loc).read()
 CONTRACT = open(args.contract).read()
 TRANSLATOR = args.t
 PRINT = args.p
@@ -59,5 +61,5 @@ if TRANSLATOR == "test":
 elif TRANSLATOR == "ros_mon_rml":
     romMon_trans = ROSMon_Translator()
     romMon_trans.translate(parseTree)
-    
+
 print("")
