@@ -37,7 +37,19 @@ class Test_Translator(Translator):
     def _translate_fol(self, fol_statement):
         """ Translate a fol guarantee statement """
 
-        return str(fol_statement)
+        if isinstance(fol_statement, tree.Tree):
+            statement = fol_statement.data
+
+            if statement == "formula":
+                return self._translate_fol(fol_statement.children)
+            elif statement == "equals":
+                return self._translate_fol(fol_statement.children[0]) + "==" + self._translate_fol(fol_statement.children[1])
+        else:
+            return str(fol_statement)
+
+
+
+
 
 
     def translate(self, parseTree):
