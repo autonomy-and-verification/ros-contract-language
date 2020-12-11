@@ -6,7 +6,29 @@ contract: "{" TOPIC ";" TYPE ";" formula "}"
 
 NODE_NAME: LETTER+
 TOPIC: LETTER+
-TYPE: LETTER+
+
+
+//ros types
+TYPE: "bool"
+    | "int8"
+    | "uint8"
+    | "int16"
+    | "uint16"
+    | "int32"
+    | "uint32"
+    | "int64"
+    | "uint64"
+    | "float32"
+    | "float64"
+    | "string"
+    | "time"
+    | "duration"
+
+
+
+
+
+
 
 formula: atomic_formula
         | "not" formula
@@ -28,7 +50,7 @@ atomic_formula  : "TRUE"
 term : VARIABLE
       | CONSTANT
       | FUNC_NAME "(" term+ ")" -> function
-      
+
 
 
 VARIABLE : FOL_NAME
