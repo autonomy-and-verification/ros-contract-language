@@ -30,7 +30,14 @@ class Test_Translator(Translator):
 
         topic, type_str, guar = contract.children
 
+        guar = self._translate_fol(guar)
+
         return ("{" + topic + ";" + type_str + ";" + guar + "}")
+
+    def _translate_fol(self, fol_statement):
+        """ Translate a fol guarantee statement """
+
+        return str(fol_statement)
 
 
     def translate(self, parseTree):
