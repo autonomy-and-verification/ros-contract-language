@@ -26,10 +26,6 @@ TYPE: "bool"
 
 
 
-
-
-
-
 formula: atomic_formula
         | "not" formula
         | formula "and" formula
@@ -40,16 +36,18 @@ formula: atomic_formula
         | "forall" VARIABLE formula
         | "exists" VARIABLE formula
 
-atomic_formula  : "TRUE"
-                | "FALSE"
-                | term "==" term
-                | term "!=" term
+atomic_formula  : BOOLEAN
+                | term "==" term -> equals
+                | term "!=" term -> not_equals
                 | PRED_NAME "(" term+ ")" -> predicate
 
+BOOLEAN : "TRUE" | "FALSE"
 
-term : VARIABLE
+term : BOOLEAN
+      | VARIABLE
       | CONSTANT
       | FUNC_NAME "(" term+ ")" -> function
+
 
 
 
