@@ -1,7 +1,7 @@
 Interface {
 
-{haveMoved; bool; test }
+{haveMoved; bool; haveMoved == TRUE ->  not EmptySet(plan) }
 
-{atGoal; bool; if }
+{atGoal; bool; atGoal == TRUE -> haveMoved == TRUE  }
 
 }
