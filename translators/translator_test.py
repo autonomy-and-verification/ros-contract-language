@@ -32,24 +32,55 @@ class Test_Translator(Translator):
 
         guar = self._translate_fol(guar)
 
+
+
         return ("{" + topic + ";" + type_str + ";" + guar + "}")
 
     def _translate_fol(self, fol_statement):
         """ Translate a fol guarantee statement """
 
+
         if isinstance(fol_statement, tree.Tree):
+
             statement = fol_statement.data
+
+
 
             if statement == "formula":
                 return self._translate_fol(fol_statement.children)
+            elif statement == "implies":
+                return self._translate_fol(fol_statement.children[0]) + " -> " + self._translate_fol(fol_statement.children[1])
             elif statement == "equals":
-                return self._translate_fol(fol_statement.children[0]) + "==" + self._translate_fol(fol_statement.children[1])
+                return self._translate_fol(fol_statement.children[0]) + " == " + self._translate_fol(fol_statement.children[1])
+            elif statement == "negation":
+
+                return "not " + self._translate_fol(fol_statement.children)
+            elif statement == "atom":
+                return self._translate_fol(fol_statement.children[0])
+            elif statement == "term":
+                return self._translate_fol(fol_statement.children[0])
+            elif statement == "predicate":
+                print("!Predicate")
+                print(fol_statement)
+                return self._translate_fol(fol_statement.children[0]) + "("+ self._translate_fol(fol_statement.children[1]) +")"
+            elif statement == "terms":
+                return self._translate_fol(fol_statement.children)
+            elif statement == "term":
+                return self._translate_fol(statement.children)
+
+
+        elif isinstance(fol_statement, lexer.Token):
+            print("!Token")
+            print(fol_statement)
+
+            return fol_statement
+        elif isinstance(fol_statement, list):
+            # Catches children being a list and iterates.
+            # Useful for one-or-more occurances
+            for element in fol_statement:
+                return self._translate_fol(element)
         else:
             return str(fol_statement)
-
-
-
-
 
 
     def translate(self, parseTree):

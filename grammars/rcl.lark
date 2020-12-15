@@ -26,27 +26,29 @@ TYPE: "bool"
 
 
 
-formula: atomic_formula
-        | "not" formula
-        | formula "and" formula
-        | formula "or" formula
-        | formula "->" formula
-        | formula "<=>" formula
+formula: atomic_formula -> atom
+        | "not" formula -> negation
+        | formula "and" formula -> and
+        | formula "or" formula -> or
+        | formula "->" formula -> implies
+        | formula "<=>" formula -> iff
         | "(" formula ")"
-        | "forall" VARIABLE formula
-        | "exists" VARIABLE formula
+        | "forall" VARIABLE formula -> forall
+        | "exists" VARIABLE formula -> exists
 
 atomic_formula  : BOOLEAN
                 | term "==" term -> equals
                 | term "!=" term -> not_equals
-                | PRED_NAME "(" term+ ")" -> predicate
+                | PRED_NAME "(" terms ")" -> predicate
 
 BOOLEAN : "TRUE" | "FALSE"
+
+terms : term ("," term)*
 
 term : BOOLEAN
       | VARIABLE
       | CONSTANT
-      | FUNC_NAME "(" term+ ")" -> function
+      | FUNC_NAME "(" terms ")" -> function
 
 
 
