@@ -70,9 +70,7 @@ class Test_Translator(Translator):
 
 
         elif isinstance(fol_statement, lexer.Token):
-            print("!Token")
-            print(fol_statement)
-
+            
             return fol_statement
         elif isinstance(fol_statement, list):
             # Catches children being a list and iterates.
