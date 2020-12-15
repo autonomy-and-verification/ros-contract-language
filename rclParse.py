@@ -15,11 +15,11 @@ VERSION_NUM = 0.1
 
 ## Arguments
 argParser = argparse.ArgumentParser()
-argParser.add_argument("grammar", help="The grammar file")
-argParser.add_argument("contract", help="The contract file")
+argParser.add_argument("grammar", help="The grammar to parse with.", default = "rcl")
+argParser.add_argument("contract", help="The contract file to be parsed.")
 argParser.add_argument("-t", help="The translator to use",choices=['test', 'ros_mon_rml'], default = 'test' )
-argParser.add_argument("-o", help="The output file for the translation")
-argParser.add_argument("-p", help="The output file for the translation", type=bool, default = False)
+argParser.add_argument("-o", help="The path to the output file for the translation")
+argParser.add_argument("-p", help="Print the parse tree", type=bool, default = False)
 
 
 ## Parse the Args
@@ -45,15 +45,23 @@ print("")
 ## Add the GRAMMAR to the parser
 parser = Lark(GRAMMAR)
 
+print("+++ Input File = +++")
+print(CONTRACT)
+print("")
+
 #Parse the contract
 parseTree = parser.parse(CONTRACT)
 
 if PRINT:
     print("+++ Pretty Parse Tree +++")
+    print("")
+
     print(parseTree.pretty())
     print("")
 
 print("+++ Translator Output +++")
+print("")
+
 if TRANSLATOR == "test":
     test_trans = Test_Translator()
     print(test_trans.translate(parseTree))
