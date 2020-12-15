@@ -14,7 +14,7 @@ class Test_Translator(Translator):
         node_name = node[0]
         node_contracts = node[1:]
 
-        return node_name + "{" + self._translate_contract_block(node_contracts) + "}"
+        return "node " + node_name + "{ " + self._translate_contract_block(node_contracts) + " }"
 
     def _translate_contract_block(self, contract_list):
 
@@ -28,17 +28,23 @@ class Test_Translator(Translator):
         """ Translate one contract """
         assert(isinstance(contract, tree.Tree) )
 
-        topic, type_str, guar = contract.children
+        topic, guar = contract.children
+
+        topic = self._translate_topic(topic)
 
         guar = self._translate_fol(guar)
 
+        return ("{ " + topic + guar + " }")
 
+    def _translate_topic(self, topic):
+        assert len(topic.children)  == 2
+        type, topic_name = topic.children
 
-        return ("{" + topic + ";" + type_str + ";" + guar + "}")
+        return "topic " + type +" "+ topic_name + " "
+
 
     def _translate_fol(self, fol_statement):
         """ Translate a fol guarantee statement """
-
 
         if isinstance(fol_statement, tree.Tree):
 
@@ -46,8 +52,8 @@ class Test_Translator(Translator):
 
 
 
-            if statement == "formula":
-                return self._translate_fol(fol_statement.children)
+            if statement == "guarantee":
+                return "guarantee " + self._translate_fol(fol_statement.children)
             elif statement == "implies":
                 return self._translate_fol(fol_statement.children[0]) + " -> " + self._translate_fol(fol_statement.children[1])
             elif statement == "equals":
@@ -60,8 +66,7 @@ class Test_Translator(Translator):
             elif statement == "term":
                 return self._translate_fol(fol_statement.children[0])
             elif statement == "predicate":
-                print("!Predicate")
-                print(fol_statement)
+                
                 return self._translate_fol(fol_statement.children[0]) + "("+ self._translate_fol(fol_statement.children[1]) +")"
             elif statement == "terms":
                 return self._translate_fol(fol_statement.children)
@@ -70,7 +75,7 @@ class Test_Translator(Translator):
 
 
         elif isinstance(fol_statement, lexer.Token):
-            
+
             return fol_statement
         elif isinstance(fol_statement, list):
             # Catches children being a list and iterates.

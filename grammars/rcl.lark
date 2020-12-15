@@ -1,11 +1,11 @@
 start: node_clause+
 
-node_clause: NODE_NAME "{"  contract+  "}"
+node_clause: "node" NODE_NAME "{"  contract+  "}"
 
-contract: "{" TOPIC ";" TYPE ";" formula "}"
+contract: "contract{" topic guarantee "}"
 
 NODE_NAME: LETTER+
-TOPIC: LETTER+
+topic: ("topic"|"T") TYPE WORD
 
 
 //ros types
@@ -24,7 +24,7 @@ TYPE: "bool"
     | "time"
     | "duration"
 
-
+guarantee : ("guarantee"| "G") formula
 
 formula: atomic_formula -> atom
         | "not" formula -> negation
@@ -69,6 +69,7 @@ FOL_NAME: ("'"|"'""_"|LETTER|DIGIT) ("'"|"'""_"|LETTER|DIGIT)*
 %import common.LCASE_LETTER
 
 
+%import common.WORD
 %import common.LETTER
 %import common.INT -> NUMBER
 %import common.WS
