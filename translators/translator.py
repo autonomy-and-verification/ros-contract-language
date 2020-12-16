@@ -23,3 +23,12 @@ class Translator(object):
     def _translate_contract(self, contract):
         """ Translate one contract """
         pass
+
+    def _translate_topic(self, topic):
+        """Translate one topic statement """
+        pass
+
+    def _translate_fol(self, fol_statement):
+        """Translate the fol guarantee """
+        # This ends up as a visitor or a big state machine
+        pass
