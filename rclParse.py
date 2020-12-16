@@ -35,7 +35,12 @@ if args.o:
     OUTPUT_PATH = args.o
 else:
     # the weird rsplit gets the string to the right of the last "/" in the contract path
-    OUTPUT_PATH = "output/" + args.contract.rsplit("/",1)[1]
+    contract_name = args.contract.rsplit("/",1)[1]
+    # then remove and then replace the file extension
+    contract_name = contract_name.rsplit(".",1)[0]
+    contract_name += (".yaml")
+
+    OUTPUT_PATH = "output/" + contract_name
 
     if not os.path.exists("output"):
         os.mkdir("output")
