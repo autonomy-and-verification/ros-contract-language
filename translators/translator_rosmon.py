@@ -16,14 +16,14 @@ class ROSMon_Translator(Translator):
 
 
     def _add_node(self, node_name):
-        print("adding node name: " + str(node_name))
+        #print("adding node name: " + str(node_name))
 
         self.nodes.append( {"node":{"name":str(node_name)}} )
 
     def _add_monitor(self, type, topic_name):
-        print("adding monitor for " +str(type) + " " + str(topic_name))
+        #print("adding monitor for " +str(type) + " " + str(topic_name))
 
-        self.monitors.append( {"monitor":{"id":"monitor_"+str(topic_name), "log": "./"+str(topic_name)+"_log.txt", "silent": "False", "topics":[{"name": str(topic_name), "type": "std_msgs.msg."+str(type), "action":"log"}]     }   } )
+        self.monitors.append( {"monitor":{"id":"monitor_"+str(topic_name), "log": "./"+str(topic_name)+"_log.txt", "silent": False, "topics":[{"name": str(topic_name), "type": "std_msgs.msg."+str(type), "action":"log"}]     }   } )
 
 
     def _prep_config(self):
