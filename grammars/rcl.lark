@@ -1,11 +1,14 @@
 start: node_clause+
 
-node_clause: "node" NODE_NAME "{"  contract+  "}"
+node_clause: "node" NODE_NAME "{" topic_list (guarantee)+   "}"
 
-contract: "contract{" topic guarantee "}"
+
 
 NODE_NAME: LETTER+
-topic: ("topic"|"T") TYPE WORD
+
+topic_list : "topics" "(" topic ("," topic)* ")"
+
+topic: TYPE WORD
 
 
 //ros types
@@ -24,7 +27,7 @@ TYPE: "bool"
     | "time"
     | "duration"
 
-guarantee : ("guarantee"| "G") formula
+guarantee : ("guarantee"| "G") "(" formula ")"
 
 formula: atomic_formula -> atom
         | "not" formula -> negation

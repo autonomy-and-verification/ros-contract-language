@@ -1,13 +1,10 @@
-node Interface {
+node Interface
+{
 
-contract{
-topic bool haveMoved
-guarantee  haveMoved == TRUE ->  not EmptySet(plan)
-}
+topics(bool haveMoved, bool atGoal)
 
-contract{
-topic bool atGoal
-guarantee atGoal == TRUE -> haveMoved == TRUE
-}
+guarantee( haveMoved == TRUE ->  not EmptySet(plan) )
+
+G( atGoal == TRUE -> haveMoved == TRUE )
 
 }

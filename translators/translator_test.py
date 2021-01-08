@@ -12,35 +12,50 @@ class Test_Translator(Translator):
         """Traslates one node """
         assert(isinstance(node[0], lexer.Token) )
         node_name = node[0]
-        node_contracts = node[1:]
+        topic_list = node[1].children
+        guarantees = node[2:]
 
-        return "node " + node_name + "{ " + self._translate_contract_block(node_contracts) + " }"
+        topic_list_out = self._translate_topic_list(topic_list)
+        guarantees_out = self._translate_guarantees(guarantees)
 
-    def _translate_contract_block(self, contract_list):
+        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + guarantees_out + "\n}"
 
-        contracts = ""
-        for cb in contract_list:
-            contracts += self._translate_contract(cb)
+    def _translate_topic_list(self, topic_list):
 
-        return contracts
+        assert(isinstance(topic_list, list))
+        topics_out = "topics ("
 
-    def _translate_contract(self, contract):
-        """ Translate one contract """
-        assert(isinstance(contract, tree.Tree) )
+        head, body = topic_list[0:]
+        
+        topics_out += self._translate_topic(head)
 
-        topic, guar = contract.children
+        if body != None:
+            if(isinstance(body,list)):
+                for topic in body:
+                    topics_out += ", " + self._translate_topic(topic)
+            elif(isinstance(body, lark.Tree)):
+                topics_out += ", " + self._translate_topic(body)
 
-        topic = self._translate_topic(topic)
 
-        guar = self._translate_fol(guar)
+        topics_out += ")"
 
-        return ("{ " + topic + guar + " }")
+        return topics_out
+
+    def _translate_guarantees(self, guarantees):
+        assert(isinstance(guarantees, list))
+
+        guar_out = ""
+
+        for guar in guarantees:
+            guar_out += "G (" + self._translate_fol(guar) + ")\n"
+
+        return guar_out
 
     def _translate_topic(self, topic):
         assert len(topic.children)  == 2
         type, topic_name = topic.children
 
-        return "topic " + type +" "+ topic_name + " "
+        return type +" "+ topic_name
 
 
     def _translate_fol(self, fol_statement):
@@ -66,7 +81,7 @@ class Test_Translator(Translator):
             elif statement == "term":
                 return self._translate_fol(fol_statement.children[0])
             elif statement == "predicate":
-                
+
                 return self._translate_fol(fol_statement.children[0]) + "("+ self._translate_fol(fol_statement.children[1]) +")"
             elif statement == "terms":
                 return self._translate_fol(fol_statement.children)
