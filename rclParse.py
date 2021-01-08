@@ -23,6 +23,13 @@ argParser.add_argument("-o", help="The path to the output file for the translati
 argParser.add_argument("-p", help="Print the parse tree", type=bool, default = False)
 
 
+print("++++++++++++++++++++++++++++++++++++++++++++++")
+print("++++++ ROS Contract Language Translator ++++++")
+print("++++++++++++++++ version " + str(VERSION_NUM) + " +++++++++++++++++")
+print("+++++++++++++++ Matt Luckcuck ++++++++++++++++")
+print("++++++++++++++++++++++++++++++++++++++++++++++")
+print("")
+
 ## Parse the Args
 args = argParser.parse_args()
 
@@ -48,12 +55,7 @@ else:
 TRANSLATOR = args.t
 PRINT = args.p
 
-print("++++++++++++++++++++++++++++++++++++++++++++++")
-print("++++++ ROS Contract Language Translator ++++++")
-print("++++++++++++++++ version " + str(VERSION_NUM) + " +++++++++++++++++")
-print("+++++++++++++++ Matt Luckcuck ++++++++++++++++")
-print("++++++++++++++++++++++++++++++++++++++++++++++")
-print("")
+
 
 
 
