@@ -17,13 +17,6 @@ class Translator(object):
         """Traslates one node """
         pass
 
-    def _translate_contract_block(self, contract_list):
-        pass
-
-    def _translate_contract(self, contract):
-        """ Translate one contract """
-        pass
-
     def _translate_topic(self, topic):
         """Translate one topic statement """
         pass

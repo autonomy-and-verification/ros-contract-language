@@ -5,8 +5,8 @@ from translators.translator import Translator
 
 class Test_Translator(Translator):
 
-    def __init__(self):
-        pass
+    def __init__(self, contract):
+        self.contract = contract
 
     def _translate_node(self, node):
         """Traslates one node """
@@ -26,7 +26,7 @@ class Test_Translator(Translator):
         topics_out = "topics ("
 
         head, body = topic_list[0:]
-        
+
         topics_out += self._translate_topic(head)
 
         if body != None:

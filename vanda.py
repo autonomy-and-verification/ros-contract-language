@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from translators.translator_test import Test_Translator
+from translators.mirror import Mirror
 from translators.translator_rosmon import ROSMon_Translator
+from extract_model import Extractor
+from utils import *
 
 try:
     input = raw_input   # For Python2 compatibility
@@ -37,16 +39,12 @@ grammar_loc = "grammars/" + args.grammar +".lark"
 
 GRAMMAR = open(grammar_loc).read()
 CONTRACT = open(args.contract).read()
+CONTRACT_NAME = get_contract_name(args.contract)
 
 if args.o:
     OUTPUT_PATH = args.o
 else:
-    # the weird rsplit gets the string to the right of the last "/" in the contract path
-    contract_name = args.contract.rsplit("/",1)[1]
-    # then remove and then replace the file extension
-    contract_name = contract_name.rsplit(".",1)[0]
-    contract_name += (".yaml")
-
+    contract_name = CONTRACT_NAME + ".yaml"
     OUTPUT_PATH = "output/" + contract_name
 
     if not os.path.exists("output"):
@@ -54,10 +52,6 @@ else:
 
 TRANSLATOR = args.t
 PRINT = args.p
-
-
-
-
 
 
 ## Add the GRAMMAR to the parser
@@ -68,27 +62,39 @@ print(CONTRACT)
 print("")
 
 #Parse the contract
-parseTree = parser.parse(CONTRACT)
+parse_tree = parser.parse(CONTRACT)
 
 if PRINT:
     print("+++ Pretty Parse Tree +++")
     print("")
 
-    print(parseTree.pretty())
+    print(parse_tree.pretty())
     print("")
+
+print("+++ Extractor Output +++")
+print()
+
+test_extractor = Extractor(CONTRACT_NAME)
+contract_obj = test_extractor.extract(parse_tree)
+print()
+print("test_extractor.extract()")
+print(str(contract_obj))
+print()
+
 
 print("+++ Translator Output +++")
 print("")
 
+
 if TRANSLATOR == "test":
     # Just Prints the Output, which should be the same (apart from whitespace)
     # as the input
-    test_trans = Test_Translator()
-    print(test_trans.translate(parseTree))
+    test_trans = Mirror()
+    print(test_trans.translate(contract_obj))
 
 elif TRANSLATOR == "rosmon_rml":
     romMon_trans = ROSMon_Translator()
-    rosmon_config = romMon_trans.translate(parseTree)
+    rosmon_config = romMon_trans.translate(parse_tree)
 
     print(rosmon_config)
 
