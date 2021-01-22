@@ -41,16 +41,16 @@ class Mirror(object):
         assert(isinstance(topic_list, list))
         topics_out = "topics ("
 
-        head, body = topic_list[0:]
+        head, *tail = topic_list
 
         topics_out += self._translate_topic(head)
 
-        if body != None:
-            if(isinstance(body,list)):
-                for topic in body:
+        if tail != None:
+            if(isinstance(tail,list)):
+                for topic in tail:
                     topics_out += ", " + self._translate_topic(topic)
             else:
-                topics_out += ", " + self._translate_topic(body)
+                topics_out += ", " + self._translate_topic(tail)
 
 
         topics_out += ")"
@@ -73,6 +73,3 @@ class Mirror(object):
             guar_out += "G (" + guar + ")\n"
 
         return guar_out
-
-
-    
