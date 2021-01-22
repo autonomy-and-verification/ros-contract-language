@@ -26,6 +26,7 @@ argParser.add_argument("-p", help="Print the parse tree", type=bool, default = F
 
 
 print("++++++++++++++++++++++++++++++++++++++++++++++")
+print("+++++++++++++++++++ Vanda ++++++++++++++++++++")
 print("++++++ ROS Contract Language Translator ++++++")
 print("++++++++++++++++ version " + str(VERSION_NUM) + " +++++++++++++++++")
 print("+++++++++++++++ Matt Luckcuck ++++++++++++++++")
