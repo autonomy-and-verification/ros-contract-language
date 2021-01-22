@@ -1,9 +1,8 @@
 node talker
 {
 
-contract{
-topic string chatter
-guarantee chatter == "hello"
-}
+topics(string chatter)
+
+guarantee(chatter == "hello")
 
 }

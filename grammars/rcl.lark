@@ -52,7 +52,7 @@ term : BOOLEAN
       | VARIABLE
       | CONSTANT
       | FUNC_NAME "(" terms ")" -> function
-
+      | "\""  FOL_NAME "\""  -> string_literal
 
 
 

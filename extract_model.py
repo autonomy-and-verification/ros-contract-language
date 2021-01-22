@@ -40,16 +40,17 @@ class Extractor(object):
         assert(isinstance(topic_list, list))
         topics_out = []
 
-        head, body = topic_list[0:]
+        #Fancy Python 3 syntax for this split
+        head, *tail = topic_list
 
         topics_out.append(self._translate_topic(head))
 
-        if body != None:
-            if(isinstance(body,list)):
-                for topic in body:
+        if tail != None:
+            if(isinstance(tail,list)):
+                for topic in tail:
                     topics_out.append(self._translate_topic(topic))
-            elif(isinstance(body, lark.Tree)):
-                topics_out.append(self._translate_topic(body))
+            elif(isinstance(tail, lark.Tree)):
+                topics_out.append(self._translate_topic(tail))
 
 
         return topics_out
@@ -78,12 +79,23 @@ class Extractor(object):
 
             statement = fol_statement.data
 
+            #Wont we always start here...?
             if statement == "guarantee":
                 return self._translate_fol(fol_statement.children)
             elif statement == "implies":
                 return self._translate_fol(fol_statement.children[0]) + " -> " + self._translate_fol(fol_statement.children[1])
             elif statement == "equals":
-                return self._translate_fol(fol_statement.children[0]) + " == " + self._translate_fol(fol_statement.children[1])
+                eq_left = self._translate_fol(fol_statement.children[0])
+
+                print(fol_statement.children[1])
+                eq_right = self._translate_fol(fol_statement.children[1])
+
+                print(eq_left)
+                print(eq_right)
+
+                eq_out = eq_left + " == " + eq_right
+
+                return eq_out
             elif statement == "negation":
 
                 return "not " + self._translate_fol(fol_statement.children)
@@ -98,10 +110,10 @@ class Extractor(object):
                 return self._translate_fol(fol_statement.children)
             elif statement == "term":
                 return self._translate_fol(statement.children)
-
-
+            elif statement == "string_literal":
+                return "\"" + fol_statement.children[0] + "\""
         elif isinstance(fol_statement, lexer.Token):
-
+            print(" else, returning " + fol_statement)
             return fol_statement
         elif isinstance(fol_statement, list):
             # Catches children being a list and iterates.
@@ -109,6 +121,7 @@ class Extractor(object):
             for element in fol_statement:
                 return self._translate_fol(element)
         else:
+            print(" else, returning " + str(fol_statement))
             return str(fol_statement)
 
 
