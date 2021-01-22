@@ -1,18 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from lark import *
+from contract_model import *
 from translators.translator import Translator
 import yaml
 
 class ROSMon_Translator(Translator):
     """Translator from Lark Parse Trees to ROSMon config and monitor files """
 
-    def __init__(self):
+    def __init__(self, contract):
+        self.contract = contract
+
         self.rosmon_config = {"nodes":[], "monitors":[]}
 
         self.nodes = []
         self.monitors = []
+
+        self.run_translate = False
 
 
     def _add_node(self, node_name):
@@ -31,14 +35,25 @@ class ROSMon_Translator(Translator):
         self.rosmon_config.update({"nodes":self.nodes})
         self.rosmon_config.update({"monitors":self.monitors})
 
+    def translate(self, contract):
+        """Translates the parsed contract object into RML output for ROS Mon"""
 
-    def translate(self, parse_tree):
-        """Translates the parse tree into RML output for ROS Mon"""
+        contract.get_contract_name()
 
-        for t in parse_tree.children:
-            assert(t.data == 'node_clause')
+        output =""
 
-            self._translate_node(t.children)
+        for n in contract.get_nodes():
+            output += self._translate_node(n)
+
+        return output
+
+    def translate_config(self):
+
+
+        if self.run_translate:
+            pass
+        else:
+            self.translate(self.contract)
 
         self._prep_config()
         return yaml.dump(self.rosmon_config)
@@ -46,49 +61,57 @@ class ROSMon_Translator(Translator):
 
     def _translate_node(self, node):
         """Traslates one node """
-        assert(isinstance(node[0], lexer.Token) )
+        assert(isinstance(node, Node))
 
-        node_name = node[0]
-        node_contracts = node[1:]
+        node_name = node.get_node_name()
+
+        topic_list = node.get_topic_list()
+        guarantees = node.get_guarantees()
 
         self._add_node(node_name)
 
-        self._translate_contract_block(node_contracts)
+        topic_list_out = self._translate_topic_list(topic_list)
+        guarantees_out = self._translate_guarantees(guarantees)
+
+        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + guarantees_out + "\n}"
 
 
-    def _translate_contract_block(self, contract_list):
+    def _translate_topic_list(self, topic_list):
 
-        contracts = ""
-        for cb in contract_list:
-            self._translate_contract(cb)
+        assert(isinstance(topic_list, list))
+        topics_out = "topics ("
 
+        head, body = topic_list[0:]
 
+        topics_out += self._translate_topic(head)
 
-    def _translate_contract(self, contract):
-        """ Translate one contract """
-        assert(isinstance(contract, tree.Tree) )
-
-        topic, guar = contract.children
-
-        topic = self._translate_topic(topic)
-
-        guar = self._translate_fol(guar)
-
-        #return ("{ " + topic + guar + " }")
+        if body != None:
+            if(isinstance(body,list)):
+                for topic in body:
+                    topics_out += ", " + self._translate_topic(topic)
+            else:
+                topics_out += ", " + self._translate_topic(body)
 
 
+        topics_out += ")"
+
+        return topics_out
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
 
-        assert len(topic.children)  == 2
-        type, topic_name = topic.children
+        type, topic_name = topic.split(" ")
 
         self._add_monitor(type, topic_name)
 
-        #return "topic " + type +" "+ topic_name + " "
+        return type +" "+ topic_name
 
-    def _translate_fol(self, fol_statement):
-        """Translate the fol guarantee """
-        # This ends up as a visitor or a big state machine
-        pass
+    def _translate_guarantees(self, guarantees):
+        assert(isinstance(guarantees, list))
+
+        guar_out = ""
+
+        for guar in guarantees:
+            guar_out += "G (" + guar + ")\n"
+
+        return guar_out

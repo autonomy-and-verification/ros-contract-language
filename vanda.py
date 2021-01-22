@@ -93,8 +93,10 @@ if TRANSLATOR == "test":
     print(test_trans.translate(contract_obj))
 
 elif TRANSLATOR == "rosmon_rml":
-    romMon_trans = ROSMon_Translator()
-    rosmon_config = romMon_trans.translate(parse_tree)
+    rosMon = ROSMon_Translator(contract_obj)
+    #rosmon_config = romMon.translate(parse_tree)
+
+    rosmon_config = rosMon.translate_config()
 
     print(rosmon_config)
 
