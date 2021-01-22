@@ -1,0 +1,9 @@
+node talker
+{
+
+contract{
+topic string chatter
+guarantee chatter == "hello"
+}
+
+}
