@@ -112,6 +112,10 @@ class ROSMon_Translator(Translator):
         guar_out = ""
 
         for guar in guarantees:
-            guar_out += "G (" + guar + ")\n"
+            guar_out += "G (" + self._translate_fol(guar) + ")\n"
 
         return guar_out
+
+    # This has to operate on the Lark parser tree
+    def _translate_fol(self, fol_statement):
+        pass

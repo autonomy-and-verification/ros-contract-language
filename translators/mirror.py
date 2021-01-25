@@ -71,9 +71,14 @@ class Mirror(object):
         guar_out = ""
 
         for guar in guarantees:
-            guar_out += "G (" + self._translate_fol(guar) + ")\n"
+            guar_out += "G (" + self._translate_fol2(guar) + ")\n"
 
         return guar_out
+
+    def _translate_fol2(self, parse_tree):
+        visitor = IncreaseAllNumbers()
+
+        return str(visitor.visit(parse_tree))
 
 
     # This has to operate on the Lark parser tree
@@ -122,3 +127,16 @@ class Mirror(object):
                 return self._translate_fol(element)
         else:
             return str(fol_statement)
+
+
+## Beginnings of a visitor for the FOL statements
+# Trying to use Lark visitors
+class IncreaseAllNumbers(Visitor):
+    def guarantee(self, tree):
+        assert(tree.data == "guarantee")
+        print("visitor: " + str(tree.data))
+        return str(tree.data)
+
+    def number(self, tree):
+        assert tree.data == "number"
+        tree.children[0] += 1
