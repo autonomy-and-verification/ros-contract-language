@@ -20,7 +20,7 @@ VERSION_NUM = 0.1
 argParser = argparse.ArgumentParser()
 argParser.add_argument("grammar", help="The grammar to parse with.", default = "rcl")
 argParser.add_argument("contract", help="The contract file to be parsed.")
-argParser.add_argument("-t", help="The translator to use",choices=['test', 'rosmon_rml'], default = 'test' )
+argParser.add_argument("-t", help="The translator to use",choices=['mirror', 'rosmon_rml'], default = 'mirror' )
 argParser.add_argument("-o", help="The path to the output file for the translation")
 argParser.add_argument("-p", help="Print the parse tree", type=bool, default = False)
 
@@ -86,7 +86,7 @@ print("+++ Translator Output +++")
 print("")
 
 
-if TRANSLATOR == "test":
+if TRANSLATOR == "mirror":
     # Just Prints the Output, which should be the same (apart from whitespace)
     # as the input
     test_trans = Mirror()
