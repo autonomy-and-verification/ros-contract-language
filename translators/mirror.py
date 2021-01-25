@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from contract_model import *
-from lark import *
+from fol2text import FOL2Text
 
 """ Mirror translator, which should output the input contract """
 
@@ -76,7 +76,9 @@ class Mirror(object):
         return guar_out
 
     def _translate_fol2(self, parse_tree):
-        visitor = IncreaseAllNumbers()
+        visitor = FOL2Text()
+
+        print("translate method: " + str(visitor.visit(parse_tree)))
 
         return str(visitor.visit(parse_tree))
 
@@ -127,16 +129,3 @@ class Mirror(object):
                 return self._translate_fol(element)
         else:
             return str(fol_statement)
-
-
-## Beginnings of a visitor for the FOL statements
-# Trying to use Lark visitors
-class IncreaseAllNumbers(Visitor):
-    def guarantee(self, tree):
-        assert(tree.data == "guarantee")
-        print("visitor: " + str(tree.data))
-        return str(tree.data)
-
-    def number(self, tree):
-        assert tree.data == "number"
-        tree.children[0] += 1
