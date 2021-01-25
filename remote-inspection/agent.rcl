@@ -1,0 +1,26 @@
+node agent
+{
+
+
+topics(
+gazebo_radiation_plugins/Command command,
+gazebo_radiation_plugins/Inspection inspection,
+Int16 currentLoc,
+String radiationStatus
+)
+
+guarantee(
+forall(x', y', i; x', y' in REAL and i in locs and at(x', y') == TRUE and wayP(x', y') and inspected(i) == TRUE and radiationStatus not in {red, orange} ->
+exists(x, y ; x,y in REAL and wayP(x, y) = i + 1 and command = move(x, y) ) ))
+
+guarantee(
+at(x', y') == TRUE and wayP(x' y') = i and inspected(i) = FALSE -> command = inspect(i)
+)
+
+guarantee(
+radiationStatus in {red, orange} or not exists( x, y ; x, y in REAL and wayP(x, y) = i + 1 )
+-> exists (x, y ; x, y in REAL and wayP(x, y) = 0 and command = move(x, y) )
+
+)
+
+}
