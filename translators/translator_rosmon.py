@@ -3,6 +3,7 @@
 
 from contract_model import *
 from translators.translator import Translator
+from translators.fol2rml import FOL2RML
 import yaml
 
 class ROSMon_Translator(Translator):
@@ -110,12 +111,10 @@ class ROSMon_Translator(Translator):
         assert(isinstance(guarantees, list))
 
         guar_out = ""
+        #This is the visitor class
+        visitor = FOL2RML()
 
         for guar in guarantees:
-            guar_out += "G (" + self._translate_fol(guar) + ")\n"
+            guar_out += "G (" + visitor.visit(guar) + ")\n"
 
         return guar_out
-
-    # This has to operate on the Lark parser tree
-    def _translate_fol(self, fol_statement):
-        pass
