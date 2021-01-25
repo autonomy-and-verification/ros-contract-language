@@ -31,8 +31,8 @@ guarantee : ("guarantee"| "G") "(" formula ")"
 
 formula: atomic_formula -> atom
         | "not" formula -> negation
-        | formula "and" formula -> and
-        | formula "or" formula -> or
+        | formula "and" formula -> and_form
+        | formula "or" formula -> or_form
         | formula "->" formula -> implies
         | formula "<=>" formula -> iff
         | "(" formula ")"

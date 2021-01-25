@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from contract_model import *
-from fol2text import FOL2Text
+from translators.fol2text import FOL2Text
 
 """ Mirror translator, which should output the input contract """
 
@@ -83,7 +83,7 @@ class Mirror(object):
         return str(visitor.visit(parse_tree))
 
 
-    # This has to operate on the Lark parser tree
+    # This has been replaced
     def _translate_fol(self, fol_statement):
         """ Translate a fol guarantee statement """
 
