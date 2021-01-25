@@ -39,6 +39,7 @@ formula: atomic_formula -> atom
         | "(" formula ")"
         | "forall" VARIABLE formula -> forall
         | "exists" VARIABLE formula -> exists
+        | "exists_unique" VARIABLE formula -> exists_unique
 
 atomic_formula  : BOOLEAN
                 | term "==" term -> equals
