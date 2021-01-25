@@ -69,18 +69,20 @@ class Mirror(object):
         assert(isinstance(guarantees, list))
 
         guar_out = ""
+        visitor = FOL2Text()
 
         for guar in guarantees:
-            guar_out += "G (" + self._translate_fol2(guar) + ")\n"
+            guar_out += "G (" + visitor.visit(guar) + ")\n"
 
         return guar_out
 
-    def _translate_fol2(self, parse_tree):
-        visitor = FOL2Text()
 
-        print("translate method: " + str(visitor.visit(parse_tree)))
 
-        return str(visitor.visit(parse_tree))
+
+
+
+
+
 
 
     # This has been replaced
