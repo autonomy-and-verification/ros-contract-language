@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from contract_model import *
+from translators.fol2text import FOL2Text
+from translators.translator import Translator
 
 """ Mirror translator, which should output the input contract """
 
-class Mirror(object):
+class Mirror(Translator):
 
     def __init__(self):
         pass
@@ -39,23 +41,26 @@ class Mirror(object):
     def _translate_topic_list(self, topic_list):
 
         assert(isinstance(topic_list, list))
-        topics_out = "topics ("
+        if topic_list != []:
+            topics_out = "topics ("
 
-        head, *tail = topic_list
+            head, *tail = topic_list
 
-        topics_out += self._translate_topic(head)
+            topics_out += self._translate_topic(head)
 
-        if tail != None:
-            if(isinstance(tail,list)):
-                for topic in tail:
-                    topics_out += ", " + self._translate_topic(topic)
-            else:
-                topics_out += ", " + self._translate_topic(tail)
+            if tail != None:
+                if(isinstance(tail,list)):
+                    for topic in tail:
+                        topics_out += ", " + self._translate_topic(topic)
+                else:
+                    topics_out += ", " + self._translate_topic(tail)
 
 
-        topics_out += ")"
+            topics_out += ")"
 
-        return topics_out
+            return topics_out
+        else:
+            return "topics ()"
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
@@ -68,8 +73,65 @@ class Mirror(object):
         assert(isinstance(guarantees, list))
 
         guar_out = ""
+        visitor = FOL2Text()
 
         for guar in guarantees:
-            guar_out += "G (" + guar + ")\n"
+            guar_out += "G (" + visitor.visit(guar) + ")\n"
 
         return guar_out
+
+
+
+
+
+
+
+
+
+
+    # This has been replaced
+    def _translate_fol(self, fol_statement):
+        """ Translate a fol guarantee statement """
+
+        if isinstance(fol_statement, tree.Tree):
+
+            statement = fol_statement.data
+
+            #Wont we always start here...?
+            if statement == "guarantee":
+                return self._translate_fol(fol_statement.children)
+            elif statement == "implies":
+                return self._translate_fol(fol_statement.children[0]) + " -> " + self._translate_fol(fol_statement.children[1])
+            elif statement == "equals":
+                eq_left = self._translate_fol(fol_statement.children[0])
+                eq_right = self._translate_fol(fol_statement.children[1])
+
+                eq_out = eq_left + " == " + eq_right
+
+                return eq_out
+            elif statement == "negation":
+
+                return "not " + self._translate_fol(fol_statement.children)
+            elif statement == "atom":
+                return self._translate_fol(fol_statement.children[0])
+            elif statement == "term":
+                return self._translate_fol(fol_statement.children[0])
+            elif statement == "predicate":
+
+                return self._translate_fol(fol_statement.children[0]) + "("+ self._translate_fol(fol_statement.children[1]) +")"
+            elif statement == "terms":
+                return self._translate_fol(fol_statement.children)
+            elif statement == "term":
+                return self._translate_fol(statement.children)
+            elif statement == "string_literal":
+                return "\"" + fol_statement.children[0] + "\""
+        elif isinstance(fol_statement, lexer.Token):
+
+            return fol_statement
+        elif isinstance(fol_statement, list):
+            # Catches children being a list and iterates.
+            # Useful for one-or-more occurances
+            for element in fol_statement:
+                return self._translate_fol(element)
+        else:
+            return str(fol_statement)

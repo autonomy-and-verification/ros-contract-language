@@ -6,7 +6,7 @@ node_clause: "node" NODE_NAME "{" topic_list (guarantee)+   "}"
 
 NODE_NAME: LETTER+
 
-topic_list : "topics" "(" topic ("," topic)* ")"
+topic_list : "topics" "(" (topic ("," topic)*)? ")"
 
 topic: TYPE WORD
 
@@ -26,22 +26,27 @@ TYPE: "bool"
     | "string"
     | "time"
     | "duration"
+    | FOL_NAME "/" FOL_NAME
+
+
 
 guarantee : ("guarantee"| "G") "(" formula ")"
 
 formula: atomic_formula -> atom
         | "not" formula -> negation
-        | formula "and" formula -> and
-        | formula "or" formula -> or
+        | formula "and" formula -> and_form
+        | formula "or" formula -> or_form
         | formula "->" formula -> implies
         | formula "<=>" formula -> iff
         | "(" formula ")"
-        | "forall" VARIABLE formula -> forall
-        | "exists" VARIABLE formula -> exists
+        | "forall" "(" variables ";" formula ")" -> forall
+        | "exists" "(" variables ";" formula ")" -> exists
+        | "exists_unique" "(" variables ";" formula ")" -> exists_unique
 
 atomic_formula  : BOOLEAN
                 | term "==" term -> equals
                 | term "!=" term -> not_equals
+                | term "in" term -> in
                 | PRED_NAME "(" terms ")" -> predicate
 
 BOOLEAN : "TRUE" | "FALSE"
@@ -50,11 +55,16 @@ terms : term ("," term)*
 
 term : BOOLEAN
       | VARIABLE
+      | "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
       | CONSTANT
       | FUNC_NAME "(" terms ")" -> function
       | "\""  FOL_NAME "\""  -> string_literal
+      | builtin ("." builtin)*
 
+builtin : "REAL" | "INTEGER" | "NATURAL"
 
+variables : "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
+          | VARIABLE ("," VARIABLE)*
 
 VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME
@@ -73,7 +83,12 @@ FOL_NAME: ("'"|"'""_"|LETTER|DIGIT) ("'"|"'""_"|LETTER|DIGIT)*
 
 
 %import common.WORD
+%import common.CPP_COMMENT
+%import common.C_COMMENT
 %import common.LETTER
 %import common.INT -> NUMBER
 %import common.WS
+
 %ignore WS
+%ignore CPP_COMMENT
+%ignore C_COMMENT

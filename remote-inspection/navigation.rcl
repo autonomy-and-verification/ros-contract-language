@@ -1,0 +1,9 @@
+node navigation
+{
+
+topics( )
+
+guarantee(forall(x, y ; x,y in REAL ))
+guarantee(position(x, y) == TRUE <=> at(x, y) == TRUE)
+
+}

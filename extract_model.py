@@ -11,15 +11,15 @@ class Extractor(object):
         self.extracted_contract = Contract(contract_name)
 
     def extract(self, parse_tree):
-        """"Translates the parse tree into RML output for ROS Mon"""
+        """"s the parse tree into RML output for ROS Mon"""
 
         for t in parse_tree.children:
             assert(t.data == 'node_clause')
-            self._translate_node(t.children)
+            self.__node(t.children)
 
         return self.extracted_contract
 
-    def _translate_node(self, node):
+    def __node(self, node):
         """Traslates one node """
 
         assert(isinstance(node[0], lexer.Token) )
@@ -27,103 +27,53 @@ class Extractor(object):
         topic_list = node[1].children
         guarantees = node[2:]
 
-        topic_list_out = self._translate_topic_list(topic_list)
-        guarantees_out = self._translate_guarantees(guarantees)
+        topic_list_out = self._extract_topic_list(topic_list)
+        guarantees_out = self._extract_guarantees(guarantees)
 
         self.extracted_contract.add_node(node_name, topic_list_out, guarantees_out)
 
 
         #return "node " + node_name + "\n{\n" + topic_list_out + "\n" + guarantees_out + "\n}"
 
-    def _translate_topic_list(self, topic_list):
+    def _extract_topic_list(self, topic_list):
 
         assert(isinstance(topic_list, list))
-        topics_out = []
+        if topic_list != []:
+            topics_out = []
 
-        #Fancy Python 3 syntax for this split
-        head, *tail = topic_list
+            #Fancy Python 3 syntax for this split
+            head, *tail = topic_list
 
-        topics_out.append(self._translate_topic(head))
+            topics_out.append(self._extract_topic(head))
 
-        if tail != None:
-            if(isinstance(tail,list)):
-                for topic in tail:
-                    topics_out.append(self._translate_topic(topic))
-            elif(isinstance(tail, lark.Tree)):
-                topics_out.append(self._translate_topic(tail))
+            if tail != None:
+                if(isinstance(tail,list)):
+                    for topic in tail:
+                        topics_out.append(self._extract_topic(topic))
+                elif(isinstance(tail, lark.Tree)):
+                    topics_out.append(self._extract_topic(tail))
 
 
-        return topics_out
+            return topics_out
+        else:
+            return []
 
-    def _translate_guarantees(self, guarantees):
+    def _extract_guarantees(self, guarantees):
         assert(isinstance(guarantees, list))
 
         guar_out = []
 
         for guar in guarantees:
-            guar_out.append(self._translate_fol(guar))
+            #Simply appends the guarentee parse tree
+            guar_out.append(guar)
 
         return guar_out
 
-    def _translate_topic(self, topic):
+    def _extract_topic(self, topic):
         assert len(topic.children)  == 2
         type, topic_name = topic.children
 
         return type +" "+ topic_name
-
-
-    def _translate_fol(self, fol_statement):
-        """ Translate a fol guarantee statement """
-
-        if isinstance(fol_statement, tree.Tree):
-
-            statement = fol_statement.data
-
-            #Wont we always start here...?
-            if statement == "guarantee":
-                return self._translate_fol(fol_statement.children)
-            elif statement == "implies":
-                return self._translate_fol(fol_statement.children[0]) + " -> " + self._translate_fol(fol_statement.children[1])
-            elif statement == "equals":
-                eq_left = self._translate_fol(fol_statement.children[0])
-
-                print(fol_statement.children[1])
-                eq_right = self._translate_fol(fol_statement.children[1])
-
-                print(eq_left)
-                print(eq_right)
-
-                eq_out = eq_left + " == " + eq_right
-
-                return eq_out
-            elif statement == "negation":
-
-                return "not " + self._translate_fol(fol_statement.children)
-            elif statement == "atom":
-                return self._translate_fol(fol_statement.children[0])
-            elif statement == "term":
-                return self._translate_fol(fol_statement.children[0])
-            elif statement == "predicate":
-
-                return self._translate_fol(fol_statement.children[0]) + "("+ self._translate_fol(fol_statement.children[1]) +")"
-            elif statement == "terms":
-                return self._translate_fol(fol_statement.children)
-            elif statement == "term":
-                return self._translate_fol(statement.children)
-            elif statement == "string_literal":
-                return "\"" + fol_statement.children[0] + "\""
-        elif isinstance(fol_statement, lexer.Token):
-            print(" else, returning " + fol_statement)
-            return fol_statement
-        elif isinstance(fol_statement, list):
-            # Catches children being a list and iterates.
-            # Useful for one-or-more occurances
-            for element in fol_statement:
-                return self._translate_fol(element)
-        else:
-            print(" else, returning " + str(fol_statement))
-            return str(fol_statement)
-
 
 
     def __str__(self):
