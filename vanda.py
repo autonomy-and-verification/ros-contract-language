@@ -87,12 +87,13 @@ print("")
 
 
 if TRANSLATOR == "mirror":
-    # Just Prints the Output, which should be the same (apart from whitespace)
-    # as the input
+    # Just prints the output of the Mirror translator
+    #, which should be the same (apart from whitespace) as the input
     test_trans = Mirror()
     print(test_trans.translate(contract_obj))
 
 elif TRANSLATOR == "rosmon_rml":
+
     rosMon = ROSMon_Translator(contract_obj)
     #rosmon_config = romMon.translate(parse_tree)
 
