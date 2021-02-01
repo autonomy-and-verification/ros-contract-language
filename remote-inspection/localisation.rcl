@@ -3,6 +3,6 @@ node localisation
 
 topics( )
 
-guarantee( exists_unique((x, y);(x, y) in REAL x REAL and position(x, y)== TRUE ) )
+guarantee( exists_unique((x, y);(x, y) in REAL.REAL and position(x, y)== TRUE ) )
 
 }

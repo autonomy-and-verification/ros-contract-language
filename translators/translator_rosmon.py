@@ -80,23 +80,26 @@ class ROSMon_Translator(Translator):
     def _translate_topic_list(self, topic_list):
 
         assert(isinstance(topic_list, list))
-        topics_out = "topics ("
+        if topic_list != []:
+            topics_out = "topics ("
 
-        head, *tail = topic_list
+            head, *tail = topic_list
 
-        topics_out += self._translate_topic(head)
+            topics_out += self._translate_topic(head)
 
-        if tail != None:
-            if(isinstance(tail,list)):
-                for topic in tail:
-                    topics_out += ", " + self._translate_topic(topic)
-            else:
-                topics_out += ", " + self._translate_topic(tail)
+            if tail != None:
+                if(isinstance(tail,list)):
+                    for topic in tail:
+                        topics_out += ", " + self._translate_topic(topic)
+                else:
+                    topics_out += ", " + self._translate_topic(tail)
 
 
-        topics_out += ")"
+            topics_out += ")"
 
-        return topics_out
+            return topics_out
+        else:
+            return "topics ()"
 
     def _translate_topic(self, topic):
         """Translate one topic statement """

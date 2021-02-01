@@ -38,22 +38,25 @@ class Extractor(object):
     def _extract_topic_list(self, topic_list):
 
         assert(isinstance(topic_list, list))
-        topics_out = []
+        if topic_list != []:
+            topics_out = []
 
-        #Fancy Python 3 syntax for this split
-        head, *tail = topic_list
+            #Fancy Python 3 syntax for this split
+            head, *tail = topic_list
 
-        topics_out.append(self._extract_topic(head))
+            topics_out.append(self._extract_topic(head))
 
-        if tail != None:
-            if(isinstance(tail,list)):
-                for topic in tail:
-                    topics_out.append(self._extract_topic(topic))
-            elif(isinstance(tail, lark.Tree)):
-                topics_out.append(self._extract_topic(tail))
+            if tail != None:
+                if(isinstance(tail,list)):
+                    for topic in tail:
+                        topics_out.append(self._extract_topic(topic))
+                elif(isinstance(tail, lark.Tree)):
+                    topics_out.append(self._extract_topic(tail))
 
 
-        return topics_out
+            return topics_out
+        else:
+            return []
 
     def _extract_guarantees(self, guarantees):
         assert(isinstance(guarantees, list))

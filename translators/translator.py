@@ -21,7 +21,7 @@ class Translator(object):
         """Translate one topic statement """
         pass
 
-    def _translate_fol(self, fol_statement):
-        """Translate the fol guarantee """
+    def _translate_guarantees(self, fol_statement):
+        """Translate the fol guarantees """
         # This ends up as a visitor or a big state machine
         pass
