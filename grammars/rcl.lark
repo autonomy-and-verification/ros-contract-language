@@ -6,7 +6,7 @@ node_clause: "node" NODE_NAME "{" topic_list (guarantee)+   "}"
 
 NODE_NAME: LETTER+
 
-topic_list : "topics" "(" topic ("," topic)* ")"
+topic_list : "topics" "(" (topic ("," topic)*)? ")"
 
 topic: TYPE WORD
 
@@ -26,7 +26,9 @@ TYPE: "bool"
     | "string"
     | "time"
     | "duration"
-    | FOL_NAME "/" FOL_NAME -> custom_type
+    | FOL_NAME "/" FOL_NAME
+
+
 
 guarantee : ("guarantee"| "G") "(" formula ")"
 
@@ -37,13 +39,14 @@ formula: atomic_formula -> atom
         | formula "->" formula -> implies
         | formula "<=>" formula -> iff
         | "(" formula ")"
-        | "forall" VARIABLE formula -> forall
-        | "exists" VARIABLE formula -> exists
-        | "exists_unique" VARIABLE formula -> exists_unique
+        | "forall" "(" variables ";" formula ")" -> forall
+        | "exists" "(" variables ";" formula ")" -> exists
+        | "exists_unique" "(" variables ";" formula ")" -> exists_unique
 
 atomic_formula  : BOOLEAN
                 | term "==" term -> equals
                 | term "!=" term -> not_equals
+                | term "in" term -> in
                 | PRED_NAME "(" terms ")" -> predicate
 
 BOOLEAN : "TRUE" | "FALSE"
@@ -52,11 +55,16 @@ terms : term ("," term)*
 
 term : BOOLEAN
       | VARIABLE
+      | "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
       | CONSTANT
       | FUNC_NAME "(" terms ")" -> function
       | "\""  FOL_NAME "\""  -> string_literal
+      | builtin ("." builtin)*
 
+builtin : "REAL" | "INTEGER" | "NATURAL"
 
+variables : "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
+          | VARIABLE ("," VARIABLE)*
 
 VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME
