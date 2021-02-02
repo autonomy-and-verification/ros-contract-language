@@ -21,7 +21,7 @@ argParser = argparse.ArgumentParser()
 argParser.add_argument("grammar", help="The grammar to parse with.", default = "rcl")
 argParser.add_argument("contract", help="The contract file to be parsed.")
 argParser.add_argument("-t", help="The translator to use",choices=['mirror', 'rosmon_rml'], default = 'mirror' )
-argParser.add_argument("-o", help="The path to the output file for the translation")
+argParser.add_argument("-o", help="The path to the output folder for the translation")
 argParser.add_argument("-p", help="Print the parse tree", type=bool, default = False)
 
 
@@ -45,11 +45,14 @@ CONTRACT_NAME = get_contract_name(args.contract)
 if args.o:
     OUTPUT_PATH = args.o
 else:
-    contract_name = CONTRACT_NAME + ".yaml"
-    OUTPUT_PATH = "output/" + contract_name
+    OUTPUT_PATH = "output/"
+contract_name = CONTRACT_NAME + ".yaml"
+CONTRACT_PATH = OUTPUT_PATH + contract_name
+rml_name = CONTRACT_NAME + ".rml"
+RML_PATH = OUTPUT_PATH + rml_name
 
-    if not os.path.exists("output"):
-        os.mkdir("output")
+if not os.path.exists(OUTPUT_PATH):
+    os.mkdir(OUTPUT_PATH)
 
 TRANSLATOR = args.t
 PRINT = args.p
@@ -98,12 +101,18 @@ elif TRANSLATOR == "rosmon_rml":
     rosMon = ROSMon_Translator(contract_obj)
     #rosmon_config = romMon.translate(parse_tree)
 
-    rosmon_config = rosMon.translate_config()
+    rosmon_config, rml = rosMon.translate_config()
 
     print(rosmon_config)
 
-    output_file = open(OUTPUT_PATH, "w")
+    print(rml)
+
+    output_file = open(CONTRACT_PATH, "w")
     output_file.write(rosmon_config)
+    output_file.close()
+
+    output_file = open(RML_PATH, "w")
+    output_file.write(rml)
     output_file.close()
 
 

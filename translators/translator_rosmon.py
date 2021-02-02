@@ -18,6 +18,7 @@ class ROSMon_Translator(Translator):
         self.monitors = []
 
         self.run_translate = False
+        self.rml = None
 
 
     def _add_node(self, node_name):
@@ -49,15 +50,25 @@ class ROSMon_Translator(Translator):
         return output
 
     def translate_config(self):
-
-
         if self.run_translate:
             pass
         else:
             self.translate(self.contract)
 
         self._prep_config()
-        return yaml.dump(self.rosmon_config)
+        rml = ""
+        for et in self.rml["event_types"]:
+            rml += et + "\n"
+        first = True
+        rml += "\nMain = "
+        for t in self.rml["terms"]:
+            if first:
+                first = False
+            else:
+                rml += " /\\ "
+            rml += "(" + t + "*)"
+        rml += ";\n"
+        return yaml.dump(self.rosmon_config), rml
 
 
     def _translate_node(self, node):
@@ -72,9 +83,9 @@ class ROSMon_Translator(Translator):
         self._add_node(node_name)
 
         topic_list_out = self._translate_topic_list(topic_list)
-        guarantees_out = self._translate_guarantees(guarantees)
+        self.rml = self._translate_guarantees(guarantees)
 
-        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + guarantees_out + "\n}"
+        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + str(self.rml) + "\n}"
 
 
     def _translate_topic_list(self, topic_list):
@@ -118,6 +129,6 @@ class ROSMon_Translator(Translator):
         visitor = FOL2RML()
 
         for guar in guarantees:
-            guar_out += "G (" + visitor.visit(guar) + ")\n"
+            visitor.visit(guar)
 
-        return guar_out
+        return visitor.get_rml()
