@@ -3,6 +3,6 @@ node talker
 
 topics(string chatter, int32 count)
 
-guarantee(forall (x; (chatter == x -> count == 10)))
+guarantee(not(forall (x; (chatter == x and count != 10))))
 
 }

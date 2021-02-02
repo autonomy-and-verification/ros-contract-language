@@ -4,4 +4,4 @@ ET2 matches { count : 10 };
 not_ET2 not matches ET2;
 Any matches {};
 
-Main = ({ let x; (not_ET1(x) \/ ET2) }*);
+Main = ({ let x; ((not_ET1(x) \/ ET2) Any*) \/ (Any)) }*);
