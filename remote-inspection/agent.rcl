@@ -1,13 +1,14 @@
 node agent
 {
 
-
 topics(
 gazebo_radiation_plugins/Command command,
 gazebo_radiation_plugins/Inspection inspection,
 Int16 currentLoc,
 String radiationStatus
 )
+
+assumption()
 
 guarantee(
 forall(x', y', i; x', y' in REAL and i in locs and at(x', y') == TRUE and wayP(x', y') and inspected(i) == TRUE and radiationStatus not in {red, orange} ->

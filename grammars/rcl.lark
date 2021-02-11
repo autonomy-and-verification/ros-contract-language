@@ -1,6 +1,6 @@
 start: node_clause+
 
-node_clause: "node" NODE_NAME "{" topic_list (guarantee)+   "}"
+node_clause: "node" NODE_NAME "{" topic_list assumption+ guarantee+   "}"
 
 
 
@@ -28,7 +28,7 @@ TYPE: "bool"
     | "duration"
     | FOL_NAME "/" FOL_NAME
 
-
+assumption : ("assumption" | "A") "(" WORD* ")"
 
 guarantee : ("guarantee"| "G") "(" formula ")"
 
@@ -54,14 +54,14 @@ BOOLEAN : "TRUE" | "FALSE"
 terms : term ("," term)*
 
 term : BOOLEAN
+      |"(" VARIABLE ("," VARIABLE)*  ")" -> tuple
       | VARIABLE
-      | "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
       | CONSTANT
       | FUNC_NAME "(" terms ")" -> function
       | "\""  FOL_NAME "\""  -> string_literal
-      | builtin ("." builtin)*
+      | builtin ("." builtin)* -> term_builtins
 
-builtin : "REAL" | "INTEGER" | "NATURAL"
+!builtin : "REAL" | "INTEGER" | "NATURAL"
 
 variables : "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
           | VARIABLE ("," VARIABLE)*
