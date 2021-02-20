@@ -1,14 +1,16 @@
-node radiation sensor
+node radiationSensor
 {
 
-//what is r? What topic does it come in on?
-topics(r  )
+topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r,
+gazebo_radiation_plugins/Command command,
+gazebo_radiation_plugins/Inspection inspected,
+string radiationStatus )
 
 guarantee(
-command = TRUE -> (inspected(i) == TRUE
-and 0 <= r < 120 -> radiationStatus = green
-and 120 <= r < 250 -> radiationStatus = orange
-and 250 <= r -> radiationStatus = red )
+forall( i | i in NATURAL and command == inspect(i) -> (inspected(i) == TRUE
+and 0 <= r < 120 -> radiationStatus == green
+and 120 <= r < 250 -> radiationStatus == orange
+and 250 <= r -> radiationStatus == red ))
 )
 
 }

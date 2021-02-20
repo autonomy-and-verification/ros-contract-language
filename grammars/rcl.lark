@@ -41,15 +41,21 @@ formula: atomic_formula -> atom
         | "(" formula ")"
         | "forall" "(" variables (";"|"|") formula ")" -> forall
         | "exists" "(" variables (";"|"|") formula ")" -> exists
-        | "exists_unique" "(" variables ";" formula ")" -> exists_unique
+        | "exists_unique" "(" variables (";"|"|") formula ")" -> exists_unique
 
 atomic_formula  : BOOLEAN
                 | term "==" term -> equals
                 | term "!=" term -> not_equals
                 | term "in" term -> in
                 | term "!in" term -> not_in
+                | term "<=" term -> leq
+                | term ">=" term -> geq
+                | term "<" term -> lt
+                | term ">" term -> gt
+                | term COMPARE_OP term COMPARE_OP term -> var_range
                 | PRED_NAME "(" terms ")" -> predicate
 
+COMPARE_OP : "<=" | ">=" | "<" | ">"
 
 arith : (VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
 

@@ -1,9 +1,9 @@
 node navigation
 {
 
-topics( )
 
-guarantee(forall(x, y ; x,y in REAL ))
-guarantee(position(x, y) == TRUE <=> at(x, y) == TRUE)
+topics(gazebo_radiation_plugins/Command command, int16 currentLoc)
+
+guarantee(forall(x, y | x in REAL and y in REAL and position(x, y) == TRUE <=> at(x, y) == TRUE) )
 
 }
