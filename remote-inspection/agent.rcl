@@ -1,12 +1,11 @@
 node agent
 {
 
-
 topics(
 gazebo_radiation_plugins/Command command,
 gazebo_radiation_plugins/Inspection inspection,
-Int16 currentLoc,
-String radiationStatus
+int16 currentLoc,
+string radiationStatus
 )
 
 guarantee(

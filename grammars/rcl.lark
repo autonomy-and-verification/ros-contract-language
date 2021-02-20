@@ -74,7 +74,7 @@ FUNC_NAME: (LCASE_LETTER|DIGIT) ("'"|"'""_"|LETTER|DIGIT)*
 PRED_NAME: (UCASE_LETTER|DIGIT) ("'"|"'""_"|LETTER|DIGIT)*
 
 
-FOL_NAME: ("'"|"'""_"|LETTER|DIGIT) ("'"|"'""_"|LETTER|DIGIT)*
+FOL_NAME: ("'"|"_"|LETTER|DIGIT)("'"|"_"|LETTER|DIGIT)*
 
 %import common.DIGIT
 %import common.LETTER
