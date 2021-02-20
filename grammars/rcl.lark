@@ -39,15 +39,21 @@ formula: atomic_formula -> atom
         | formula "->" formula -> implies
         | formula "<=>" formula -> iff
         | "(" formula ")"
-        | "forall" "(" variables ";" formula ")" -> forall
-        | "exists" "(" variables ";" formula ")" -> exists
+        | "forall" "(" variables (";"|"|") formula ")" -> forall
+        | "exists" "(" variables (";"|"|") formula ")" -> exists
         | "exists_unique" "(" variables ";" formula ")" -> exists_unique
 
 atomic_formula  : BOOLEAN
                 | term "==" term -> equals
                 | term "!=" term -> not_equals
                 | term "in" term -> in
+                | term "!in" term -> not_in
                 | PRED_NAME "(" terms ")" -> predicate
+
+
+arith : (VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
+
+ARITH_OP: "+" | "-" | "*" | "/"
 
 BOOLEAN : "TRUE" | "FALSE"
 
@@ -55,7 +61,9 @@ terms : term ("," term)*
 
 term : BOOLEAN
       | VARIABLE
+      | arith
       | "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
+      | "{" VARIABLE ("," VARIABLE)* "}" -> set
       | CONSTANT
       | FUNC_NAME "(" terms ")" -> function
       | "\""  FOL_NAME "\""  -> string_literal
