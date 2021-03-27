@@ -27,7 +27,7 @@ class FOL2RML(FOL):
         assert(tree.data == "not_equals")
         pass
 
-    def atom(self, term):
+    def atom(self, tree):
         """ Translate an atom tree """
         assert(tree.data == "atom")
         pass
