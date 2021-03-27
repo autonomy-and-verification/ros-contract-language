@@ -33,7 +33,6 @@ class Mirror(Translator):
         assumes = node.get_assumes()
         guarantees = node.get_guarantees()
 
-
         topic_list_out = self._translate_topic_list(topic_list)
         assumes_out = self._translate_assumes(assumes)
         guarantees_out = self._translate_guarantees(guarantees)
@@ -90,6 +89,7 @@ class Mirror(Translator):
         visitor = FOL2Text()
 
         for guar in guarantees:
+
             guar_out += "G (" + visitor.visit(guar) + ")\n"
 
         return guar_out

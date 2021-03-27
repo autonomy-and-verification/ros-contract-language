@@ -1,6 +1,6 @@
 start: node_clause+
 
-node_clause: "node" NODE_NAME "{" topic_list (assume)+ (guarantee)+   "}"
+node_clause: "node" NODE_NAME "{" topic_list (assume)* (guarantee)+   "}"
 
 
 
@@ -46,7 +46,7 @@ formula: atomic_formula -> atom
 atomic_formula  : BOOLEAN
                 | term "==" term -> equals
                 | term "!=" term -> not_equals
-                | term "in" term -> in
+                | term "in" term -> in_form
                 | term "!in" term -> not_in
                 | term "<=" term -> leq
                 | term ">=" term -> geq
