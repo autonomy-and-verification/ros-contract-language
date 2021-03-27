@@ -1,6 +1,6 @@
 start: node_clause+
 
-node_clause: "node" NODE_NAME "{" topic_list (guarantee)+   "}"
+node_clause: "node" NODE_NAME "{" topic_list (assume)+ (guarantee)+   "}"
 
 
 
@@ -28,7 +28,7 @@ TYPE: "bool"
     | "duration"
     | FOL_NAME "/" FOL_NAME
 
-
+assume : ("assume" | "A") "(" formula ")"
 
 guarantee : ("guarantee"| "G") "(" formula ")"
 
