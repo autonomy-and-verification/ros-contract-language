@@ -8,6 +8,14 @@ from translators.fol import FOL
 
 class FOL2Text(FOL):
 
+        def assume(self, tree):
+            """ Translate an assume tree """
+            assert(tree.data == "assume")
+            print("translating assume")
+            print(tree.children[0])
+
+            return self.visit(tree.children[0])
+
         def guarantee(self, tree):
             """ Translate a guarantee tree """
             assert(tree.data == "guarantee")
@@ -41,8 +49,24 @@ class FOL2Text(FOL):
         def atom(self, tree):
             """ Translate an atom tree """
             assert(tree.data == "atom")
+            print("translating atom")
+            print(tree.children[0])
 
             return self.visit(tree.children[0])
+
+        def atomic_formula(self,tree):
+            """ Translate an atomic_formula tree """
+            assert(tree.data == "atomic_formula")
+            print("translating atomic_formula")
+            print(tree.children[0])
+
+            if isinstance(tree.children[0], Token):
+                token = tree.children[0]
+                if token.type == "BOOLEAN":
+                    return str(token)
+            else:
+                assert(isinstance(tree.children[0], Tree))
+                return self.visit(tree.children[0])
 
         def negation(self, tree):
             """ Translate a negation tree """
@@ -114,5 +138,5 @@ class FOL2Text(FOL):
         def string_literal(self, tree):
             """ Translate a string literal tree """
             assert(tree.data == "string_literal")
-            
+
             return "\"" + tree.children[0] + "\""
