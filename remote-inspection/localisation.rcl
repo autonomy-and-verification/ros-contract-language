@@ -1,9 +1,12 @@
 node localisation
 {
 
-//Still don't know what topics localisation uses
-topics( )
+topics(geometry_msgs/PoseWithCovarianceStamped amcl pose)
+
+assume(TRUE)
 
 guarantee( exists_unique(x, y | x in REAL and y in REAL and position(x, y)== TRUE ) )
+
+
 
 }

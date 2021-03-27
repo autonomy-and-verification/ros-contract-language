@@ -6,6 +6,10 @@ gazebo_radiation_plugins/Command command,
 gazebo_radiation_plugins/Inspection inspected,
 string radiationStatus )
 
+assume(
+0 <= r
+)
+
 guarantee(
 forall( i | i in NATURAL and command == inspect(i) -> (inspected(i) == TRUE
 and 0 <= r < 120 -> radiationStatus == green

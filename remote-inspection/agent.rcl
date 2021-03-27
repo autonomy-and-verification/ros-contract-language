@@ -3,9 +3,14 @@ node agent
 
 topics(
 gazebo_radiation_plugins/Command command,
-gazebo_radiation_plugins/Inspection inspection,
-int16 currentLoc,
+gazebo_radiation_plugins/Inspection inspected,
+gazebo_radiation_plugins/At at,
+int16 wayP,
 string radiationStatus
+)
+
+assume(
+radiationStatus in {red, orange, green}
 )
 
 guarantee(
@@ -21,6 +26,5 @@ forall(x', y', i | x' in REAL and y' in REAL and i in NATURAL
   -> exists (x'', y'' | x'' in REAL and y'' in REAL and wayP(x'', y'') == 0 and command == move(x'', y'') )
   )
 )
-
 
 }

@@ -2,8 +2,13 @@ node navigation
 {
 
 
-topics(gazebo_radiation_plugins/Command command, int16 currentLoc)
+topics(
+gazebo_radiation_plugins/Command command,
+int16 currentLoc,
+gazebo radiation plugins/At at)
 
-guarantee(forall(x, y | x in REAL and y in REAL and position(x, y) == TRUE <=> at(x, y) == TRUE) )
+assume(exists_unique(x, y | x in REAL and y in REAL and position(x,y) == TRUE ) )
+
+guarantee(forall(x, y | x in REAL and y in REAL and command == move(x, y) and position(x, y) == TRUE <=> at(x, y) == TRUE) )
 
 }

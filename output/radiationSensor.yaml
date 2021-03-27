@@ -1,0 +1,36 @@
+monitors:
+- monitor:
+    id: monitor_r
+    log: ./r_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: r
+      type: std_msgs.msg.gazebo_radiation_plugins/Simulated_Radiation_Msg
+- monitor:
+    id: monitor_command
+    log: ./command_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: command
+      type: std_msgs.msg.gazebo_radiation_plugins/Command
+- monitor:
+    id: monitor_inspected
+    log: ./inspected_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: inspected
+      type: std_msgs.msg.gazebo_radiation_plugins/Inspection
+- monitor:
+    id: monitor_radiationStatus
+    log: ./radiationStatus_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: radiationStatus
+      type: std_msgs.msg.string
+nodes:
+- node:
+    name: radiationSensor

@@ -1,0 +1,20 @@
+monitors:
+- monitor:
+    id: monitor_command
+    log: ./command_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: command
+      type: std_msgs.msg.gazebo_radiation_plugins/Command
+- monitor:
+    id: monitor_currentLoc
+    log: ./currentLoc_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: currentLoc
+      type: std_msgs.msg.int16
+nodes:
+- node:
+    name: navigation
