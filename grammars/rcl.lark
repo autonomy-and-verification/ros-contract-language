@@ -67,7 +67,7 @@ terms : term ("," term)*
 
 term : BOOLEAN
       | VARIABLE
-      | arith
+      | arith -> arithmetic
       | "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
       | "{" VARIABLE ("," VARIABLE)* "}" -> set
       | CONSTANT
