@@ -31,14 +31,16 @@ class FOL2Text(FOL):
             print("translating implies:")
             print(tree)
 
-            print("***visiting left..")
-            left = self.visit(tree.children[0])
+            #print("***visiting left..")
+            #left = self.visit(tree.children[0])
 
-            print("visiting right..")
-            right = self.visit(tree.children[1])
+            #print("visiting right..")
+            #right = self.visit(tree.children[1])
 
-            print("left = " + left)
-            print("right = " + right)
+            #print("left = " + left)
+            #print("right = " + right)
+
+            left, right = self.binary_infix(tree)
 
             return left + " -> " + right
 
@@ -114,6 +116,61 @@ class FOL2Text(FOL):
             return in_left + " !in " + in_right
 
 
+        def leq(self, tree):
+            """ Translate a leq tree """
+            assert(tree.data == "leq")
+            assert(len(tree.children)==2)
+
+            left, right = self.binary_infix(tree)
+
+            return left + " <= " + right
+
+        def geq(self, tree):
+            """ Translate a geq tree """
+            assert(tree.data == "geq")
+            assert(len(tree.children)==2)
+
+            left, right = self.binary_infix(tree)
+
+            return left + " >= " + right
+
+        def lt(self, tree):
+            """ Translate a lt tree """
+            assert(tree.data == "lt")
+            assert(len(tree.children)==2)
+
+            left, right = self.binary_infix(tree)
+
+            return left + " < " + right
+
+        def gt(self, tree):
+            """ Translate a gt tree """
+            assert(tree.data == "gt")
+            assert(len(tree.children)==2)
+
+            left, right = self.binary_infix(tree)
+
+            return left + " > " + right
+
+        def var_range(self, tree):
+            """ Translate a var_range tree """
+            assert(tree.data == "var_range")
+            assert(len(tree.children)==5)
+            # term COMPARE_OP term COMPARE_OP term
+            print("translating var_range..." )
+
+            left_term = tree.children[0]
+            left_op = tree.children[1]
+            mid_term = tree.children[2]
+            right_op = tree.children[3]
+            right_term = tree.children[4]
+
+            left_term_out = self.visit(left_term)
+            mid_term_out = self.visit(mid_term)
+            right_term_out = self.visit(right_term)
+
+            return left_term_out + str(left_op) + mid_term_out + str(right_op) + right_term_out
+
         def negation(self, tree):
             """ Translate a negation tree """
             assert(tree.data == "negation")
@@ -162,6 +219,13 @@ class FOL2Text(FOL):
             print("right = " + iff_right)
 
             return iff_left + " <=> " + iff_right
+
+        def bracket_form(self, tree):
+            """ Translate a bracketed formula """
+            assert(tree.data == "bracket_form")
+            assert(len(tree.children) == 1)
+
+            return "( " + self.visit(tree.children[0]) + " )"
 
         def forall(self, tree):
             """ Translate a forall tree """
@@ -224,12 +288,6 @@ class FOL2Text(FOL):
 
             return pred_name + "("+ str(pred_terms) +")"
 
-        def terms(self, tree):
-            """ Translate a terms tree """
-            assert(tree.data == "terms")
-
-            for c in tree.children:
-                return self.visit(c)
 
         def term(self, tree):
             """ Translate a term tree """
@@ -258,6 +316,10 @@ class FOL2Text(FOL):
             op = str(arith_tree.children[1])
             right = str(arith_tree.children[2])
 
+            assert(isinstance(left, str))
+            assert(isinstance(op, str))
+            assert(isinstance(right, str))
+
             return left + op + right
 
 
@@ -276,9 +338,8 @@ class FOL2Text(FOL):
                 print(var)
                 vars += ", " + str(var)
 
-            print(type(vars))
-            print(vars)
 
+            assert(isinstance(vars, str))
             return "{" + vars + "}"
 
         def tuple(self, tree):
@@ -307,8 +368,9 @@ class FOL2Text(FOL):
             terms_out = self.visit(head)
 
             for term in tail:
-                terms_out += ", " + self.visit(term) 
+                terms_out += ", " + self.visit(term)
 
+            assert(isinstance(terms_out, str))
             return terms_out
 
         def string_literal(self, tree):
@@ -333,4 +395,5 @@ class FOL2Text(FOL):
                 print(var)
                 vars += ", " + str(var)
 
+            assert(isinstance(vars, str))
             return vars

@@ -11,10 +11,15 @@ assume(
 )
 
 guarantee(
-forall( i | i in NATURAL and command == inspect(i) -> (inspected(i) == TRUE
+forall( i | i in NATURAL and command == inspect(i) ->
+(inspected(i) == TRUE
 and 0 <= r < 120 -> radiationStatus == green
 and 120 <= r < 250 -> radiationStatus == orange
-and 250 <= r -> radiationStatus == red ))
+and 250 <= r -> radiationStatus == red )
 )
+)
+
+
+
 
 }

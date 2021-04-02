@@ -5,7 +5,7 @@ node navigation
 topics(
 gazebo_radiation_plugins/Command command,
 int16 currentLoc,
-gazebo radiation plugins/At at)
+gazebo_radiation_plugins/At at)
 
 assume(exists_unique(x, y | x in REAL and y in REAL and position(x,y) == TRUE ) )
 
