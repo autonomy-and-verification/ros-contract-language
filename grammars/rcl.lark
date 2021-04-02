@@ -8,7 +8,7 @@ NODE_NAME: LETTER+
 
 topic_list : "topics" "(" (topic ("," topic)*)? ")"
 
-topic: TYPE WORD
+topic: TYPE FOL_NAME
 
 
 //ros types

@@ -1,12 +1,11 @@
 node localisation
 {
 
-topics(geometry_msgs/PoseWithCovarianceStamped amcl pose)
+//topic name != variable name, add alias?
+topics(geometry_msgs/PoseWithCovarianceStamped amcl_pose)
 
 assume(TRUE)
 
 guarantee( exists_unique(x, y | x in REAL and y in REAL and position(x, y)== TRUE ) )
-
-
 
 }
