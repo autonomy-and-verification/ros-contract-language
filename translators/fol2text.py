@@ -288,6 +288,20 @@ class FOL2Text(FOL):
 
             return pred_name + "("+ str(pred_terms) +")"
 
+        def terms(self, tree):
+            """ Translate a terms tree """
+            assert(tree.data == "terms")
+
+            print("translating terms")
+
+            head, *tail = tree.children
+            terms_out = self.visit(head)
+
+            for term in tail:
+                terms_out += ", " + self.visit(term)
+
+            assert(isinstance(terms_out, str))
+            return terms_out
 
         def term(self, tree):
             """ Translate a term tree """
@@ -358,20 +372,7 @@ class FOL2Text(FOL):
 
             return func_name + "("+ str(func_args) +")"
 
-        def terms(self, tree):
-            """ Translate a terms tree """
-            assert(tree.data == "terms")
 
-            print("translating terms")
-
-            head, *tail = tree.children
-            terms_out = self.visit(head)
-
-            for term in tail:
-                terms_out += ", " + self.visit(term)
-
-            assert(isinstance(terms_out, str))
-            return terms_out
 
         def string_literal(self, tree):
             """ Translate a string literal tree """
