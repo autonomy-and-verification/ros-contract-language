@@ -30,13 +30,14 @@ class Mirror(Translator):
         node_name = node.get_node_name()
 
         topic_list = node.get_topic_list()
+        assumes = node.get_assumes()
         guarantees = node.get_guarantees()
 
-
         topic_list_out = self._translate_topic_list(topic_list)
+        assumes_out = self._translate_assumes(assumes)
         guarantees_out = self._translate_guarantees(guarantees)
 
-        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + guarantees_out + "\n}"
+        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + assumes_out + "\n" + guarantees_out + "\n}"
 
     def _translate_topic_list(self, topic_list):
 
@@ -69,6 +70,18 @@ class Mirror(Translator):
 
         return type +" "+ topic_name
 
+    def _translate_assumes(self, assumes):
+        assert(isinstance(assumes, list))
+
+        ass_out = ""
+        visitor = FOL2Text()
+
+        for ass in assumes:
+
+            ass_out += "A (" + visitor.visit(ass)  + ")\n"
+
+        return ass_out
+
     def _translate_guarantees(self, guarantees):
         assert(isinstance(guarantees, list))
 
@@ -76,6 +89,7 @@ class Mirror(Translator):
         visitor = FOL2Text()
 
         for guar in guarantees:
+
             guar_out += "G (" + visitor.visit(guar) + ")\n"
 
         return guar_out
@@ -92,6 +106,8 @@ class Mirror(Translator):
     # This has been replaced
     def _translate_fol(self, fol_statement):
         """ Translate a fol guarantee statement """
+
+        assert(false)
 
         if isinstance(fol_statement, tree.Tree):
 

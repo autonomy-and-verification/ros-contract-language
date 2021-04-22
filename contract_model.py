@@ -3,14 +3,16 @@
 
 class Node(object):
 
-    def __init__(self, node_name, topic_list, guarantees):
+    def __init__(self, node_name, topic_list, assumes, guarantees):
         assert(isinstance(node_name,str))
         assert(isinstance(topic_list, list))
+        assert(isinstance(assumes, list))
         assert(isinstance(guarantees, list))
 
 
         self.node_name  = node_name
         self.topic_list = topic_list
+        self.assumes = assumes
         self.guarantees = guarantees
 
     def get_node_name(self):
@@ -18,6 +20,9 @@ class Node(object):
 
     def get_topic_list(self):
         return self.topic_list
+
+    def get_assumes(self):
+        return self.assumes
 
     def get_guarantees(self):
         return self.guarantees
@@ -39,9 +44,9 @@ class Contract(object):
     def get_nodes(self):
         return self.nodes
 
-    def add_node(self, node_name, topic_list, guarantees):
+    def add_node(self, node_name, topic_list, assumes, guarantees):
 
-        new_node = Node(node_name, topic_list, guarantees)
+        new_node = Node(node_name, topic_list, assumes, guarantees)
 
         self.nodes.append(new_node)
 
@@ -55,7 +60,7 @@ class Contract(object):
                 to_string += "node list empty"
             else:
                 for node in node_list:
-                    to_string += "node: " + node.get_node_name() +"\n" + "\ttopics: " + str(node.get_topic_list()) +"\n" + "\tguarantees: " + str(node.get_guarantees())
+                    to_string += "node: " + node.get_node_name() +"\n" + "\ttopics: " + str(node.get_topic_list()) +"\n" + "\tassumes:" + str(node.get_assumes()) + "\n \tguarantees: " + str(node.get_guarantees())
 
         return to_string
 

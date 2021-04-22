@@ -87,3 +87,27 @@ class FOL(Interpreter):
         """ Translate a string literal tree """
         assert(tree.data == "string_literal")
         pass
+
+# Helper Methods
+
+    def binary_infix(self, tree):
+        """ Helps translate any binary infix operator """
+        assert(len(tree.children) == 2)
+        print("translating some binary_operator")
+
+        print(tree)
+
+        left = self.visit(tree.children[0])
+        right = self.visit(tree.children[1])
+
+        assert(isinstance(left, str))
+        print("Right...")
+        print(right)
+
+        assert(isinstance(right, str))
+
+
+        print("left = " + left)
+        print("right = " + right)
+
+        return left, right

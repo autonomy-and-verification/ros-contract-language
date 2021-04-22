@@ -3,6 +3,8 @@ node Interface
 
 topics(bool haveMoved, bool atGoal)
 
+assume(TRUE)
+
 guarantee( haveMoved == TRUE ->  not EmptySet(plan) )
 
 G( atGoal == TRUE -> haveMoved == TRUE )

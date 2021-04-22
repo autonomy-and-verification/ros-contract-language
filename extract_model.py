@@ -11,7 +11,7 @@ class Extractor(object):
         self.extracted_contract = Contract(contract_name)
 
     def extract(self, parse_tree):
-        """"s the parse tree into RML output for ROS Mon"""
+        """"parses the parse tree into RML output for ROS Mon"""
 
         for t in parse_tree.children:
             assert(t.data == 'node_clause')
@@ -25,15 +25,30 @@ class Extractor(object):
         assert(isinstance(node[0], lexer.Token) )
         node_name = node[0]
         topic_list = node[1].children
-        guarantees = node[2:]
+        assumes, guarantees = self._extract_assumes_and_gurantees(node[2:])
 
         topic_list_out = self._extract_topic_list(topic_list)
+        assumes_out = self._extract_assumes(assumes)
         guarantees_out = self._extract_guarantees(guarantees)
 
-        self.extracted_contract.add_node(node_name, topic_list_out, guarantees_out)
+        self.extracted_contract.add_node(node_name, topic_list_out, assumes_out, guarantees_out)
 
 
         #return "node " + node_name + "\n{\n" + topic_list_out + "\n" + guarantees_out + "\n}"
+    def _extract_assumes_and_gurantees(self, node_list):
+
+        assumes = []
+        guarantees = []
+
+        for node in node_list:
+            if node.data == "assume":
+                assumes.append(node)
+            elif node.data == "guarantee":
+                guarantees.append(node)
+            else:
+                pass
+
+        return assumes, guarantees
 
     def _extract_topic_list(self, topic_list):
 
@@ -57,6 +72,17 @@ class Extractor(object):
             return topics_out
         else:
             return []
+
+    def _extract_assumes(self, assumes):
+        assert(isinstance(assumes, list))
+
+        ass_out = []
+
+        for ass in assumes:
+            #Simply appends the assume parse tree
+            ass_out.append(ass)
+
+        return ass_out
 
     def _extract_guarantees(self, guarantees):
         assert(isinstance(guarantees, list))

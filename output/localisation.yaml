@@ -1,0 +1,4 @@
+monitors: []
+nodes:
+- node:
+    name: localisation
