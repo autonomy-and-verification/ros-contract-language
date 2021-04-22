@@ -52,13 +52,21 @@ class FOL2Text(FOL):
 
         def and_form(self, tree):
             """ Translate an and tree """
-            assert(tree.data == "and")
-            pass
+            assert(tree.data == "and_form")
+
+            left = self.visit(tree.children[0])
+            right = self.visit(tree.children[1])
+
+            print(left)
+            print(right)
+
+            return left + " and " + right
 
         def or_form(self, tree):
             """ Translate a or tree """
-            assert(tree.data == "or")
-            pass
+            assert(tree.data == "or_for,")
+
+            return self.visit(tree.children[0]) + " or " + self.visit(tree.children[1])
 
         def iff(self, tree):
             """ Translate a iff tree """
@@ -83,13 +91,27 @@ class FOL2Text(FOL):
                 return self.visit(c)
 
         def term(self, tree):
-            """ Translate a term tree """
+            """ Translate a single term tree """
             assert(tree.data == "term")
 
             assert(len(tree.children)==1)
             assert(isinstance(tree.children[0],Token ))
 
             return str(tree.children[0])
+
+        def term_builtins(self, tree):
+            assert(tree.data == "term_builtins")
+
+            head, *tail = tree.children
+
+            builtins_out = self.visit(head)
+
+            if tail != None:
+                for b in tail:
+                    builtins_out += "."
+                    builtins_out += self.visit(b)
+
+            return builtins_out
 
         def predicate(self, tree):
             """ Translate a predicate tree """
@@ -114,5 +136,5 @@ class FOL2Text(FOL):
         def string_literal(self, tree):
             """ Translate a string literal tree """
             assert(tree.data == "string_literal")
-            
+
             return "\"" + tree.children[0] + "\""
