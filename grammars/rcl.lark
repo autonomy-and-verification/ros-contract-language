@@ -38,7 +38,7 @@ formula: atomic_formula -> atom
         | formula "or" formula -> or_form
         | formula "->" formula -> implies
         | formula "<=>" formula -> iff
-        | "(" formula ")" -> bracket_form
+        | "(" formula ")" -> sub_formula
         | "forall" "(" variables (";"|"|") formula ")" -> forall
         | "exists" "(" variables (";"|"|") formula ")" -> exists
         | "exists_unique" "(" variables (";"|"|") formula ")" -> exists_unique
@@ -66,6 +66,7 @@ BOOLEAN : "TRUE" | "FALSE"
 terms : term ("," term)*
 
 term : BOOLEAN
+      |"(" VARIABLE ("," VARIABLE)*  ")" -> tuple
       | VARIABLE
       | arith -> arithmetic
       | "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
@@ -73,9 +74,9 @@ term : BOOLEAN
       | CONSTANT
       | FUNC_NAME "(" terms ")" -> function
       | "\""  FOL_NAME "\""  -> string_literal
-      | builtin ("." builtin)*
+      | builtin ("." builtin)* -> term_builtins
 
-builtin : "REAL" | "INTEGER" | "NATURAL"
+!builtin : "REAL" | "INTEGER" | "NATURAL"
 
 variables : "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
           | VARIABLE ("," VARIABLE)*

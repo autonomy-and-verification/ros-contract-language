@@ -171,9 +171,9 @@ class FOL2Text(FOL):
 
             return iff_left + " <=> " + iff_right
 
-        def bracket_form(self, tree):
-            """ Translate a bracketed formula """
-            assert(tree.data == "bracket_form")
+        def sub_formula(self, tree):
+            """ Translate a sub formula tree """
+            assert(tree.data == "sub_formula")
             assert(len(tree.children) == 1)
 
             return "( " + self.visit(tree.children[0]) + " )"
@@ -217,6 +217,20 @@ class FOL2Text(FOL):
             formula_out = self.visit(formula)
 
             return "exists_unique (" + variables_out + " | " + formula_out + ")"
+
+        def term_builtins(self, tree):
+            assert(tree.data == "term_builtins")
+
+            head, *tail = tree.children
+
+            builtins_out = self.visit(head)
+
+            if tail != None:
+                for b in tail:
+                    builtins_out += "."
+                    builtins_out += self.visit(b)
+
+            return builtins_out
 
         def predicate(self, tree):
             """ Translate a predicate tree """

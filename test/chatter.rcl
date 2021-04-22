@@ -1,8 +1,8 @@
 node talker
 {
 
-topics(string chatter)
+topics(string chatter, int32 count)
 
-guarantee(chatter == "hello")
+guarantee(not(forall (x; (chatter == x and count != 10))))
 
 }
