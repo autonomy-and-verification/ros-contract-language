@@ -220,9 +220,9 @@ class FOL2Text(FOL):
 
             return iff_left + " <=> " + iff_right
 
-        def bracket_form(self, tree):
-            """ Translate a bracketed formula """
-            assert(tree.data == "bracket_form")
+        def sub_formula(self, tree):
+            """ Translate a sub formula tree """
+            assert(tree.data == "sub_formula")
             assert(len(tree.children) == 1)
 
             return "( " + self.visit(tree.children[0]) + " )"

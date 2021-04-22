@@ -38,8 +38,7 @@ formula: atomic_formula -> atom
         | formula "or" formula -> or_form
         | formula "->" formula -> implies
         | formula "<=>" formula -> iff
-//        | "(" formula ")" -> sub_formula
-        | "(" formula ")" -> bracket_form
+        | "(" formula ")" -> sub_formula
         | "forall" "(" variables (";"|"|") formula ")" -> forall
         | "exists" "(" variables (";"|"|") formula ")" -> exists
         | "exists_unique" "(" variables (";"|"|") formula ")" -> exists_unique
