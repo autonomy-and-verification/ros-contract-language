@@ -3,6 +3,7 @@
 
 from translators.mirror import Mirror
 from translators.translator_rosmon import ROSMon_Translator
+from translators.translator_latex import Latex_Translator
 from extract_model import Extractor
 from utils import *
 
@@ -20,7 +21,7 @@ VERSION_NUM = 0.1
 argParser = argparse.ArgumentParser()
 argParser.add_argument("grammar", help="The grammar to parse with.", default = "rcl")
 argParser.add_argument("contract", help="The contract file to be parsed.")
-argParser.add_argument("-t", help="The translator to use",choices=['mirror', 'rosmon_rml'], default = 'mirror' )
+argParser.add_argument("-t", help="The translator to use",choices=['mirror', 'rosmon_rml', 'latex'], default = 'mirror' )
 argParser.add_argument("-o", help="The path to the output folder for the translation")
 argParser.add_argument("-p", help="Print the parse tree", type=bool, default = False)
 
@@ -115,5 +116,9 @@ elif TRANSLATOR == "rosmon_rml":
     output_file.write(rml)
     output_file.close()
 
+elif TRANSLATOR == "latex":
+
+    latex_translator = Latex_Translator()
+    print(latex_translator.translate(contract_obj))
 
 print("")

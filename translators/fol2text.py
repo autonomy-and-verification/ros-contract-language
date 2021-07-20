@@ -160,7 +160,7 @@ class FOL2Text(FOL):
 
             or_left, or_right  = self.binary_infix(tree)
 
-            return or_left + " and " + or_right
+            return or_left + " or " + or_right
 
         def iff(self, tree):
             """ Translate a iff tree """
