@@ -52,7 +52,7 @@ class FOL2Latex(FOL):
 
         in_left, in_right =  self.binary_infix(tree)
 
-        return in_left + " \notin " + in_right
+        return in_left + " \\notin " + in_right
 
 
     def leq(self, tree):
@@ -209,11 +209,11 @@ class FOL2Latex(FOL):
         for term in tree.children:
             assert(isinstance(term, Token))
             if str(term) == "REAL":
-                return "\\R"
+                return "\mathbb{R}"
             elif str(term) == "INTEGER":
-                return "\\Z"
+                return "\\mathbb{Z}"
             elif str(term) == "NATURAL":
-                return "\\N"
+                return "\\mathbb{N}"
 
 
     def set(self, tree):
