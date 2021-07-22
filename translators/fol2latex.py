@@ -202,6 +202,19 @@ class FOL2Latex(FOL):
 
         return str(tree.children[0])
 
+    def term_builtins(self, tree):
+        """ Translate a term_builtins tree """
+        assert(tree.data == "term_builtins")
+
+        for term in tree.children:
+            assert(isinstance(term, Token))
+            if str(term) == "REAL":
+                return "\\mathbb{R}"
+            elif str(term) == "INTEGER":
+                return "\\mathbb{Z}"
+            elif str(term) == "NATURAL":
+                return "\\mathbb{N}"
+
     def set(self, tree):
         """Translates a set tree """
         assert(tree.data == "set")
@@ -253,6 +266,8 @@ class FOL2Latex(FOL):
 
         left = self.visit(tree.children[0])
         right = self.visit(tree.children[1])
+
+        print(right)
 
         assert(isinstance(left, str))
         assert(isinstance(right, str))

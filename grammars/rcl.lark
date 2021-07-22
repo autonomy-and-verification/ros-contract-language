@@ -63,9 +63,12 @@ ARITH_OP: "+" | "-" | "*" | "/"
 
 BOOLEAN : "TRUE" | "FALSE"
 
+BUILTIN : "REAL" | "INTEGER" | "NATURAL"
+
 terms : term ("," term)*
 
 term : BOOLEAN
+      | BUILTIN ("." BUILTIN)* -> term_builtins
       |"(" VARIABLE ("," VARIABLE)*  ")" -> tuple
       | VARIABLE
       | arith -> arithmetic
@@ -74,12 +77,11 @@ term : BOOLEAN
       | CONSTANT
       | FUNC_NAME "(" terms ")" -> function
       | "\""  FOL_NAME "\""  -> string_literal
-      | builtin ("." builtin)* -> term_builtins
 
-!builtin : "REAL" | "INTEGER" | "NATURAL"
 
-variables : "(" VARIABLE ("," VARIABLE)*  ")" -> tuple
-          | VARIABLE ("," VARIABLE)*
+
+variables : "(" (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*  ")" -> tuple
+          | (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*
 
 VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME
