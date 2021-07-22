@@ -120,22 +120,6 @@ class FOL2Text(FOL):
 
             return left + " > " + right
 
-        def var_range(self, tree):
-            """ Translate a var_range tree """
-            assert(tree.data == "var_range")
-            assert(len(tree.children)==5)
-
-            left_term = tree.children[0]
-            left_op = tree.children[1]
-            mid_term = tree.children[2]
-            right_op = tree.children[3]
-            right_term = tree.children[4]
-
-            left_term_out = self.visit(left_term)
-            mid_term_out = self.visit(mid_term)
-            right_term_out = self.visit(right_term)
-
-            return left_term_out + str(left_op) + mid_term_out + str(right_op) + right_term_out
 
         def negation(self, tree):
             """ Translate a negation tree """
@@ -171,12 +155,6 @@ class FOL2Text(FOL):
 
             return iff_left + " <=> " + iff_right
 
-        def sub_formula(self, tree):
-            """ Translate a sub formula tree """
-            assert(tree.data == "sub_formula")
-            assert(len(tree.children) == 1)
-
-            return "( " + self.visit(tree.children[0]) + " )"
 
         def forall(self, tree):
             """ Translate a forall tree """

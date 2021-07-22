@@ -19,7 +19,4 @@ and 250 <= r -> radiationStatus == red )
 )
 )
 
-
-
-
 }

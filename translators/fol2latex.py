@@ -15,7 +15,9 @@ class FOL2Latex(FOL):
         """ Translate an implies tree """
         assert(tree.data == "implies")
 
-        return "[implies placeholder]"
+        left, right = self.binary_infix(tree)
+
+        return left + " \implies " + right
 
     def equals(self, tree):
         """ Translate an equals tree """
@@ -24,13 +26,15 @@ class FOL2Latex(FOL):
 
         eq_left, eq_right = self.binary_infix(tree)
 
-        return eq_left + " == " + eq_right
+        return eq_left + " = " + eq_right
 
     def not_equals(self, tree):
         """ Translate a not equals tree """
         assert(tree.data == "not_equals")
 
-        return "[not equals placeholder]"
+        eq_left, eq_right = self.binary_infix(tree)
+
+        return eq_left + " \neq " + eq_right
 
     def in_form(self, tree):
         """ Translate an in tree """
@@ -46,7 +50,9 @@ class FOL2Latex(FOL):
         assert(tree.data == "not_in")
         assert(len(tree.children)==2)
 
-        return "[not_in placeholder]"
+        in_left, in_right =  self.binary_infix(tree)
+
+        return in_left + " \notin " + in_right
 
 
     def leq(self, tree):
@@ -85,12 +91,6 @@ class FOL2Latex(FOL):
 
         return left + " > " + right
 
-    def var_range(self, tree):
-        """ Translate a var_range tree """
-        assert(tree.data == "var_range")
-        assert(len(tree.children)==5)
-
-        return "[var_range placeholder]"
 
     def negation(self, tree):
         """ Translate a negation tree """
@@ -122,15 +122,7 @@ class FOL2Latex(FOL):
 
         iff_left, iff_right = self.binary_infix(tree)
 
-        return iff_left + " \Leftrightarrow " + iff_right
-
-
-    def bracket_form(self, tree):
-        """ Translate a bracketed formula """
-        assert(tree.data == "bracket_form")
-        assert(len(tree.children) == 1)
-
-        return "[bracket placeholder]"
+        return iff_left + " \iff " + iff_right
 
     def forall(self, tree):
         """ Translate a forall tree """
@@ -213,11 +205,11 @@ class FOL2Latex(FOL):
         for term in tree.children:
             assert(isinstance(term, Token))
             if str(term) == "REAL":
-                return "\\mathbb{R}"
+                return "\\R"
             elif str(term) == "INTEGER":
-                return "\\mathbb{Z}"
+                return "\\Z"
             elif str(term) == "NATURAL":
-                return "\\mathbb{N}"
+                return "\\N"
 
     def set(self, tree):
         """Translates a set tree """
@@ -256,6 +248,8 @@ class FOL2Latex(FOL):
 
         left = self.visit(tree.children[0])
         right = self.visit(tree.children[1])
+
+        print(right)
 
         assert(isinstance(left, str))
         assert(isinstance(right, str))
