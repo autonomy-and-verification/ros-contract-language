@@ -95,8 +95,9 @@ class FOL2Latex(FOL):
     def negation(self, tree):
         """ Translate a negation tree """
         assert(tree.data == "negation")
+        assert(len(tree.children) == 1)
 
-        return "[negation placeholder]"
+        return "\neg " + self.visit(tree.children[0])
 
     def and_form(self, tree):
         """ Translate an and tree """
@@ -109,7 +110,7 @@ class FOL2Latex(FOL):
 
     def or_form(self, tree):
         """ Translate a or tree """
-        assert(tree.data == "or")
+        assert(tree.data == "or_form")
 
         and_left, and_right  = self.binary_infix(tree)
 
@@ -163,12 +164,6 @@ class FOL2Latex(FOL):
 
         return "\\exists! " + variables_out + " \cdot " + formula_out
 
-    def arithmetic(self, tree):
-        """Translate an arithmetic statement """
-        assert(tree.data == "arithmetic")
-        assert(len(tree.children) == 1)
-
-        return "[artihmatic placeholder]"
 
     def tuple(self, tree):
         """Translates a tuple tree """
@@ -211,13 +206,21 @@ class FOL2Latex(FOL):
             elif str(term) == "NATURAL":
                 return "\\N"
 
+
     def set(self, tree):
         """Translates a set tree """
         assert(tree.data == "set")
 
-        return "[set placeholder]"
+        head, *tail = tree.children
+
+        vars = str(head)
+
+        for var in tail:
+            vars += ", " + str(var)
 
 
+        assert(isinstance(vars, str))
+        return "\{" + vars + "\}"
 
 
     def string_literal(self, tree):

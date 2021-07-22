@@ -177,7 +177,20 @@ class FOL(Interpreter):
         assert(tree.data == "arithmetic")
         assert(len(tree.children) == 1)
 
-        pass
+        arith_tree = tree.children[0]
+        assert(arith_tree.data == "arith")
+
+        #(VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
+
+        left = str(arith_tree.children[0])
+        op = str(arith_tree.children[1])
+        right = str(arith_tree.children[2])
+
+        assert(isinstance(left, str))
+        assert(isinstance(op, str))
+        assert(isinstance(right, str))
+
+        return left + op + right
 
     def tuple(self, tree):
         """Translates a tuple tree """

@@ -243,26 +243,6 @@ class FOL2Text(FOL):
 
             return str(tree.children[0])
 
-        def arithmetic(self, tree):
-            """Translate an arithmetic statement """
-            assert(tree.data == "arithmetic")
-            assert(len(tree.children) == 1)
-
-            arith_tree = tree.children[0]
-            assert(arith_tree.data == "arith")
-
-            #(VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
-
-            left = str(arith_tree.children[0])
-            op = str(arith_tree.children[1])
-            right = str(arith_tree.children[2])
-
-            assert(isinstance(left, str))
-            assert(isinstance(op, str))
-            assert(isinstance(right, str))
-
-            return left + op + right
-
 
         def set(self, tree):
             """Translates a set tree """
