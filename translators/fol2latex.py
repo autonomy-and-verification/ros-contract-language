@@ -169,7 +169,16 @@ class FOL2Latex(FOL):
         """Translates a tuple tree """
         assert(tree.data == "tuple")
 
-        return "[tuple placeholder]"
+        head, *tail = tree.children
+
+        vars = str(head)
+
+        for var in tail:
+            vars += ", " + str(var)
+
+
+        assert(isinstance(vars, str))
+        return "(" + vars + ")"
 
     def terms(self, tree):
         """ Translate a terms tree """
@@ -227,7 +236,7 @@ class FOL2Latex(FOL):
         """ Translate a string literal tree """
         assert(tree.data == "string_literal")
 
-        return "[string_literal placeholder]"
+        return "``" + tree.children[0] + "''"
 
     def variables(self, tree):
         """ Translate a variables tree """
