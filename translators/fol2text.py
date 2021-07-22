@@ -262,6 +262,7 @@ class FOL2Text(FOL):
             assert(len(tree.children)==1)
             assert(isinstance(tree.children[0],Token ))
 
+
             return str(tree.children[0])
 
         def arithmetic(self, tree):

@@ -20,8 +20,11 @@ class FOL2Latex(FOL):
     def equals(self, tree):
         """ Translate an equals tree """
         assert(tree.data == "equals")
+        assert(len(tree.children)==2)
 
-        return "[equals placeholder]"
+        eq_left, eq_right = self.binary_infix(tree)
+
+        return eq_left + " == " + eq_right
 
     def not_equals(self, tree):
         """ Translate a not equals tree """
@@ -69,14 +72,18 @@ class FOL2Latex(FOL):
         assert(tree.data == "lt")
         assert(len(tree.children)==2)
 
-        return "[lt placeholder]"
+        left, right = self.binary_infix(tree)
+
+        return left + " < " + right
 
     def gt(self, tree):
         """ Translate a gt tree """
         assert(tree.data == "gt")
         assert(len(tree.children)==2)
 
-        return "[gt placeholder]"
+        left, right = self.binary_infix(tree)
+
+        return left + " > " + right
 
     def var_range(self, tree):
         """ Translate a var_range tree """
@@ -136,7 +143,7 @@ class FOL2Latex(FOL):
         variables_out = self.visit(variables)
         formula_out = self.visit(formula)
 
-        return "\forall " + variables_out + " \cdot " + formula_out
+        return "\\forall " + variables_out + " \cdot " + formula_out
 
     def exists(self, tree):
         """ Translate a exists tree """
@@ -149,7 +156,7 @@ class FOL2Latex(FOL):
         variables_out = self.visit(variables)
         formula_out = self.visit(formula)
 
-        return "\exists " + variables_out + " \cdot " + formula_out
+        return "\\exists " + variables_out + " \cdot " + formula_out
 
     def exists_unique(self, tree):
         """ Translate a exists_unique tree """
@@ -162,13 +169,7 @@ class FOL2Latex(FOL):
         variables_out = self.visit(variables)
         formula_out = self.visit(formula)
 
-        return "\exists! " + variables_out + " \cdot " + formula_out
-
-    def predicate(self, tree):
-        """ Translate a predicate tree """
-        assert(tree.data == "predicate")
-
-        return "[predicate placeholder]"
+        return "\\exists! " + variables_out + " \cdot " + formula_out
 
     def arithmetic(self, tree):
         """Translate an arithmetic statement """
@@ -192,6 +193,9 @@ class FOL2Latex(FOL):
 
         for term in tail:
             terms_out += ", " + self.visit(term)
+
+        assert(isinstance(terms_out, str))
+        return terms_out
 
     def term(self, tree):
         """ Translate a term tree """
@@ -222,21 +226,7 @@ class FOL2Latex(FOL):
         return "[set placeholder]"
 
 
-    def predicate(self, tree):
-        """ Translate a predicate tree """
-        assert(tree.data == "predicate")
 
-        assert(isinstance(tree.children[0],Token ))
-        pred_name = str(tree.children[0])
-        pred_terms = self.visit(tree.children[1])
-
-        return pred_name + "("+ str(pred_terms) +")"
-
-    def function(self, tree):
-        """ Translate a function tree """
-        assert(tree.data == "function")
-
-        return "[function placeholder]"
 
     def string_literal(self, tree):
         """ Translate a string literal tree """
@@ -266,8 +256,6 @@ class FOL2Latex(FOL):
 
         left = self.visit(tree.children[0])
         right = self.visit(tree.children[1])
-
-        print(right)
 
         assert(isinstance(left, str))
         assert(isinstance(right, str))

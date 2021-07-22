@@ -1,7 +1,6 @@
 node navigation
 {
 
-
 topics(
 gazebo_radiation_plugins/Command command,
 int16 currentLoc,

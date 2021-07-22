@@ -39,7 +39,7 @@ class Latex_Translator(Translator):
         assumes_out = self._translate_assumes(short_name, assumes)
         guarantees_out = self._translate_guarantees(short_name, guarantees)
 
-        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + assumes_out + "\n" + guarantees_out + "\n}"
+        return "node " + node_name + "\n\n" + topic_list_out + "\n\n" +  assumes_out + "\n" + guarantees_out
 
     def _translate_topic_list(self, topic_list):
 
@@ -83,7 +83,6 @@ class Latex_Translator(Translator):
         for ass in assumes:
 
             result = self.visitor.visit(ass)
-            print(result)
             ass_out += "\\mathcal{A}_" + short_name + "(\\overline{i_"+short_name+"}): " + result + "\n"
 
         return ass_out

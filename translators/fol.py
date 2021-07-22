@@ -197,13 +197,21 @@ class FOL(Interpreter):
         """ Translate a predicate tree """
         assert(tree.data == "predicate")
 
-        pass
+        assert(isinstance(tree.children[0],Token ))
+        pred_name = str(tree.children[0])
+        pred_terms = self.visit(tree.children[1])
+
+        return pred_name + "("+ str(pred_terms) +")"
 
     def function(self, tree):
         """ Translate a function tree """
         assert(tree.data == "function")
 
-        pass
+        assert(isinstance(tree.children[0],Token ))
+        func_name = str(tree.children[0])
+        func_args = self.visit(tree.children[1])
+
+        return func_name + "("+ str(func_args) +")"
 
     def string_literal(self, tree):
         """ Translate a string literal tree """
