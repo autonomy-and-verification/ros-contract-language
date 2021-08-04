@@ -119,6 +119,11 @@ elif TRANSLATOR == "rosmon_rml":
 elif TRANSLATOR == "latex":
 
     latex_translator = Latex_Translator()
-    print(latex_translator.translate(contract_obj))
+    latex_output = latex_translator.translate(contract_obj)
+    print(latex_output)
+
+    output_file = open( OUTPUT_PATH+CONTRACT_NAME+".tex", "w")
+    output_file.write(latex_output)
+    output_file.close()
 
 print("")
