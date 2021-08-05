@@ -20,7 +20,7 @@ class Latex_Translator(Translator):
         output =""
 
         for n in contract.get_nodes():
-            output += self._translate_node(n)
+            output += self._translate_node(n) + "\n"
 
         return output
 

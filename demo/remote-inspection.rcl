@@ -1,0 +1,91 @@
+node agent
+{
+
+//input: output of N, output of R, wayP: REAL x REAL --> NATURAL
+//output: command in {move(REAL, REAL), inspect(NATURAL)}
+
+topics(
+gazebo_radiation_plugins/Command command,
+gazebo_radiation_plugins/Inspection inspected,
+gazebo_radiation_plugins/At at,
+int16 wayP,
+string radiationStatus
+)
+
+assume( radiationStatus in {red, orange, green} )
+
+guarantee(
+forall(x', y', i | x' in REAL and y' in REAL and i in NATURAL
+
+  and at(x', y') == TRUE and wayP(x', y') == i and inspected(i) == TRUE and radiationStatus !in {red, orange} ->
+  exists(x, y | x in REAL and y in REAL and wayP(x, y) == i + 1 and command == move(x, y) )
+
+  //Kinda unhappy about the last ==, in my head it should be = or := but oh well.
+  and at(x', y') == TRUE and wayP(x', y') == i and inspected(i) == FALSE -> command == inspect(i)
+
+  and radiationStatus in {red, orange} or not exists( x, y| x in REAL and y in REAL and wayP(x, y) == i + 1 )
+  -> exists (x'', y'' | x'' in REAL and y'' in REAL and wayP(x'', y'') == 0 and command == move(x'', y'') )
+  )
+)
+
+}
+
+
+node localisation
+{
+
+//input: sensor input
+//output: position : REAL x REAL --> {true, false}
+
+//topic name != variable name, add alias?
+topics(geometry_msgs/PoseWithCovarianceStamped amcl_pose)
+
+assume(TRUE)
+
+guarantee( exists_unique(x, y | x in REAL and y in REAL and Position(x, y) ) )
+
+}
+
+node navigation
+{
+
+//input: output of L, output of A
+//output: at REAL x REAL : --> {true, false}
+
+topics(
+gazebo_radiation_plugins/Command command,
+int16 currentLoc,
+gazebo_radiation_plugins/At at)
+
+assume(exists_unique(x, y | x in REAL and y in REAL and position(x,y) == TRUE ) )
+
+guarantee(forall(x, y | x in REAL and y in REAL and command == move(x, y) and position(x, y) == TRUE <=> at(x, y) == TRUE) )
+
+}
+
+
+node radiationSensor
+{
+
+//input: r in REAL and output of A
+//output: radiationStatus in {red, orange, green} and inspected: NATURAL --> {true, false}
+
+topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r,
+gazebo_radiation_plugins/Command command,
+gazebo_radiation_plugins/Inspection inspected,
+string radiationStatus )
+
+assume(
+0 <= r
+)
+
+guarantee(
+forall( i | i in NATURAL and command == inspect(i) ->
+(inspected(i) == TRUE
+and 0 <= r < 120 -> radiationStatus == green
+and 120 <= r < 250 -> radiationStatus == orange
+and 250 <= r -> radiationStatus == red )
+)
+)
+
+}

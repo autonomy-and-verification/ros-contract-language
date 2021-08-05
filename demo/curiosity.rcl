@@ -1,0 +1,82 @@
+node Agent
+{
+//input: output of R and n in NATURAL and Wayp = < w1 upto wn > and W = Wayp
+//output: act
+
+assume( guarantee_of(R) )
+
+guarantee( W = Wayp <=> W = {} )
+guarantee( start -> act = patrol(w1) and w1 !in W )
+guarantee( move_result = TRUE -> act = patrol(w1) and w1 !in W )
+}
+
+node Rosbridge
+{
+//input: output of A and output of As and output of Ms and output of Ws
+//output: msg
+
+assume( guarantee_of(A) and guarantee_of(As) and guarantee_of(Ms) and guarantee_of(Ws) )
+
+guarantee(msg = act or msg = output_of(As) or msg = output_of(Ms) or msg = output_of(Ws) )
+}
+
+node ArmClient
+{
+//input: output of R and output of As
+//output: Amsg = (g, f, r)
+
+assume( guarantee_of(R) and guarantee_of(As) )
+
+guarantee( g = act)
+}
+
+node ArmServer
+{
+
+//input: output of Ac
+//output: r in {TRUE, FALSE}
+
+assume(guarantee_of(Ac))
+
+guarantee(r == TRUE -> executed(g) )
+}
+
+node MastClient
+{
+//input: output of Or and output of Ms
+//output: Amsg = (g, f, r)
+
+assume(guarantee_of(R) and guarantee_of(Ms) )
+
+guarantee(g = act)
+}
+
+node MastServer
+{
+//input: output of Mc
+//output: r in {TRUE, FALSE}
+
+assume(guarantee_of(Mc))
+
+guarantee(r == TRUE -> executed(g))
+}
+
+node WheelsClient
+{
+//input: output of R and output of Ws
+//output: Amsg =(g, f, r)
+
+assume(guarantee_of(R) and guarantee_of(Ws) )
+
+guarantee( g = act)
+}
+
+node WheelsServer
+{
+//input: output of Wc
+//output: r in {TRUE, FALSE}
+
+assume(guarantee_of(Wc) )
+
+guarantee( r == TRUE -> executed(g) )
+}
