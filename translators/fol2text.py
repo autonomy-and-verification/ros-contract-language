@@ -220,19 +220,7 @@ class FOL2Text(FOL):
 
             return pred_name + "("+ str(pred_terms) +")"
 
-        def terms(self, tree):
-            """ Translate a terms tree """
-            assert(tree.data == "terms")
-
-            head, *tail = tree.children
-            terms_out = self.visit(head)
-
-            for term in tail:
-                terms_out += ", " + self.visit(term)
-
-            assert(isinstance(terms_out, str))
-            return terms_out
-
+        
         def set(self, tree):
             """Translates a set tree """
             assert(tree.data == "set")

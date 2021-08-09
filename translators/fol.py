@@ -44,6 +44,25 @@ class FOL(Interpreter):
             assert(isinstance(tree.children[0], Tree))
             return self.visit(tree.children[0])
 
+    def formula_variables(self, tree):
+        """ Translate a formula_variables tree """
+        assert(tree.data == "formula_variables")
+
+        head, *tail = tree.children
+        vars_out = self.visit(head)
+
+        for term in tail:
+            vars_out += ", " + self.visit(term)
+
+        assert(isinstance(vars_out, str))
+        return vars_out
+
+    def formula_variables_part(self, tree):
+        """ Translate a formula_variables_part tree """
+        assert(tree.data == "formula_variables_part")
+
+        pass
+
     def equals(self, tree):
         """ Translate an equals tree """
         assert(tree.data == "equals")
@@ -202,12 +221,19 @@ class FOL(Interpreter):
         """ Translate a terms tree """
         assert(tree.data == "terms")
 
-        pass
+        head, *tail = tree.children
+        terms_out = self.visit(head)
+
+        for term in tail:
+            terms_out += ", " + self.visit(term)
+
+        assert(isinstance(terms_out, str))
+        return terms_out
 
     def term(self, tree):
         """ Translate a term tree """
         assert(tree.data == "term")
-        print(tree)
+
         assert(len(tree.children)==1)
         if (isinstance(tree.children[0],Token )):
             return str(tree.children[0])

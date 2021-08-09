@@ -19,6 +19,23 @@ class FOL2Latex(FOL):
 
         return left + " \implies " + right
 
+    def formula_variables_part(self, tree):
+        """ Translate a formula_variables_part tree """
+        assert(tree.data == "formula_variables_part")
+        assert(len(tree.children) == 2)
+
+        vars_extract, sets_extract = tree.children
+
+        vars_out = self.visit(vars_extract)
+
+        if isinstance(sets_extract, Token) :
+            sets_out = str(sets_extract)
+        elif isinstance(sets_extract, Tree) :
+            sets_out = self.visit(sets_extract)
+
+        return vars_out + " \in " + sets_out
+
+
     def equals(self, tree):
         """ Translate an equals tree """
         assert(tree.data == "equals")
@@ -97,7 +114,7 @@ class FOL2Latex(FOL):
         assert(tree.data == "negation")
         assert(len(tree.children) == 1)
 
-        return "\neg " + self.visit(tree.children[0])
+        return "\\neg " + self.visit(tree.children[0])
 
     def and_form(self, tree):
         """ Translate an and tree """
@@ -162,7 +179,7 @@ class FOL2Latex(FOL):
         variables_out = self.visit(variables)
         formula_out = self.visit(formula)
 
-        return "\\exists! " + variables_out + " \cdot " + formula_out
+        return "\\exists!~ " + variables_out + " \cdot " + formula_out
 
 
     def tuple(self, tree):
@@ -180,18 +197,6 @@ class FOL2Latex(FOL):
         assert(isinstance(vars, str))
         return "(" + vars + ")"
 
-    def terms(self, tree):
-        """ Translate a terms tree """
-        assert(tree.data == "terms")
-
-        head, *tail = tree.children
-        terms_out = self.visit(head)
-
-        for term in tail:
-            terms_out += ", " + self.visit(term)
-
-        assert(isinstance(terms_out, str))
-        return terms_out
 
     def term_builtins(self, tree):
         """ Translate a term_builtins tree """
@@ -251,8 +256,6 @@ class FOL2Latex(FOL):
 
         left = self.visit(tree.children[0])
         right = self.visit(tree.children[1])
-
-        print(right)
 
         assert(isinstance(left, str))
         assert(isinstance(right, str))

@@ -39,9 +39,9 @@ formula: atomic_formula -> atom
         | formula "->" formula -> implies
         | formula "<=>" formula -> iff
         | "(" formula ")" -> sub_formula
-        | "forall" "(" variables (";"|"|") formula ")" -> forall
-        | "exists" "(" variables (";"|"|") formula ")" -> exists
-        | "exists_unique" "(" variables (";"|"|") formula ")" -> exists_unique
+        | "forall" "(" formula_variables (";"|"|") formula ")" -> forall
+        | "exists" "(" formula_variables (";"|"|") formula ")" -> exists
+        | "exists_unique" "(" formula_variables (";"|"|") formula ")" -> exists_unique
 
 atomic_formula  : BOOLEAN
                 | term "==" term -> equals
@@ -87,8 +87,10 @@ tuple : "(" VARIABLE ("," VARIABLE)* ")"
 variables : "(" (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*  ")" -> tuple
           | (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*
 
-formula_variables : VARIABLE
-                  | VARIABLE "in" set
+formula_variables : formula_variables_part (", " formula_variables_part)*
+
+formula_variables_part : variables "in" (set|BUILTIN|VARIABLE) ("," (set|BUILTIN|VARIABLE))* 
+
 
 VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME

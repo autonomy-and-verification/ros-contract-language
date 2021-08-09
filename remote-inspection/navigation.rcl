@@ -6,8 +6,8 @@ gazebo_radiation_plugins/Command command,
 int16 currentLoc,
 gazebo_radiation_plugins/At at)
 
-assume(exists_unique(x, y | x in REAL and y in REAL and position(x,y) == TRUE ) )
+assume(exists_unique(x, y in REAL | position(x,y) == TRUE ) )
 
-guarantee(forall(x, y | x in REAL and y in REAL and command == move(x, y) and position(x, y) == TRUE <=> at(x, y) == TRUE) )
+guarantee(forall(x, y in REAL | command == move(x, y) and position(x, y) == TRUE <=> at(x, y) == TRUE) )
 
 }

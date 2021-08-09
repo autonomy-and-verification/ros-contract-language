@@ -11,7 +11,7 @@ assume(
 )
 
 guarantee(
-forall( i | i in NATURAL and command == inspect(i) ->
+forall( i in NATURAL | command == inspect(i) ->
 (inspected(i) == TRUE
 and 0 <= r < 120 -> radiationStatus == green
 and 120 <= r < 250 -> radiationStatus == orange
