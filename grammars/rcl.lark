@@ -69,20 +69,26 @@ terms : term ("," term)*
 
 term : BOOLEAN
       | BUILTIN ("." BUILTIN)* -> term_builtins
-      |"(" VARIABLE ("," VARIABLE)*  ")" -> tuple
       | VARIABLE
       | arith -> arithmetic
-      | "(" VARIABLE ("," VARIABLE)* ")" -> tuple
-      | "{" VARIABLE ("," VARIABLE)* "}" -> set
-      | "<" VARIABLE ("," VARIABLE)* ">" -> sequence
+      | tuple
+      | set
+      | sequence
       | CONSTANT
       | FUNC_NAME "(" terms ")" -> function
       | "\""  FOL_NAME "\""  -> string_literal
 
 
+set : "{" VARIABLE ("," VARIABLE)* "}"
+sequence : "<" VARIABLE ("," VARIABLE)* ">"
+tuple : "(" VARIABLE ("," VARIABLE)* ")"
+
 
 variables : "(" (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*  ")" -> tuple
           | (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*
+
+formula_variables : VARIABLE
+                  | VARIABLE "in" set
 
 VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME

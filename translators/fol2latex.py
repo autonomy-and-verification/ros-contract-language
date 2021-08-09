@@ -193,15 +193,6 @@ class FOL2Latex(FOL):
         assert(isinstance(terms_out, str))
         return terms_out
 
-    def term(self, tree):
-        """ Translate a term tree """
-        assert(tree.data == "term")
-
-        assert(len(tree.children)==1)
-        assert(isinstance(tree.children[0],Token ))
-
-        return str(tree.children[0])
-
     def term_builtins(self, tree):
         """ Translate a term_builtins tree """
         assert(tree.data == "term_builtins")

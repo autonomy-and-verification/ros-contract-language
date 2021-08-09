@@ -207,8 +207,12 @@ class FOL(Interpreter):
     def term(self, tree):
         """ Translate a term tree """
         assert(tree.data == "term")
-
-        pass
+        print(tree)
+        assert(len(tree.children)==1)
+        if (isinstance(tree.children[0],Token )):
+            return str(tree.children[0])
+        elif (isinstance(tree.children[0],Tree)) :
+            return self.visit(tree.children[0])
 
     def set(self, tree):
         """Translates a set tree """

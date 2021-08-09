@@ -233,17 +233,6 @@ class FOL2Text(FOL):
             assert(isinstance(terms_out, str))
             return terms_out
 
-        def term(self, tree):
-            """ Translate a term tree """
-            assert(tree.data == "term")
-
-            assert(len(tree.children)==1)
-            assert(isinstance(tree.children[0],Token ))
-
-
-            return str(tree.children[0])
-
-
         def set(self, tree):
             """Translates a set tree """
             assert(tree.data == "set")
