@@ -1,13 +1,24 @@
 node Agent
 {
-//input: output of R and n in NATURAL and Wayp = < w1 upto wn > and W = Wayp
+//input: msg?, output of R and n in NATURAL and Wayp = < w1 upto wn > and W = Wayp
 //output: act
 
-assume( guarantee_of(R) )
+topics()
 
-guarantee( W = Wayp <=> W = {} )
-guarantee( start -> act = patrol(w1) and w1 !in W )
-guarantee( move_result = TRUE -> act = patrol(w1) and w1 !in W )
+assume( Guarantee_of(R) )
+
+// equals or assignment?
+// Also...what the hell is this?
+guarantee( W == Wayp <=> W == {} )
+
+// I think "act = patrol.." here should be an assignment
+// from diagram: %when it receives start from rosbridge it sends the message to patrol the first waypoint
+//guarantee( start -> act = patrol(w1) and w1 !in W )
+guarantee( msg ==  start -> act == patrol(w1) and w1 !in W )
+
+// from diagram: %when it receives a success move result message, then it sends the message to patrol the next waypoint
+// Again, I think "act = patrol..." should be assignment. Also, what the hell? Why is this "patrol(w1)" again!?
+guarantee( move_result == TRUE -> act == patrol(w1) and w1 !in W )
 }
 
 node Rosbridge
@@ -15,9 +26,12 @@ node Rosbridge
 //input: output of A and output of As and output of Ms and output of Ws
 //output: msg
 
-assume( guarantee_of(A) and guarantee_of(As) and guarantee_of(Ms) and guarantee_of(Ws) )
+topics()
 
-guarantee(msg = act or msg = output_of(As) or msg = output_of(Ms) or msg = output_of(Ws) )
+assume( Guarantee_of(A) and Guarantee_of(As) and Guarantee_of(Ms) and Guarantee_of(Ws) )
+
+//I think the "msg = ..." should be assignments
+guarantee(msg == act or msg == output_of(As) or msg == output_of(Ms) or msg == output_of(Ws) )
 }
 
 node ArmClient
@@ -25,9 +39,13 @@ node ArmClient
 //input: output of R and output of As
 //output: Amsg = (g, f, r)
 
-assume( guarantee_of(R) and guarantee_of(As) )
+topics()
 
-guarantee( g = act)
+assume( Guarantee_of(R) and Guarantee_of(As) )
+
+// I think this should be an assignment
+// What is "g"
+guarantee( g == act)
 }
 
 node ArmServer
@@ -36,9 +54,11 @@ node ArmServer
 //input: output of Ac
 //output: r in {TRUE, FALSE}
 
-assume(guarantee_of(Ac))
+topics()
 
-guarantee(r == TRUE -> executed(g) )
+assume(Guarantee_of(Ac))
+
+guarantee(r == TRUE -> executed(g) == TRUE )
 }
 
 node MastClient
@@ -46,9 +66,13 @@ node MastClient
 //input: output of Or and output of Ms
 //output: Amsg = (g, f, r)
 
-assume(guarantee_of(R) and guarantee_of(Ms) )
+topics()
 
-guarantee(g = act)
+assume(Guarantee_of(R) and Guarantee_of(Ms) )
+
+// I think this should be an assignment
+// What is "g"
+guarantee(g == act)
 }
 
 node MastServer
@@ -56,9 +80,11 @@ node MastServer
 //input: output of Mc
 //output: r in {TRUE, FALSE}
 
-assume(guarantee_of(Mc))
+topics()
 
-guarantee(r == TRUE -> executed(g))
+assume(Guarantee_of(Mc))
+
+guarantee(r == TRUE -> executed(g) == TRUE)
 }
 
 node WheelsClient
@@ -66,9 +92,13 @@ node WheelsClient
 //input: output of R and output of Ws
 //output: Amsg =(g, f, r)
 
-assume(guarantee_of(R) and guarantee_of(Ws) )
+topics()
 
-guarantee( g = act)
+assume(Guarantee_of(R) and Guarantee_of(Ws) )
+
+// I think this should be an assignment
+// What is "g"
+guarantee( g == act)
 }
 
 node WheelsServer
@@ -76,7 +106,9 @@ node WheelsServer
 //input: output of Wc
 //output: r in {TRUE, FALSE}
 
-assume(guarantee_of(Wc) )
+topics()
 
-guarantee( r == TRUE -> executed(g) )
+assume(Guarantee_of(Wc) )
+
+guarantee( r == TRUE -> executed(g) == TRUE )
 }

@@ -79,8 +79,12 @@ term : BOOLEAN
       | "\""  FOL_NAME "\""  -> string_literal
 
 
-set : "{" VARIABLE ("," VARIABLE)* "}"
+set : "{" (VARIABLE|set) ("," (VARIABLE|set))* "}"
+    | "{}" -> empty_set
+
 sequence : "<" VARIABLE ("," VARIABLE)* ">"
+        | "<>" -> empty_sequence
+
 tuple : "(" VARIABLE ("," VARIABLE)* ")"
 
 
@@ -89,7 +93,7 @@ variables : "(" (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*  ")" -> tuple
 
 formula_variables : formula_variables_part (", " formula_variables_part)*
 
-formula_variables_part : variables "in" (set|BUILTIN|VARIABLE) ("," (set|BUILTIN|VARIABLE))* 
+formula_variables_part : variables "in" (set|BUILTIN|VARIABLE) ("," (set|BUILTIN|VARIABLE))*
 
 
 VARIABLE : FOL_NAME

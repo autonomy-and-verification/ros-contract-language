@@ -227,6 +227,12 @@ class FOL2Latex(FOL):
         assert(isinstance(vars, str))
         return "\{" + vars + "\}"
 
+    def empty_set(self, tree):
+        """ Translates an empty_set tree """
+        assert(tree.data == "empty_set")
+
+        return "\\emptyset"
+
 
     def string_literal(self, tree):
         """ Translate a string literal tree """
@@ -254,6 +260,7 @@ class FOL2Latex(FOL):
         """ Helps translate any binary infix operator """
         assert(len(tree.children) == 2)
 
+        print(tree)
         left = self.visit(tree.children[0])
         right = self.visit(tree.children[1])
 
