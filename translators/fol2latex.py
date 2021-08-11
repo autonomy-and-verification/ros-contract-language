@@ -188,10 +188,10 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = make_string(self, head)
+        vars = self.make_string(head)
 
         for var in tail:
-            vars += ", " + make_string(self, var)
+            vars += ", " + self.make_string(var)
 
         assert(isinstance(vars, str))
         return "(" + vars + ")"
@@ -217,10 +217,10 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = make_string(self, head)
+        vars = self.make_string(head)
 
         for var in tail:
-            vars += ", " + make_string(self, var)
+            vars += ", " + self.make_string(var)
 
         assert(isinstance(vars, str))
         return "\{" + vars + "\}"
@@ -244,10 +244,10 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = make_string(self, head)
+        vars = self.make_string(head)
 
         for var in tail:
-            vars += ", " + make_string(self, var)
+            vars += ", " + self.make_string(var)
 
         assert(isinstance(vars, str))
         return vars

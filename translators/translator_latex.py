@@ -19,12 +19,12 @@ class Latex_Translator(Translator):
 
         contract.get_contract_name()
 
-        output ="\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{inputenc}\n\\usepackage[english]{babel}\n\\usepackage{amsmath}\n\\usepackage{lmodern}\n\\usepackage[left=4cm,right=4cm,top=4cm,bottom=4cm]{geometry}\n\\usepackage[UKenglish]{isodate}\n\\author{Vanda v"+str(self.version)+"}\n\\title{Contract for: "+self.name+"}\\begin{document}\n\\maketitle\n\\begin{description} \n"
+        output ="\\begin{description} \n"
 
         for n in contract.get_nodes():
             output += self._translate_node(n)
 
-        output += "\n\\end{description}\n\\end{document}"
+        output += "\n\\end{description}\n"
         return output
 
     def _translate_node(self, node):
@@ -74,7 +74,7 @@ class Latex_Translator(Translator):
 
         type, topic_name = topic.split(" ")
 
-        return type +" "+ topic_name
+        return type.replace('_', '\_') +" "+ topic_name.replace('_', '\_')
 
     def _translate_assumes(self, short_name, assumes):
         assert(isinstance(assumes, list))
