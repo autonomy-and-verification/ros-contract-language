@@ -188,11 +188,10 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = str(head)
+        vars = make_string(self, head)
 
         for var in tail:
-            vars += ", " + str(var)
-
+            vars += ", " + make_string(self, var)
 
         assert(isinstance(vars, str))
         return "(" + vars + ")"
@@ -218,11 +217,10 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = str(head)
+        vars = make_string(self, head)
 
         for var in tail:
-            vars += ", " + str(var)
-
+            vars += ", " + make_string(self, var)
 
         assert(isinstance(vars, str))
         return "\{" + vars + "\}"
@@ -246,13 +244,23 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = str(head)
+        vars = make_string(self, head)
 
         for var in tail:
-            vars += ", " + str(var)
+            vars += ", " + make_string(self, var)
 
         assert(isinstance(vars, str))
         return vars
+
+    def predicate(self, tree):
+        """ Translate a predicate tree """
+        assert(tree.data == "predicate")
+        assert(len(tree.children) == 2)
+
+        name, terms = tree.children
+
+        return self.make_string(name) + self.visit(terms)
+
 
 # Helper Methods
 
@@ -260,7 +268,6 @@ class FOL2Latex(FOL):
         """ Helps translate any binary infix operator """
         assert(len(tree.children) == 2)
 
-        print(tree)
         left = self.visit(tree.children[0])
         right = self.visit(tree.children[1])
 
@@ -268,3 +275,6 @@ class FOL2Latex(FOL):
         assert(isinstance(right, str))
 
         return left, right
+
+    def make_string(self, to_string):
+        return str(to_string).replace('_', '\_')

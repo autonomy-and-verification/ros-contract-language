@@ -5,6 +5,8 @@ topics(bool haveMoved, bool atGoal)
 
 assume(TRUE)
 
+assume( Guarantee_of(R) )
+
 guarantee( haveMoved == TRUE ->  not EmptySet(plan) )
 
 G( atGoal == TRUE -> haveMoved == TRUE )

@@ -24,6 +24,7 @@ class FOL(Interpreter):
     def implies(self, tree):
         """ Translate an implies tree """
         assert(tree.data == "implies")
+
         pass
 
     def atom(self, tree):
@@ -36,6 +37,7 @@ class FOL(Interpreter):
         """ Translate an atomic_formula tree """
         assert(tree.data == "atomic_formula")
 
+        print(tree)
         if isinstance(tree.children[0], Token):
             token = tree.children[0]
             if token.type == "BOOLEAN":

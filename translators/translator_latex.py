@@ -84,7 +84,7 @@ class Latex_Translator(Translator):
         for ass in assumes:
 
             result = self.visitor.visit(ass)
-            ass_out += "  \\item $\\mathcal{A}_" + short_name + "(\\overline{i_"+short_name+"}): " + result + "$"
+            ass_out += "  \\item $\\mathcal{A}_" + short_name + "(\\overline{i_"+short_name+"}): " + result + "$\n"
 
         return ass_out
 
@@ -96,5 +96,5 @@ class Latex_Translator(Translator):
         for guar in guarantees:
 
             result = self.visitor.visit(guar)
-            guar_out += "  \\item $\\mathcal{G}_" + short_name + "(\overline{o_" + short_name + "}): " + result + "$"
+            guar_out += "  \\item $\\mathcal{G}_" + short_name + "(\overline{o_" + short_name + "}): " + result + "$\n"
         return guar_out
