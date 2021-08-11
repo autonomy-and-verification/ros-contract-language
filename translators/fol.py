@@ -187,12 +187,6 @@ class FOL(Interpreter):
 
         pass
 
-    def predicate(self, tree):
-        """ Translate a predicate tree """
-        assert(tree.data == "predicate")
-
-        pass
-
     def arithmetic(self, tree):
         """Translate an arithmetic statement """
         assert(tree.data == "arithmetic")

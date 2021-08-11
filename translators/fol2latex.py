@@ -261,6 +261,15 @@ class FOL2Latex(FOL):
 
         return self.make_string(name) + self.visit(terms)
 
+    def function(self, tree):
+        """ Translate a function tree """
+        assert(tree.data == "function")
+        assert(len(tree.children) == 2)
+
+        name, terms = tree.children
+
+        return self.make_string(name) + self.visit(terms)
+
 
 # Helper Methods
 
