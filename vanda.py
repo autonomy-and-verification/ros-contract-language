@@ -118,7 +118,7 @@ elif TRANSLATOR == "rosmon_rml":
 
 elif TRANSLATOR == "latex":
 
-    latex_translator = Latex_Translator()
+    latex_translator = Latex_Translator(VERSION_NUM, CONTRACT_NAME)
     latex_output = latex_translator.translate(contract_obj)
     print(latex_output)
 

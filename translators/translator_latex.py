@@ -9,19 +9,22 @@ from translators.translator import Translator
 
 class Latex_Translator(Translator):
 
-    def __init__(self):
+    def __init__(self, version, name):
 
         self.visitor = FOL2Latex()
+        self.version = version
+        self.name = name
 
     def translate(self, contract):
 
         contract.get_contract_name()
 
-        output =""
+        output ="\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{inputenc}\n\\usepackage[english]{babel}\n\\usepackage{amsmath}\n\\usepackage{lmodern}\n\\usepackage[left=4cm,right=4cm,top=4cm,bottom=4cm]{geometry}\n\\usepackage[UKenglish]{isodate}\n\\author{Vanda v"+str(self.version)+"}\n\\title{Contract for: "+self.name+"}\\begin{document}\n\\maketitle\n\\begin{description} \n"
 
         for n in contract.get_nodes():
-            output += self._translate_node(n) + "\n"
+            output += self._translate_node(n)
 
+        output += "\n\\end{description}\n\\end{document}"
         return output
 
     def _translate_node(self, node):
@@ -39,13 +42,14 @@ class Latex_Translator(Translator):
         assumes_out = self._translate_assumes(short_name, assumes)
         guarantees_out = self._translate_guarantees(short_name, guarantees)
 
-        return "node " + node_name + "\n\n" + topic_list_out + "\n\n" +  assumes_out + "\n" + guarantees_out
+        return "\item[" + node_name + "] ~\\\\\n\\begin{itemize} \n" + topic_list_out + "\n" +  assumes_out + "\n" + guarantees_out + "\n\\end{itemize}\n"
 
     def _translate_topic_list(self, topic_list):
-
         assert(isinstance(topic_list, list))
+
+        topics_out = "  \\item "
         if topic_list != []:
-            topics_out = "topics ("
+            topics_out += "topics ($"
 
             head, *tail = topic_list
 
@@ -59,11 +63,11 @@ class Latex_Translator(Translator):
                     topics_out += ", " + self._translate_topic(tail)
 
 
-            topics_out += ")"
+            topics_out += "$)"
 
             return topics_out
         else:
-            return "topics ()"
+            return topics_out + "topics ()"
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
@@ -75,25 +79,22 @@ class Latex_Translator(Translator):
     def _translate_assumes(self, short_name, assumes):
         assert(isinstance(assumes, list))
 
-
         ass_out = ""
-        #visitor = FOL2Text()
-
 
         for ass in assumes:
 
             result = self.visitor.visit(ass)
-            ass_out += "\\mathcal{A}_" + short_name + "(\\overline{i_"+short_name+"}): " + result + "\n"
+            ass_out += "  \\item $\\mathcal{A}_" + short_name + "(\\overline{i_"+short_name+"}): " + result + "$"
 
         return ass_out
 
     def _translate_guarantees(self, short_name, guarantees):
         assert(isinstance(guarantees, list))
 
-
         guar_out = ""
-        #visitor = FOL2Text()
 
         for guar in guarantees:
-            guar_out += "\\mathcal{G}_" + short_name + "(\overline{o_" + short_name + "}): " + self.visitor.visit(guar) + "\n"
+
+            result = self.visitor.visit(guar)
+            guar_out += "  \\item $\\mathcal{G}_" + short_name + "(\overline{o_" + short_name + "}): " + result + "$"
         return guar_out
