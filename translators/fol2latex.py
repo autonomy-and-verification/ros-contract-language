@@ -17,7 +17,7 @@ class FOL2Latex(FOL):
 
         left, right = self.binary_infix(tree)
 
-        return left + " \implies " + right
+        return left + " \\implies " + right
 
     def formula_variables_part(self, tree):
         """ Translate a formula_variables_part tree """
@@ -28,18 +28,17 @@ class FOL2Latex(FOL):
 
         vars_out = self.visit(vars_extract)
 
-        if isinstance(sets_extract, Token) :
-            sets_out = str(sets_extract)
-        elif isinstance(sets_extract, Tree) :
+        if isinstance(sets_extract, Token):
+            sets_out = self.make_string(sets_extract)
+        elif isinstance(sets_extract, Tree):
             sets_out = self.visit(sets_extract)
 
-        return vars_out + " \in " + sets_out
-
+        return vars_out + " \\in " + sets_out
 
     def equals(self, tree):
         """ Translate an equals tree """
         assert(tree.data == "equals")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         eq_left, eq_right = self.binary_infix(tree)
 
@@ -57,25 +56,23 @@ class FOL2Latex(FOL):
         """ Translate an in tree """
         assert(tree.data == "in_form")
 
-        in_left, in_right =  self.binary_infix(tree)
+        in_left, in_right = self.binary_infix(tree)
 
-        return in_left + " \in " + in_right
-
+        return in_left + " \\in " + in_right
 
     def not_in(self, tree):
         """ Translate a not in tree """
         assert(tree.data == "not_in")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
-        in_left, in_right =  self.binary_infix(tree)
+        in_left, in_right = self.binary_infix(tree)
 
         return in_left + " \\notin " + in_right
-
 
     def leq(self, tree):
         """ Translate a leq tree """
         assert(tree.data == "leq")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         left, right = self.binary_infix(tree)
 
@@ -84,7 +81,7 @@ class FOL2Latex(FOL):
     def geq(self, tree):
         """ Translate a geq tree """
         assert(tree.data == "geq")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         left, right = self.binary_infix(tree)
 
@@ -93,7 +90,7 @@ class FOL2Latex(FOL):
     def lt(self, tree):
         """ Translate a lt tree """
         assert(tree.data == "lt")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         left, right = self.binary_infix(tree)
 
@@ -102,12 +99,11 @@ class FOL2Latex(FOL):
     def gt(self, tree):
         """ Translate a gt tree """
         assert(tree.data == "gt")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         left, right = self.binary_infix(tree)
 
         return left + " > " + right
-
 
     def negation(self, tree):
         """ Translate a negation tree """
@@ -119,9 +115,9 @@ class FOL2Latex(FOL):
     def and_form(self, tree):
         """ Translate an and tree """
         assert(tree.data == "and_form")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
-        and_left, and_right  = self.binary_infix(tree)
+        and_left, and_right = self.binary_infix(tree)
 
         return and_left + " \land " + and_right
 
@@ -129,14 +125,14 @@ class FOL2Latex(FOL):
         """ Translate a or tree """
         assert(tree.data == "or_form")
 
-        and_left, and_right  = self.binary_infix(tree)
+        and_left, and_right = self.binary_infix(tree)
 
         return and_left + " \lor " + and_right
 
     def iff(self, tree):
         """ Translate a iff tree """
         assert(tree.data == "iff")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         iff_left, iff_right = self.binary_infix(tree)
 
@@ -145,7 +141,7 @@ class FOL2Latex(FOL):
     def forall(self, tree):
         """ Translate a forall tree """
         assert(tree.data == "forall")
-        assert(len(tree.children) == 2 )
+        assert(len(tree.children) == 2)
 
         variables = tree.children[0]
         formula = tree.children[1]
@@ -158,7 +154,7 @@ class FOL2Latex(FOL):
     def exists(self, tree):
         """ Translate a exists tree """
         assert(tree.data == "exists")
-        assert(len(tree.children) == 2 )
+        assert(len(tree.children) == 2)
 
         variables = tree.children[0]
         formula = tree.children[1]
@@ -171,7 +167,7 @@ class FOL2Latex(FOL):
     def exists_unique(self, tree):
         """ Translate a exists_unique tree """
         assert(tree.data == "exists_unique")
-        assert(len(tree.children) == 2 )
+        assert(len(tree.children) == 2)
 
         variables = tree.children[0]
         formula = tree.children[1]
@@ -180,7 +176,6 @@ class FOL2Latex(FOL):
         formula_out = self.visit(formula)
 
         return "\\exists!~ " + variables_out + " \cdot " + formula_out
-
 
     def tuple(self, tree):
         """Translates a tuple tree """
@@ -196,20 +191,18 @@ class FOL2Latex(FOL):
         assert(isinstance(vars, str))
         return "(" + vars + ")"
 
-
     def term_builtins(self, tree):
         """ Translate a term_builtins tree """
         assert(tree.data == "term_builtins")
 
         for term in tree.children:
             assert(isinstance(term, Token))
-            if str(term) == "REAL":
-                return "\mathbb{R}"
-            elif str(term) == "INTEGER":
+            if self.make_string(term) == "REAL":
+                return "\\mathbb{R}"
+            elif self.make_string(term) == "INTEGER":
                 return "\\mathbb{Z}"
-            elif str(term) == "NATURAL":
+            elif self.make_string(term) == "NATURAL":
                 return "\\mathbb{N}"
-
 
     def set(self, tree):
         """Translates a set tree """
@@ -230,7 +223,6 @@ class FOL2Latex(FOL):
         assert(tree.data == "empty_set")
 
         return "\\emptyset"
-
 
     def string_literal(self, tree):
         """ Translate a string literal tree """
@@ -284,6 +276,3 @@ class FOL2Latex(FOL):
         assert(isinstance(right, str))
 
         return left, right
-
-    def make_string(self, to_string):
-        return str(to_string).replace('_', '\_')

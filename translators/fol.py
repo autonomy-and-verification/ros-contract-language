@@ -7,6 +7,7 @@ from lark.visitors import Interpreter
 from lark.lexer import Token
 from lark import Tree
 
+
 class FOL(Interpreter):
 
     def assume(self, tree):
@@ -33,7 +34,7 @@ class FOL(Interpreter):
 
         return self.visit(tree.children[0])
 
-    def atomic_formula(self,tree):
+    def atomic_formula(self, tree):
         """ Translate an atomic_formula tree """
         assert(tree.data == "atomic_formula")
 
@@ -41,7 +42,7 @@ class FOL(Interpreter):
         if isinstance(tree.children[0], Token):
             token = tree.children[0]
             if token.type == "BOOLEAN":
-                return str(token)
+                return self.make_string(token)
         else:
             assert(isinstance(tree.children[0], Tree))
             return self.visit(tree.children[0])
@@ -80,47 +81,45 @@ class FOL(Interpreter):
         assert(tree.data == "in_form")
         pass
 
-
     def not_in(self, tree):
         """ Translate a not in tree """
         assert(tree.data == "not_in")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         pass
-
 
     def leq(self, tree):
         """ Translate a leq tree """
         assert(tree.data == "leq")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         pass
 
     def geq(self, tree):
         """ Translate a geq tree """
         assert(tree.data == "geq")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         pass
 
     def lt(self, tree):
         """ Translate a lt tree """
         assert(tree.data == "lt")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         pass
 
     def gt(self, tree):
         """ Translate a gt tree """
         assert(tree.data == "gt")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         pass
 
     def var_range(self, tree):
         """ Translate a var_range tree """
         assert(tree.data == "var_range")
-        assert(len(tree.children)==5)
+        assert(len(tree.children) == 5)
 
         left_term = tree.children[0]
         left_op = tree.children[1]
@@ -132,8 +131,7 @@ class FOL(Interpreter):
         mid_term_out = self.visit(mid_term)
         right_term_out = self.visit(right_term)
 
-        return left_term_out + str(left_op) + mid_term_out + str(right_op) + right_term_out
-
+        return left_term_out + self.make_string(left_op) + mid_term_out + self.make_string(right_op) + right_term_out
 
     def negation(self, tree):
         """ Translate a negation tree """
@@ -144,7 +142,7 @@ class FOL(Interpreter):
     def and_form(self, tree):
         """ Translate an and tree """
         assert(tree.data == "and_form")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         pass
 
@@ -156,7 +154,7 @@ class FOL(Interpreter):
     def iff(self, tree):
         """ Translate a iff tree """
         assert(tree.data == "iff")
-        assert(len(tree.children)==2)
+        assert(len(tree.children) == 2)
 
         pass
 
@@ -170,20 +168,20 @@ class FOL(Interpreter):
     def forall(self, tree):
         """ Translate a forall tree """
         assert(tree.data == "forall")
-        assert(len(tree.children) == 2 )
+        assert(len(tree.children) == 2)
 
         pass
 
     def exists(self, tree):
         """ Translate a exists tree """
         assert(tree.data == "exists")
-        assert(len(tree.children) == 2 )
+        assert(len(tree.children) == 2)
         pass
 
     def exists_unique(self, tree):
         """ Translate a exists_unique tree """
         assert(tree.data == "exists_unique")
-        assert(len(tree.children) == 2 )
+        assert(len(tree.children) == 2)
 
         pass
 
@@ -197,9 +195,9 @@ class FOL(Interpreter):
 
         #(VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
 
-        left = str(arith_tree.children[0])
-        op = str(arith_tree.children[1])
-        right = str(arith_tree.children[2])
+        left = self.make_string(arith_tree.children[0])
+        op = self.make_string(arith_tree.children[1])
+        right = self.make_string(arith_tree.children[2])
 
         assert(isinstance(left, str))
         assert(isinstance(op, str))
@@ -230,10 +228,10 @@ class FOL(Interpreter):
         """ Translate a term tree """
         assert(tree.data == "term")
 
-        assert(len(tree.children)==1)
-        if (isinstance(tree.children[0],Token )):
-            return str(tree.children[0])
-        elif (isinstance(tree.children[0],Tree)) :
+        assert(len(tree.children) == 1)
+        if (isinstance(tree.children[0], Token)):
+            return self.make_string(tree.children[0])
+        elif (isinstance(tree.children[0], Tree)):
             return self.visit(tree.children[0])
 
     def set(self, tree):
@@ -242,26 +240,25 @@ class FOL(Interpreter):
 
         pass
 
-
     def predicate(self, tree):
         """ Translate a predicate tree """
         assert(tree.data == "predicate")
 
-        assert(isinstance(tree.children[0],Token ))
-        pred_name = str(tree.children[0])
+        assert(isinstance(tree.children[0], Token))
+        pred_name = self.make_string(tree.children[0])
         pred_terms = self.visit(tree.children[1])
 
-        return pred_name + "("+ str(pred_terms) +")"
+        return pred_name + "(" + self.make_string(pred_terms) + ")"
 
     def function(self, tree):
         """ Translate a function tree """
         assert(tree.data == "function")
 
-        assert(isinstance(tree.children[0],Token ))
-        func_name = str(tree.children[0])
+        assert(isinstance(tree.children[0], Token))
+        func_name = self.make_string(tree.children[0])
         func_args = self.visit(tree.children[1])
 
-        return func_name + "("+ str(func_args) +")"
+        return func_name + "(" + self.make_string(func_args) + ")"
 
     def string_literal(self, tree):
         """ Translate a string literal tree """
@@ -288,3 +285,6 @@ class FOL(Interpreter):
         assert(isinstance(right, str))
 
         return left, right
+
+    def make_string(self, to_string):
+        return str(to_string).replace('_', '\\_')
