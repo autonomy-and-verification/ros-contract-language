@@ -3,7 +3,6 @@
 
 """ Superclass of the FOL translators, using Lark Interpreters """
 
-from lark.visitors import Interpreter
 from lark.lexer import Token
 from lark import Tree
 from translators.fol import FOL
@@ -76,7 +75,7 @@ class FOL2Latex(FOL):
 
         left, right = self.binary_infix(tree)
 
-        return left + " \leq " + right
+        return left + " \\leq " + right
 
     def geq(self, tree):
         """ Translate a geq tree """
@@ -85,7 +84,7 @@ class FOL2Latex(FOL):
 
         left, right = self.binary_infix(tree)
 
-        return left + " \geq " + right
+        return left + " \\geq " + right
 
     def lt(self, tree):
         """ Translate a lt tree """

@@ -1,285 +1,274 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from lark.visitors import Interpreter
 from lark.lexer import Token
 from lark import Tree
 from translators.fol import FOL
 
+
 class FOL2Text(FOL):
 
-        def assume(self, tree):
-            """ Translate an assume tree """
-            assert(tree.data == "assume")
+    def assume(self, tree):
+        """ Translate an assume tree """
+        assert(tree.data == "assume")
 
+        return self.visit(tree.children[0])
+
+    def guarantee(self, tree):
+        """ Translate a guarantee tree """
+        assert(tree.data == "guarantee")
+
+        return self.visit(tree.children[0])
+
+    def implies(self, tree):
+        """ Translate an implies tree """
+        assert(tree.data == "implies")
+
+        left, right = self.binary_infix(tree)
+
+        return left + " -> " + right
+
+    def atom(self, tree):
+        """ Translate an atom tree """
+        assert(tree.data == "atom")
+
+        return self.visit(tree.children[0])
+
+    def atomic_formula(self, tree):
+        """ Translate an atomic_formula tree """
+        assert(tree.data == "atomic_formula")
+
+        if isinstance(tree.children[0], Token):
+            token = tree.children[0]
+            if token.type == "BOOLEAN":
+                return str(token)
+        else:
+            assert(isinstance(tree.children[0], Tree))
             return self.visit(tree.children[0])
 
-        def guarantee(self, tree):
-            """ Translate a guarantee tree """
-            assert(tree.data == "guarantee")
+    def equals(self, tree):
+        """ Translate an equals tree """
+        assert(tree.data == "equals")
+        assert(len(tree.children) == 2)
 
-            return self.visit(tree.children[0])
+        eq_left, eq_right = self.binary_infix(tree)
 
-        def implies(self, tree):
-            """ Translate an implies tree """
-            assert(tree.data == "implies")
+        return eq_left + " == " + eq_right
 
-            left, right = self.binary_infix(tree)
+    def not_equals(self, tree):
+        """ Translate a not equals tree """
+        assert(tree.data == "not_equals")
+        assert(len(tree.children) == 2)
 
-            return left + " -> " + right
+        eq_left, eq_right = self.binary_infix(tree)
 
-        def atom(self, tree):
-            """ Translate an atom tree """
-            assert(tree.data == "atom")
+        return eq_left + " != " + eq_right
 
-            return self.visit(tree.children[0])
+    def in_form(self, tree):
+        """ Translate an in tree """
+        assert(tree.data == "in_form")
+        assert(len(tree.children) == 2)
 
-        def atomic_formula(self,tree):
-            """ Translate an atomic_formula tree """
-            assert(tree.data == "atomic_formula")
+        in_left, in_right = self.binary_infix(tree)
 
-            if isinstance(tree.children[0], Token):
-                token = tree.children[0]
-                if token.type == "BOOLEAN":
-                    return str(token)
-            else:
-                assert(isinstance(tree.children[0], Tree))
-                return self.visit(tree.children[0])
+        return in_left + " in " + in_right
 
+    def not_in(self, tree):
+        """ Translate a not in tree """
+        assert(tree.data == "not_in")
+        assert(len(tree.children) == 2)
 
-        def equals(self, tree):
-            """ Translate an equals tree """
-            assert(tree.data == "equals")
-            assert(len(tree.children)==2)
+        in_left, in_right = self.binary_infix(tree)
 
-            eq_left, eq_right = self.binary_infix(tree)
+        return in_left + " !in " + in_right
 
-            return eq_left + " == " + eq_right
+    def leq(self, tree):
+        """ Translate a leq tree """
+        assert(tree.data == "leq")
+        assert(len(tree.children) == 2)
 
-        def not_equals(self, tree):
-            """ Translate a not equals tree """
-            assert(tree.data == "not_equals")
-            assert(len(tree.children)==2)
+        left, right = self.binary_infix(tree)
 
-            eq_left, eq_right = self.binary_infix(tree)
+        return left + " <= " + right
 
-            return eq_left + " != " + eq_right
+    def geq(self, tree):
+        """ Translate a geq tree """
+        assert(tree.data == "geq")
+        assert(len(tree.children) == 2)
 
-        def in_form(self, tree):
-            """ Translate an in tree """
-            assert(tree.data == "in_form")
-            assert(len(tree.children)==2)
+        left, right = self.binary_infix(tree)
 
-            in_left, in_right =  self.binary_infix(tree)
+        return left + " >= " + right
 
-            return in_left + " in " + in_right
+    def lt(self, tree):
+        """ Translate a lt tree """
+        assert(tree.data == "lt")
+        assert(len(tree.children) == 2)
 
-        def not_in(self, tree):
-            """ Translate a not in tree """
-            assert(tree.data == "not_in")
-            assert(len(tree.children)==2)
+        left, right = self.binary_infix(tree)
 
-            in_left, in_right  = self.binary_infix(tree)
+        return left + " < " + right
 
-            return in_left + " !in " + in_right
+    def gt(self, tree):
+        """ Translate a gt tree """
+        assert(tree.data == "gt")
+        assert(len(tree.children) == 2)
 
+        left, right = self.binary_infix(tree)
 
-        def leq(self, tree):
-            """ Translate a leq tree """
-            assert(tree.data == "leq")
-            assert(len(tree.children)==2)
+        return left + " > " + right
 
-            left, right = self.binary_infix(tree)
+    def negation(self, tree):
+        """ Translate a negation tree """
+        assert(tree.data == "negation")
+        assert(len(tree.children) == 1)
 
-            return left + " <= " + right
+        return "not " + self.visit(tree.children[0])
 
-        def geq(self, tree):
-            """ Translate a geq tree """
-            assert(tree.data == "geq")
-            assert(len(tree.children)==2)
+    def and_form(self, tree):
+        """ Translate an and tree """
+        assert(tree.data == "and_form")
+        assert(len(tree.children) == 2)
 
-            left, right = self.binary_infix(tree)
+        and_left, and_right = self.binary_infix(tree)
 
-            return left + " >= " + right
+        return and_left + " and " + and_right
 
-        def lt(self, tree):
-            """ Translate a lt tree """
-            assert(tree.data == "lt")
-            assert(len(tree.children)==2)
+    def or_form(self, tree):
+        """ Translate a or tree """
+        assert(tree.data == "or_form")
+        assert(len(tree.children) == 2)
 
-            left, right = self.binary_infix(tree)
+        or_left, or_right = self.binary_infix(tree)
 
-            return left + " < " + right
+        return or_left + " or " + or_right
 
-        def gt(self, tree):
-            """ Translate a gt tree """
-            assert(tree.data == "gt")
-            assert(len(tree.children)==2)
+    def iff(self, tree):
+        """ Translate a iff tree """
+        assert(tree.data == "iff")
+        assert(len(tree.children) == 2)
 
-            left, right = self.binary_infix(tree)
+        iff_left, iff_right = self.binary_infix(tree)
 
-            return left + " > " + right
+        return iff_left + " <=> " + iff_right
 
+    def forall(self, tree):
+        """ Translate a forall tree """
+        assert(tree.data == "forall")
+        assert(len(tree.children) == 2)
 
-        def negation(self, tree):
-            """ Translate a negation tree """
-            assert(tree.data == "negation")
-            assert(len(tree.children) == 1)
+        variables = tree.children[0]
+        formula = tree.children[1]
 
-            return "not " + self.visit(tree.children[0])
+        variables_out = self.visit(variables)
+        formula_out = self.visit(formula)
 
-        def and_form(self, tree):
-            """ Translate an and tree """
-            assert(tree.data == "and_form")
-            assert(len(tree.children)==2)
+        return "forall (" + variables_out + " | " + formula_out + ")"
 
-            and_left, and_right  = self.binary_infix(tree)
+    def exists(self, tree):
+        """ Translate a exists tree """
+        assert(tree.data == "exists")
+        assert(len(tree.children) == 2)
 
-            return and_left + " and " + and_right
+        variables = tree.children[0]
+        formula = tree.children[1]
 
-        def or_form(self, tree):
-            """ Translate a or tree """
-            assert(tree.data == "or_form")
-            assert(len(tree.children)==2)
+        variables_out = self.visit(variables)
+        formula_out = self.visit(formula)
 
-            or_left, or_right  = self.binary_infix(tree)
+        return "exists (" + variables_out + " | " + formula_out + ")"
 
-            return or_left + " or " + or_right
+    def exists_unique(self, tree):
+        """ Translate a exists_unique tree """
+        assert(tree.data == "exists_unique")
+        assert(len(tree.children) == 2)
 
-        def iff(self, tree):
-            """ Translate a iff tree """
-            assert(tree.data == "iff")
-            assert(len(tree.children)==2)
+        variables = tree.children[0]
+        formula = tree.children[1]
 
-            iff_left, iff_right = self.binary_infix(tree)
+        variables_out = self.visit(variables)
+        formula_out = self.visit(formula)
 
-            return iff_left + " <=> " + iff_right
+        return "exists_unique (" + variables_out + " | " + formula_out + ")"
 
+    def term_builtins(self, tree):
+        assert(tree.data == "term_builtins")
 
-        def forall(self, tree):
-            """ Translate a forall tree """
-            assert(tree.data == "forall")
-            assert(len(tree.children) == 2 )
+        head, *tail = tree.children
 
-            variables = tree.children[0]
-            formula = tree.children[1]
+        builtins_out = self.visit(head)
 
-            variables_out = self.visit(variables)
-            formula_out = self.visit(formula)
+        if tail != None:
+            for b in tail:
+                builtins_out += "."
+                builtins_out += self.visit(b)
 
-            return "forall (" + variables_out + " | " + formula_out + ")"
+        return builtins_out
 
-        def exists(self, tree):
-            """ Translate a exists tree """
-            assert(tree.data == "exists")
-            assert(len(tree.children) == 2 )
+    def predicate(self, tree):
+        """ Translate a predicate tree """
+        assert(tree.data == "predicate")
 
-            variables = tree.children[0]
-            formula = tree.children[1]
+        assert(isinstance(tree.children[0], Token))
+        pred_name = str(tree.children[0])
+        pred_terms = self.visit(tree.children[1])
 
-            variables_out = self.visit(variables)
-            formula_out = self.visit(formula)
+        return pred_name + "(" + str(pred_terms) + ")"
 
-            return "exists (" + variables_out + " | " + formula_out + ")"
+    def set(self, tree):
+        """Translates a set tree """
+        assert(tree.data == "set")
 
+        head, *tail = tree.children
 
-        def exists_unique(self, tree):
-            """ Translate a exists_unique tree """
-            assert(tree.data == "exists_unique")
-            assert(len(tree.children) == 2 )
+        vars = str(head)
 
-            variables = tree.children[0]
-            formula = tree.children[1]
+        for var in tail:
+            vars += ", " + str(var)
 
-            variables_out = self.visit(variables)
-            formula_out = self.visit(formula)
+        assert(isinstance(vars, str))
+        return "{" + vars + "}"
 
-            return "exists_unique (" + variables_out + " | " + formula_out + ")"
+    def tuple(self, tree):
+        """Translates a tuple tree """
+        assert(tree.data == "tuple")
 
-        def term_builtins(self, tree):
-            assert(tree.data == "term_builtins")
+        head, *tail = tree.children
 
-            head, *tail = tree.children
+        vars = str(head)
 
-            builtins_out = self.visit(head)
+        for var in tail:
+            vars += ", " + str(var)
 
-            if tail != None:
-                for b in tail:
-                    builtins_out += "."
-                    builtins_out += self.visit(b)
+        assert(isinstance(vars, str))
+        return "(" + vars + ")"
 
-            return builtins_out
+    def function(self, tree):
+        """ Translate a function tree """
+        assert(tree.data == "function")
 
-        def predicate(self, tree):
-            """ Translate a predicate tree """
-            assert(tree.data == "predicate")
+        assert(isinstance(tree.children[0], Token))
+        func_name = str(tree.children[0])
+        func_args = self.visit(tree.children[1])
 
-            assert(isinstance(tree.children[0],Token ))
-            pred_name = str(tree.children[0])
-            pred_terms = self.visit(tree.children[1])
+        return func_name + "(" + str(func_args) + ")"
 
-            return pred_name + "("+ str(pred_terms) +")"
+    def string_literal(self, tree):
+        """ Translate a string literal tree """
+        assert(tree.data == "string_literal")
 
-        
-        def set(self, tree):
-            """Translates a set tree """
-            assert(tree.data == "set")
+        return "\"" + tree.children[0] + "\""
 
-            head, *tail = tree.children
+    def variables(self, tree):
+        """ Translate a variables tree """
+        assert(tree.data == "variables")
 
-            vars = str(head)
+        head, *tail = tree.children
 
-            for var in tail:
-                vars += ", " + str(var)
+        vars = str(head)
 
+        for var in tail:
+            vars += ", " + str(var)
 
-            assert(isinstance(vars, str))
-            return "{" + vars + "}"
-
-        def tuple(self, tree):
-            """Translates a tuple tree """
-            assert(tree.data == "tuple")
-
-            head, *tail = tree.children
-
-            vars = str(head)
-
-            for var in tail:
-                vars += ", " + str(var)
-
-
-            assert(isinstance(vars, str))
-            return "(" + vars + ")"
-
-
-        def function(self, tree):
-            """ Translate a function tree """
-            assert(tree.data == "function")
-
-            assert(isinstance(tree.children[0],Token ))
-            func_name = str(tree.children[0])
-            func_args = self.visit(tree.children[1])
-
-            return func_name + "("+ str(func_args) +")"
-
-
-
-        def string_literal(self, tree):
-            """ Translate a string literal tree """
-            assert(tree.data == "string_literal")
-
-            return "\"" + tree.children[0] + "\""
-
-        def variables(self, tree):
-            """ Translate a variables tree """
-            assert(tree.data == "variables")
-
-            head, *tail = tree.children
-
-            vars = str(head)
-
-            for var in tail:
-                vars += ", " + str(var)
-
-            assert(isinstance(vars, str))
-            return vars
+        assert(isinstance(vars, str))
+        return vars
