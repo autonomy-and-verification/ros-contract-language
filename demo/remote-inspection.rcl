@@ -1,12 +1,17 @@
 node agent
 {
 
+inputs( output_of(navigation), output_of(radiationSensor),
+  wayP : REAL x REAL --> NATURAL )
+
+outputs( command in {move(REAL, REAL), inspect(NATURAL) } )
+
 topics(
-gazebo_radiation_plugins/Command command,
-gazebo_radiation_plugins/Inspection inspected,
-gazebo_radiation_plugins/At at,
-int16 wayP,
-string radiationStatus
+gazebo_radiation_plugins/Command command matches(command),
+gazebo_radiation_plugins/Inspection inspected matches(inspected),
+gazebo_radiation_plugins/At at matches(at),
+int16 wayP matches(wayP),
+string radiationStatus matches(radiationStatus)
 )
 
 assume(
@@ -33,7 +38,10 @@ forall(x', y' in REAL, i in NATURAL |
 node localisation
 {
 
-//topic name != variable name, add alias?
+inputs()
+outputs( position : REAL x REAL --> BOOL )
+
+//input or output?
 topics(geometry_msgs/PoseWithCovarianceStamped amcl_pose)
 
 assume(TRUE)
@@ -45,10 +53,14 @@ guarantee( exists_unique(x, y in REAL | Position(x, y) ) )
 node navigation
 {
 
+inputs( output_of(localisation), output_of(agent) ) // output_of, good or bad?
+
+outputs( at: REAL x REAL --> BOOL )
+
 topics(
-gazebo_radiation_plugins/Command command,
-int16 currentLoc,
-gazebo_radiation_plugins/At at)
+gazebo_radiation_plugins/Command command matches(command),
+int16 currentLoc matches(position),
+gazebo_radiation_plugins/At at matches() at)
 
 assume(exists_unique(x, y in REAL | position(x,y) == TRUE ) )
 
@@ -60,14 +72,17 @@ guarantee(forall(x, y in REAL | command == move(x, y) and position(x, y) == TRUE
 node radiationSensor
 {
 
-topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r,
-gazebo_radiation_plugins/Command command,
-gazebo_radiation_plugins/Inspection inspected,
-string radiationStatus )
+inputs( r in REAL , output_of(agent))
 
-assume(
-0 <= r
-)
+output( radiationStatus in {red, orange, green}, inspected : NATURAL --> BOOL )
+
+
+topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r matches(r),
+gazebo_radiation_plugins/Command command matches(command),
+gazebo_radiation_plugins/Inspection inspected matches(inspected),
+string radiationStatus matches(radiationStatus) )
+
+assume( 0 <= r )
 
 guarantee(
 forall( i in NATURAL | command == inspect(i) ->

@@ -1,14 +1,20 @@
 start: node_clause+
 
-node_clause: "node" NODE_NAME "{" topic_list (assume)* (guarantee)+   "}"
-
-
+node_clause: "node" NODE_NAME "{" inputs outputs topic_list (assume)* (guarantee)+   "}"
 
 NODE_NAME: LETTER+
 
+inputs : "inputs" "(" (input ("," input))*  ")" | ("input" "(" input ")")*
+
+input : formula
+
+outputs :  "outputs" "(" (output ("," output))*  ")" | ("output" "(" output ")")*
+
+output : formula
+
 topic_list : "topics" "(" (topic ("," topic)*)? ")"
 
-topic: TYPE FOL_NAME
+topic: TYPE FOL_NAME ("matches" "(" FOL_NAME ")" )?
 
 
 //ros types
