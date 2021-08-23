@@ -2,15 +2,19 @@ types
 {
   WayP : REAL x REAL --> NATURAL ;
   RadStat : {red, orange, green} ;
+//  CommandSet : { move(REAL, REAL), inspect(NATURAL) };
+PositionType : REAL x REAL --> BOOL ;
+AtType: REAL x REAL --> BOOL;
+InspectedType :  NATURAL --> BOOL;
+
 }
 
 node agent
 {
 
-inputs( output_of(navigation), output_of(radiationSensor), radiationStatus : in RadStat
-  wayP : WayP )
+inputs( wayP : WayP, at : AtType, radiationStatus : RadStat, inspected : InspectedType )
 
-outputs( command in {move(REAL, REAL), inspect(NATURAL) } )
+outputs( command : CommandSet  )
 
 topics(
 gazebo_radiation_plugins/Command command matches(command),
@@ -20,9 +24,7 @@ int16 wayP matches(wayP),
 string radiationStatus matches(radiationStatus)
 )
 
-assume(
-radiationStatus in {red, orange, green}
-)
+assume( radiationStatus in {red, orange, green} )
 
 guarantee(
 forall(x', y' in REAL, i in NATURAL |
@@ -45,7 +47,7 @@ node localisation
 {
 
 inputs()
-outputs( position : REAL x REAL --> BOOL )
+outputs( position : PositionType )
 
 //input or output?
 topics(geometry_msgs/PoseWithCovarianceStamped amcl_pose)
@@ -59,14 +61,14 @@ guarantee( exists_unique(x, y in REAL | Position(x, y) ) )
 node navigation
 {
 
-inputs( output_of(localisation), output_of(agent) ) // output_of, good or bad?
+inputs( position : PositionType, command : CommandSet )
 
-outputs( at: REAL x REAL --> BOOL )
+outputs( at: AtType )
 
 topics(
 gazebo_radiation_plugins/Command command matches(command),
 int16 currentLoc matches(position),
-gazebo_radiation_plugins/At at matches() at)
+gazebo_radiation_plugins/At at matches(at))
 
 assume(exists_unique(x, y in REAL | position(x,y) == TRUE ) )
 
@@ -78,9 +80,9 @@ guarantee(forall(x, y in REAL | command == move(x, y) and position(x, y) == TRUE
 node radiationSensor
 {
 
-inputs( r in REAL , output_of(agent))
+inputs( r : REAL , command : CommandSet)
 
-output( radiationStatus in {red, orange, green}, inspected : NATURAL --> BOOL )
+outputs( radiationStatus : RadStat, inspected : InspectedType  )
 
 
 topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r matches(r),

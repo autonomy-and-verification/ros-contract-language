@@ -15,6 +15,7 @@ class Extractor(object):
         """"parses the parse tree into RML output for ROS Mon"""
 
         for t in parse_tree.children:
+            print(t)
             assert(t.data == "contract_clause")
             assert(len(t.children) == 1)
 
