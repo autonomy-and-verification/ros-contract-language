@@ -31,7 +31,7 @@ class Type(object):
 
     def __init__(self, type_name, type_definition):
         assert(isinstance(type_name, str))
-        assert(isinstance(type_definition, str))
+    #    assert(isinstance(type_definition, str))
         self.type_name = type_name
         self.type_definition = type_definition
 

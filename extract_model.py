@@ -15,7 +15,7 @@ class Extractor(object):
         """"parses the parse tree into RML output for ROS Mon"""
 
         for t in parse_tree.children:
-            print(t)
+
             assert(t.data == "contract_clause")
             assert(len(t.children) == 1)
 
@@ -42,7 +42,8 @@ class Extractor(object):
 
         assert(isinstance(node[0], lexer.Token))
         node_name = node[0]
-        topic_list = node[1].children
+
+        topic_list = node[3].children
         assumes, guarantees = self._extract_assumes_and_gurantees(node[2:])
 
         topic_list_out = self._extract_topic_list(topic_list)
@@ -112,10 +113,17 @@ class Extractor(object):
         return guar_out
 
     def _extract_topic(self, topic):
-        assert len(topic.children) == 2
-        type, topic_name = topic.children
+        print(topic)
+        assert(len(topic.children) in {2, 3})
 
-        return type + " " + topic_name
+        if len(topic.children) ==  3:
+            type, topic_name, matches = topic.children
+            return type + " " + topic_name + " matches: " + matches
+        else:
+            type, topic_name = topic.children
+            return type + " " + topic_name
+
+
 
     def __str__(self):
         return self.extract()
