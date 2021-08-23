@@ -243,23 +243,16 @@ class FOL2Latex(FOL):
         assert(isinstance(vars, str))
         return vars
 
-    def predicate(self, tree):
-        """ Translate a predicate tree """
-        assert(tree.data == "predicate")
+    def function_application(self, tree):
+        """ Translate a function_application tree """
+        assert(tree.data == "function_application")
         assert(len(tree.children) == 2)
 
         name, terms = tree.children
 
-        return self.make_string(name) + self.visit(terms)
+        terms = self.visit(tree.children[1])
 
-    def function(self, tree):
-        """ Translate a function tree """
-        assert(tree.data == "function")
-        assert(len(tree.children) == 2)
-
-        name, terms = tree.children
-
-        return self.make_string(name) + self.visit(terms)
+        return self.make_string(name) + "(" + self.make_string(terms) + ")"
 
 
 # Helper Methods

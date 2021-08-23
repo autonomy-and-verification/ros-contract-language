@@ -240,26 +240,6 @@ class FOL(Interpreter):
 
         pass
 
-    def predicate(self, tree):
-        """ Translate a predicate tree """
-        assert(tree.data == "predicate")
-
-        assert(isinstance(tree.children[0], Token))
-        pred_name = self.make_string(tree.children[0])
-        pred_terms = self.visit(tree.children[1])
-
-        return pred_name + "(" + self.make_string(pred_terms) + ")"
-
-    def function(self, tree):
-        """ Translate a function tree """
-        assert(tree.data == "function")
-
-        assert(isinstance(tree.children[0], Token))
-        func_name = self.make_string(tree.children[0])
-        func_args = self.visit(tree.children[1])
-
-        return func_name + "(" + self.make_string(func_args) + ")"
-
     def string_literal(self, tree):
         """ Translate a string literal tree """
         assert(tree.data == "string_literal")

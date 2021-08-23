@@ -59,7 +59,7 @@ atomic_formula  : BOOLEAN
                 | term "<" term -> lt
                 | term ">" term -> gt
                 | term COMPARE_OP term COMPARE_OP term -> var_range
-                | PRED_NAME "(" terms ")" -> predicate
+                | FOL_NAME "(" terms ")" -> function_application
 
 COMPARE_OP : "<=" | ">=" | "<" | ">"
 
@@ -81,7 +81,7 @@ term : BOOLEAN
       | set
       | sequence
       | CONSTANT
-      | FUNC_NAME "(" terms ")" -> function
+      | FOL_NAME "(" terms ")" -> function_application
       | "\""  FOL_NAME "\""  -> string_literal
 
 
@@ -104,11 +104,6 @@ formula_variables_part : variables "in" (set|BUILTIN|VARIABLE) ("," (set|BUILTIN
 
 VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME
-
-
-FUNC_NAME: (LCASE_LETTER|DIGIT) ("'"|"_"|LETTER|DIGIT)*
-PRED_NAME: (UCASE_LETTER|DIGIT) ("'"|"_"|LETTER|DIGIT)*
-
 
 FOL_NAME: ("'"|"_"|LETTER|DIGIT)("'"|"_"|LETTER|DIGIT)*
 
