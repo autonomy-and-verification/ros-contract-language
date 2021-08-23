@@ -4,13 +4,12 @@
 class Node(object):
 
     def __init__(self, node_name, topic_list, assumes, guarantees):
-        assert(isinstance(node_name,str))
+        assert(isinstance(node_name, str))
         assert(isinstance(topic_list, list))
         assert(isinstance(assumes, list))
         assert(isinstance(guarantees, list))
 
-
-        self.node_name  = node_name
+        self.node_name = node_name
         self.topic_list = topic_list
         self.assumes = assumes
         self.guarantees = guarantees
@@ -28,11 +27,33 @@ class Node(object):
         return self.guarantees
 
 
+class Type(object):
+
+    def __init__(self, type_name, type_definition):
+        assert(isinstance(type_name, str))
+        assert(isinstance(type_definition, str))
+        self.type_name = type_name
+        self.type_definition = type_definition
+
+    def get_type_name(self):
+
+        return self.type_name
+
+    def get_type_definition(self):
+
+        return self.type_definition
+
+    def __str__(self):
+
+        return self.get_type_name() + " : " + self.get_type_definition()
+
+
 class Contract(object):
 
     def __init__(self, contract_name):
         self.contract_name = contract_name
         self.nodes = []
+        self.types = []
 
     def set_contract_name(self, name):
         assert(isinstance(name, str))
@@ -50,20 +71,41 @@ class Contract(object):
 
         self.nodes.append(new_node)
 
+    def get_types(self):
+
+        return self.types
+
+    def add_type(self, type_name, type_definition):
+
+        new_type = Type(type_name, type_definition)
+
+        self.types.append(new_type)
+
     def __str__(self):
-        to_string = "contract:" + self.get_contract_name() +"\n"
+        to_string = "contract:" + self.get_contract_name() + "\n"
+
+        type_list = self.get_types()
+
+        if type_list is not None:
+            if type_list == []:
+                to_string += "type list empty \n"
+            else:
+                for type in type_list:
+                    to_string += str(type) + "\n"
 
         node_list = self.get_nodes()
 
-        if node_list != None:
+        if node_list is not None:
             if node_list == []:
-                to_string += "node list empty"
+                to_string += "node list empty \n"
             else:
                 for node in node_list:
-                    to_string += "node: " + node.get_node_name() +"\n" + "\ttopics: " + str(node.get_topic_list()) +"\n" + "\tassumes:" + str(node.get_assumes()) + "\n \tguarantees: " + str(node.get_guarantees())
+                    to_string += "node: " + node.get_node_name() + "\n" + "\ttopics: " + str(node.get_topic_list()) + \
+                                                               "\n" + "\tassumes:" + \
+                                                                   str(node.get_assumes(
+                                                                   )) + "\n \tguarantees: " + str(node.get_guarantees())
 
         return to_string
-
 
 
 if __name__ == "__main__":

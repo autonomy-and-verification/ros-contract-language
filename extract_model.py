@@ -5,6 +5,7 @@ from contract_model import Node
 from contract_model import Contract
 from lark import *
 
+
 class Extractor(object):
 
     def __init__(self,  contract_name):
@@ -14,15 +15,31 @@ class Extractor(object):
         """"parses the parse tree into RML output for ROS Mon"""
 
         for t in parse_tree.children:
-            assert(t.data == 'node_clause')
-            self.__node(t.children)
+            assert(t.data == "contract_clause")
+            assert(len(t.children) == 1)
+
+            inner = t.children[0]
+            if(inner.data == 'node_clause'):
+                self.__node(inner.children)
+            elif(inner.data == "type_clause"):
+                self.__type_clause(inner.children)
 
         return self.extracted_contract
 
-    def __node(self, node):
-        """Traslates one node """
+    def __type_clause(self, statements):
+        """ Translates one type clause """
 
-        assert(isinstance(node[0], lexer.Token) )
+        for statement in statements:
+            assert(len(statement.children) == 2)
+            name = statement.children[0]
+            type = statement.children[1]
+
+            self.extracted_contract.add_type(name, type)
+
+    def __node(self, node):
+        """Traslates one node clause """
+
+        assert(isinstance(node[0], lexer.Token))
         node_name = node[0]
         topic_list = node[1].children
         assumes, guarantees = self._extract_assumes_and_gurantees(node[2:])
@@ -31,10 +48,9 @@ class Extractor(object):
         assumes_out = self._extract_assumes(assumes)
         guarantees_out = self._extract_guarantees(guarantees)
 
-        self.extracted_contract.add_node(node_name, topic_list_out, assumes_out, guarantees_out)
+        self.extracted_contract.add_node(
+            node_name, topic_list_out, assumes_out, guarantees_out)
 
-
-        #return "node " + node_name + "\n{\n" + topic_list_out + "\n" + guarantees_out + "\n}"
     def _extract_assumes_and_gurantees(self, node_list):
 
         assumes = []
@@ -62,12 +78,11 @@ class Extractor(object):
             topics_out.append(self._extract_topic(head))
 
             if tail != None:
-                if(isinstance(tail,list)):
+                if(isinstance(tail, list)):
                     for topic in tail:
                         topics_out.append(self._extract_topic(topic))
                 elif(isinstance(tail, lark.Tree)):
                     topics_out.append(self._extract_topic(tail))
-
 
             return topics_out
         else:
@@ -96,11 +111,10 @@ class Extractor(object):
         return guar_out
 
     def _extract_topic(self, topic):
-        assert len(topic.children)  == 2
+        assert len(topic.children) == 2
         type, topic_name = topic.children
 
-        return type +" "+ topic_name
-
+        return type + " " + topic_name
 
     def __str__(self):
         return self.extract()
@@ -120,6 +134,5 @@ if __name__ == "__main__":
     print("test_extractor.extract()")
     print(str(contract))
     assert(contract.get_contract_name() == test_name)
-
 
     print()

@@ -1,8 +1,14 @@
+types
+{
+  WayP : REAL x REAL --> NATURAL ;
+  RadStat : {red, orange, green} ;
+}
+
 node agent
 {
 
-inputs( output_of(navigation), output_of(radiationSensor),
-  wayP : REAL x REAL --> NATURAL )
+inputs( output_of(navigation), output_of(radiationSensor), radiationStatus : in RadStat
+  wayP : WayP )
 
 outputs( command in {move(REAL, REAL), inspect(NATURAL) } )
 

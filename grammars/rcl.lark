@@ -1,4 +1,12 @@
-start: node_clause+
+start: contract_clause+
+
+contract_clause: node_clause | type_clause
+
+type_clause : "types" "{" type_declaration+ "}"
+
+type_declaration : TYPE_NAME ":" formula ";"
+
+TYPE_NAME :  UPPER_NAME
 
 node_clause: "node" NODE_NAME "{" inputs outputs topic_list (assume)* (guarantee)+   "}"
 
@@ -106,6 +114,8 @@ VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME
 
 FOL_NAME: ("'"|"_"|LETTER|DIGIT)("'"|"_"|LETTER|DIGIT)*
+LOWER_NAME: (LCASE_LETTER|DIGIT) ("'"|"_"|LETTER|DIGIT)*
+UPPER_NAME: (UCASE_LETTER|DIGIT) ("'"|"_"|LETTER|DIGIT)*
 
 %import common.DIGIT
 %import common.LETTER
