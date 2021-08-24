@@ -71,10 +71,14 @@ class Latex_Translator(Translator):
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
+        assert(len(topic) in {2, 3})
 
-        type, topic_name = topic.split(" ")
-
-        return type.replace('_', '\_') + " " + topic_name.replace('_', '\_')
+        if len(topic) == 3:
+            type_name, topic_name, matches = topic
+            return type_name.replace('_', '\\_') + " " + topic_name.replace('_', '\\_') + " matches: " + matches.replace('_', '\\_')
+        elif len(topic) == 2:
+            type_name, topic_name = topic
+            return type_name.replace('_', '\\_') + " " + topic_name.replace('_', '\\_')
 
     def _translate_assumes(self, short_name, assumes):
         assert(isinstance(assumes, list))

@@ -3,6 +3,7 @@
 from lark import *
 from translators.translator import Translator
 
+
 class Test_Translator(Translator):
 
     def __init__(self, contract):
@@ -10,7 +11,7 @@ class Test_Translator(Translator):
 
     def _translate_node(self, node):
         """Traslates one node """
-        assert(isinstance(node[0], lexer.Token) )
+        assert(isinstance(node[0], lexer.Token))
         node_name = node[0]
         topic_list = node[1].children
         guarantees = node[2:]
@@ -30,12 +31,11 @@ class Test_Translator(Translator):
         topics_out += self._translate_topic(head)
 
         if body != None:
-            if(isinstance(body,list)):
+            if(isinstance(body, list)):
                 for topic in body:
                     topics_out += ", " + self._translate_topic(topic)
             elif(isinstance(body, lark.Tree)):
                 topics_out += ", " + self._translate_topic(body)
-
 
         topics_out += ")"
 
@@ -52,11 +52,10 @@ class Test_Translator(Translator):
         return guar_out
 
     def _translate_topic(self, topic):
-        assert len(topic.children)  == 2
+        assert len(topic.children) == 2
         type, topic_name = topic.children
 
-        return type +" "+ topic_name
-
+        return type + " " + topic_name
 
     def _translate_fol(self, fol_statement):
         """ Translate a fol guarantee statement """
@@ -64,8 +63,6 @@ class Test_Translator(Translator):
         if isinstance(fol_statement, tree.Tree):
 
             statement = fol_statement.data
-
-
 
             if statement == "guarantee":
                 return "guarantee " + self._translate_fol(fol_statement.children)
@@ -82,12 +79,11 @@ class Test_Translator(Translator):
                 return self._translate_fol(fol_statement.children[0])
             elif statement == "predicate":
 
-                return self._translate_fol(fol_statement.children[0]) + "("+ self._translate_fol(fol_statement.children[1]) +")"
+                return self._translate_fol(fol_statement.children[0]) + "(" + self._translate_fol(fol_statement.children[1]) + ")"
             elif statement == "terms":
                 return self._translate_fol(fol_statement.children)
             elif statement == "term":
                 return self._translate_fol(statement.children)
-
 
         elif isinstance(fol_statement, lexer.Token):
 
@@ -100,11 +96,10 @@ class Test_Translator(Translator):
         else:
             return str(fol_statement)
 
-
     def translate(self, parseTree):
         """Translates the parse tree into RML output for ROS Mon"""
 
-        output =""
+        output = ""
 
         for t in parseTree.children:
             if t.data == 'node_clause':

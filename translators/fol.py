@@ -193,7 +193,7 @@ class FOL(Interpreter):
         arith_tree = tree.children[0]
         assert(arith_tree.data == "arith")
 
-        #(VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
+        # (VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
 
         left = self.make_string(arith_tree.children[0])
         op = self.make_string(arith_tree.children[1])

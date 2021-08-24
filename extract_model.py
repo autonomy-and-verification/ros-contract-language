@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from contract_model import Node
 from contract_model import Contract
-from lark import *
+from lark.lexer import Token
+from lark import Tree
 
 
 class Extractor(object):
@@ -40,7 +40,7 @@ class Extractor(object):
     def __node(self, node):
         """Traslates one node clause """
 
-        assert(isinstance(node[0], lexer.Token))
+        assert(isinstance(node[0], Token))
         node_name = node[0]
 
         topic_list = node[3].children
@@ -74,16 +74,16 @@ class Extractor(object):
         if topic_list != []:
             topics_out = []
 
-            #Fancy Python 3 syntax for this split
+            # Fancy Python 3 syntax for this split
             head, *tail = topic_list
 
             topics_out.append(self._extract_topic(head))
 
-            if tail != None:
+            if tail is not None:
                 if(isinstance(tail, list)):
                     for topic in tail:
                         topics_out.append(self._extract_topic(topic))
-                elif(isinstance(tail, lark.Tree)):
+                elif(isinstance(tail, Tree)):
                     topics_out.append(self._extract_topic(tail))
 
             return topics_out
@@ -96,7 +96,7 @@ class Extractor(object):
         ass_out = []
 
         for ass in assumes:
-            #Simply appends the assume parse tree
+            # Simply appends the assume parse tree
             ass_out.append(ass)
 
         return ass_out
@@ -107,23 +107,21 @@ class Extractor(object):
         guar_out = []
 
         for guar in guarantees:
-            #Simply appends the guarentee parse tree
+            # Simply appends the guarentee parse tree
             guar_out.append(guar)
 
         return guar_out
 
     def _extract_topic(self, topic):
-        print(topic)
+
         assert(len(topic.children) in {2, 3})
 
-        if len(topic.children) ==  3:
+        if len(topic.children) == 3:
             type, topic_name, matches = topic.children
-            return type + " " + topic_name + " matches: " + matches
+            return (type, topic_name, matches)
         else:
             type, topic_name = topic.children
-            return type + " " + topic_name
-
-
+            return (type, topic_name)
 
     def __str__(self):
         return self.extract()

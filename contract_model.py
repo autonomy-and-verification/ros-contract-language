@@ -45,7 +45,7 @@ class Type(object):
 
     def __str__(self):
 
-        return self.get_type_name() + " : " + self.get_type_definition()
+        return self.get_type_name() + " : " + str(self.get_type_definition())
 
 
 class Contract(object):
@@ -67,6 +67,11 @@ class Contract(object):
 
     def add_node(self, node_name, topic_list, assumes, guarantees):
 
+        assert(isinstance(node_name, str))
+        assert(isinstance(topic_list, list))
+        assert(isinstance(assumes, list))
+        assert(isinstance(guarantees, list))
+
         new_node = Node(node_name, topic_list, assumes, guarantees)
 
         self.nodes.append(new_node)
@@ -86,12 +91,13 @@ class Contract(object):
 
         type_list = self.get_types()
 
+        to_string += "types: \n"
         if type_list is not None:
             if type_list == []:
-                to_string += "type list empty \n"
+                to_string += "\ttype list empty \n"
             else:
                 for type in type_list:
-                    to_string += str(type) + "\n"
+                    to_string += "\t" + str(type) + "\n"
 
         node_list = self.get_nodes()
 
@@ -109,13 +115,14 @@ class Contract(object):
 
 
 if __name__ == "__main__":
-    test_contract = Contract()
+    test_contract = Contract("Test")
     test_contract.set_contract_name("Test Contract")
 
     node_name = "Test Node"
-    topic_list = ["bool test", "String data"]
+    topic_list = [("bool", "test"), ("String", "data")]
+    assumes = ["true"]
     guarantees = ["true", "false", "x == y"]
 
-    test_contract.add_node(node_name, topic_list, guarantees)
+    test_contract.add_node(node_name, topic_list, assumes, guarantees)
 
     print(test_contract)
