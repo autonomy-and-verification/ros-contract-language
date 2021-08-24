@@ -254,7 +254,58 @@ class FOL2Latex(FOL):
 
         return self.make_string(name) + "(" + self.make_string(terms) + ")"
 
+    def function_declaration(self, tree):
+        """ Translates a function_declaration tree """
+        assert(tree.data == "function_declaration")
+        assert(len(tree.children) == 2)
 
+        print(tree.children)
+
+        inputs, outputs = tree.children
+
+        print(inputs)
+        print(outputs)
+
+        inputs_out = ""
+        head, *tail = inputs.children
+        assert(isinstance(head, Token))
+        inputs_out += self.make_string(head)
+
+        for input in tail:
+            assert(isinstance(input, Token))
+            inputs_out += " \\times " + self.make_string((input))
+
+        outputs_out = ""
+        head, *tail = outputs.children
+        assert(isinstance(head, Token))
+        outputs_out += self.make_string(head)
+
+        for input in tail:
+            outputs_out += " \\times " + self.make_string((input))
+
+        print(inputs_out)
+
+        return inputs_out + " \\rightarrow " + outputs_out
+
+    def function_input(self, tree):
+        """ Translates function_input tree """
+        assert(tree.data == "function_input")
+
+        print("+++ FUNCTION INPUT")
+
+        out = ""
+
+        return out
+
+    def function_output(self, tree):
+        """ Translates function_output tree """
+        assert(tree.data == "function_output")
+
+        out = ""
+
+        return out
+
+        pass
 # Helper Methods
 
     def binary_infix(self, tree):

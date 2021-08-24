@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from contract_model import *
+from contract_model import Contract
+from contract_model import Node
+from contract_model import Type
 from translators.fol2latex import FOL2Latex
 from translators.translator import Translator
 
@@ -17,16 +19,45 @@ class Latex_Translator(Translator):
         self.name = name
 
     def translate(self, contract):
+        """ Translates a contract, calling other helper methods """
+        assert(isinstance(contract, Contract))
 
         contract.get_contract_name()
 
         output = "\\begin{description} \n"
+
+        output += self._translate_types(contract.get_types())
 
         for n in contract.get_nodes():
             output += self._translate_node(n)
 
         output += "\n\\end{description}\n"
         return output
+
+    def _translate_types(self, types_list):
+        """ Translates the list of types declared in the contract """
+        assert(isinstance(types_list, list))
+
+        types_out = "\\item[Types]\n\t\\bein{itemize}\n"
+
+        for t in types_list:
+            types_out += "\t\t\\item " + self._translate_type(t) + "\n"
+
+        types_out += "\t\\end{itemize}\n"
+        return types_out
+
+    def _translate_type(self, type_declaration):
+        """ Translates one type declaration """
+        assert(isinstance(type_declaration, Type))
+
+        print(type_declaration.get_type_definition())
+
+        type_definition_out = self.visitor.visit(
+            type_declaration.get_type_definition())
+
+        print(type_definition_out)
+
+        return type_declaration.get_type_name() + " : " + type_definition_out
 
     def _translate_node(self, node):
         """Traslates one node """
@@ -43,7 +74,7 @@ class Latex_Translator(Translator):
         assumes_out = self._translate_assumes(short_name, assumes)
         guarantees_out = self._translate_guarantees(short_name, guarantees)
 
-        return "\item[" + node_name + "] ~\\\\\n\\begin{itemize} \n" + topic_list_out + "\n" + assumes_out + "\n" + guarantees_out + "\n\\end{itemize}\n"
+        return "\\item[" + node_name + "] ~\\\\\n\\begin{itemize} \n" + topic_list_out + "\n" + assumes_out + "\n" + guarantees_out + "\n\\end{itemize}\n"
 
     def _translate_topic_list(self, topic_list):
         assert(isinstance(topic_list, list))
@@ -56,7 +87,7 @@ class Latex_Translator(Translator):
 
             topics_out += self._translate_topic(head)
 
-            if tail != None:
+            if tail is not None:
                 if(isinstance(tail, list)):
                     for topic in tail:
                         topics_out += ", " + self._translate_topic(topic)
@@ -102,5 +133,5 @@ class Latex_Translator(Translator):
 
             result = self.visitor.visit(guar)
             guar_out += "  \\item $\\mathcal{G}_" + short_name + \
-                "(\overline{o_" + short_name + "}): " + result + "$\n"
+                "(\\overline{o_" + short_name + "}): " + result + "$\n"
         return guar_out

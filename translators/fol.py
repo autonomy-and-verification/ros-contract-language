@@ -252,6 +252,14 @@ class FOL(Interpreter):
 
         pass
 
+    def type_declaration_part(self, tree):
+        """ Translate a type_declaration_part tree """
+        assert(tree.data == "type_declaration_part")
+        assert(len(tree.children) == 1)
+
+        return self.visit(tree.children[0])
+
+
 # Helper Methods
 
     def binary_infix(self, tree):

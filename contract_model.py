@@ -77,14 +77,15 @@ class Contract(object):
         self.nodes.append(new_node)
 
     def get_types(self):
-
+        assert(isinstance(self.types, list))
         return self.types
 
     def add_type(self, type_name, type_definition):
-
+        assert(isinstance(self.types, list))
         new_type = Type(type_name, type_definition)
 
         self.types.append(new_type)
+        assert(isinstance(self.types, list))
 
     def __str__(self):
         to_string = "contract:" + self.get_contract_name() + "\n"

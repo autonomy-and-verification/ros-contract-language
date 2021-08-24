@@ -7,7 +7,7 @@ type_clause : "types" "{" type_declaration+ "}"
 type_declaration : TYPE_NAME ":" type_declaration_part ";"
 
 TYPE_NAME :  UPPER_NAME
-type_declaration_part :  function_declaration
+type_declaration_part : function_declaration
                       | set
                       | sequence
 
