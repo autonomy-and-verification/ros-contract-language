@@ -1,11 +1,11 @@
 types
 {
-  WayP : REAL x REAL --> NATURAL ;
-  RadStat : {red, orange, green} ;
-//  CommandSet : { move(REAL, REAL), inspect(NATURAL) };
-PositionType : REAL x REAL --> BOOL ;
-AtType: REAL x REAL --> BOOL;
-InspectedType :  NATURAL --> BOOL;
+ WayP : REAL x REAL --> NATURAL ;
+ RadStat : {red, orange, green} ;
+ CommandSet : { move(REAL, REAL), inspect(NATURAL) };
+ PositionType : REAL x REAL --> BOOL ;
+ AtType: REAL x REAL --> BOOL;
+ InspectedType :  NATURAL --> BOOL;
 
 }
 

@@ -38,10 +38,10 @@ class Latex_Translator(Translator):
         """ Translates the list of types declared in the contract """
         assert(isinstance(types_list, list))
 
-        types_out = "\\item[Types]\n\t\\bein{itemize}\n"
+        types_out = "\\item[Types]~\\\\\n\\begin{itemize} \n"
 
         for t in types_list:
-            types_out += "\t\t\\item " + self._translate_type(t) + "\n"
+            types_out += "\t\t\\item $ " + self._translate_type(t) + " $\n"
 
         types_out += "\t\\end{itemize}\n"
         return types_out
@@ -81,7 +81,7 @@ class Latex_Translator(Translator):
 
         topics_out = "  \\item "
         if topic_list != []:
-            topics_out += "topics ($"
+            topics_out += "topics ($ "
 
             head, *tail = topic_list
 
@@ -94,7 +94,7 @@ class Latex_Translator(Translator):
                 else:
                     topics_out += ", " + self._translate_topic(tail)
 
-            topics_out += "$)"
+            topics_out += " $ )"
 
             return topics_out
         else:
@@ -119,8 +119,8 @@ class Latex_Translator(Translator):
         for ass in assumes:
 
             result = self.visitor.visit(ass)
-            ass_out += "  \\item $\\mathcal{A}_" + short_name + \
-                "(\\overline{i_"+short_name+"}): " + result + "$\n"
+            ass_out += "  \\item $ \\mathcal{A}_" + short_name + \
+                "(\\overline{i_"+short_name+"}): " + result + " $\n"
 
         return ass_out
 
@@ -132,6 +132,6 @@ class Latex_Translator(Translator):
         for guar in guarantees:
 
             result = self.visitor.visit(guar)
-            guar_out += "  \\item $\\mathcal{G}_" + short_name + \
-                "(\\overline{o_" + short_name + "}): " + result + "$\n"
+            guar_out += "  \\item $ \\mathcal{G}_" + short_name + \
+                "(\\overline{o_" + short_name + "}): " + result + " $\n"
         return guar_out

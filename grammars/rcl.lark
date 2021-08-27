@@ -102,11 +102,12 @@ term : BOOLEAN
       | set
       | sequence
       | CONSTANT
-      | FOL_NAME "(" terms ")" -> function_application
+      | function_application
       | "\""  FOL_NAME "\""  -> string_literal
 
+function_application : FOL_NAME "(" terms ")"
 
-set : "{" (VARIABLE|set) ("," (VARIABLE|set))* "}"
+set : "{" (VARIABLE|set|function_application) ("," (VARIABLE|set|function_application))* "}"
     | "{}" -> empty_set
 
 sequence : "<" VARIABLE ("," VARIABLE)* ">"

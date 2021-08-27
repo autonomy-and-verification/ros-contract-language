@@ -237,7 +237,6 @@ class FOL(Interpreter):
     def set(self, tree):
         """Translates a set tree """
         assert(tree.data == "set")
-
         pass
 
     def string_literal(self, tree):
@@ -261,6 +260,7 @@ class FOL(Interpreter):
 
 
 # Helper Methods
+
 
     def binary_infix(self, tree):
         """ Helps translate any binary infix operator """

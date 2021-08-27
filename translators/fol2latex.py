@@ -209,13 +209,19 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = self.make_string(head)
+        if isinstance(head, Tree):
+            vars = self.make_string(self.visit(head))
+        else:
+            vars = self.make_string(head)
 
         for var in tail:
-            vars += ", " + self.make_string(var)
+            if isinstance(head, Tree):
+                vars += ", " + self.make_string(self.visit(head))
+            else:
+                vars += ", " + self.make_string(head)
 
         assert(isinstance(vars, str))
-        return "\{" + vars + "\}"
+        return "\\{" + vars + "\\}"
 
     def empty_set(self, tree):
         """ Translates an empty_set tree """
