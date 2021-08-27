@@ -216,12 +216,36 @@ class FOL2Latex(FOL):
 
         for var in tail:
             if isinstance(head, Tree):
-                vars += ", " + self.make_string(self.visit(head))
+                vars += ", " + self.make_string(self.visit(var))
             else:
-                vars += ", " + self.make_string(head)
+                vars += ", " + self.make_string(var)
 
         assert(isinstance(vars, str))
         return "\\{" + vars + "\\}"
+
+    def sequence(self, tree):
+        """ Translates a sequence tree """
+        assert(tree.data == "sequence")
+
+        if len(tree.children) == 3:
+            #It's a collection, so use the helper method
+            vars = self.collection_range(tree)
+        else:
+            head, *tail = tree.children
+
+            if isinstance(head, Tree):
+                vars = self.make_string(self.visit(head))
+            else:
+                vars = self.make_string(head)
+
+            for var in tail:
+                if isinstance(head, Tree):
+                    vars += ", " + self.make_string(self.visit(var))
+                else:
+                    vars += ", " + self.make_string(var)
+
+        assert(isinstance(vars, str))
+        return "\\langle " + vars + " \\rangle"
 
     def empty_set(self, tree):
         """ Translates an empty_set tree """
@@ -293,6 +317,7 @@ class FOL2Latex(FOL):
 
         return inputs_out + " \\rightarrow " + outputs_out
 
+# I think these are not being called
     def function_input(self, tree):
         """ Translates function_input tree """
         assert(tree.data == "function_input")
@@ -325,3 +350,21 @@ class FOL2Latex(FOL):
         assert(isinstance(right, str))
 
         return left, right
+
+    def collection_range(self, tree):
+        """ Helps translate a range in a collection_range
+            i.e. x upto y, in a set, sequence, or tuple """
+
+        first_elem = tree.children[0]
+        last_elem = tree.children[2]
+        if isinstance(first_elem, Tree):
+            vars = self.make_string(self.visit(first_elem))
+        else:
+            vars = self.make_string(first_elem)
+        vars += " upto "
+        if isinstance(last_elem, Tree):
+            vars += self.make_string(self.visit(last_elem))
+        else:
+            vars += self.make_string(last_elem)
+
+        return vars

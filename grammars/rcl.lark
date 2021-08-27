@@ -10,6 +10,7 @@ TYPE_NAME :  UPPER_NAME
 type_declaration_part : function_declaration
                       | set
                       | sequence
+                      | tuple
 
 node_clause: "node" NODE_NAME "{" inputs outputs topic_list (assume)* (guarantee)+   "}"
 
@@ -110,10 +111,14 @@ function_application : FOL_NAME "(" terms ")"
 set : "{" (VARIABLE|set|function_application) ("," (VARIABLE|set|function_application))* "}"
     | "{}" -> empty_set
 
-sequence : "<" VARIABLE ("," VARIABLE)* ">"
+UPTO : "upto"
+
+sequence : "<" VARIABLE ((UPTO VARIABLE)? |("," VARIABLE)*) ">"
         | "<>" -> empty_sequence
 
+
 tuple : "(" VARIABLE ("," VARIABLE)* ")"
+
 
 
 variables : "(" (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*  ")" -> tuple

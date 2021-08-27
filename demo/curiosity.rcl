@@ -1,7 +1,13 @@
+types
+{
+  MessageType : (g, f, r) ;
+  Wayp : < w1 upto wn > ;
+}
+
 node Agent
 {
-//input: msg?, output of R and n in NATURAL and Wayp = < w1 upto wn > and W = Wayp
-//output: act
+inputs (msg : MISSING_TYPE , n : NATURAL , w : Wayp)
+outputs (act : MISSING_TYPE)
 
 topics()
 
@@ -9,35 +15,37 @@ assume( Guarantee_of(R) )
 
 // equals or assignment?
 // Also...what the hell is this?
-guarantee( W == Wayp <=> W == {} )
+guarantee( w == Wayp <=> w == {} )
 
 // I think "act = patrol.." here should be an assignment
 // from diagram: %when it receives start from rosbridge it sends the message to patrol the first waypoint
 //guarantee( start -> act = patrol(w1) and w1 !in W )
-guarantee( msg ==  start -> act == patrol(w1) and w1 !in W )
+guarantee( msg ==  start -> act == patrol(w1) and w1 !in w )
 
 // from diagram: %when it receives a success move result message, then it sends the message to patrol the next waypoint
 // Again, I think "act = patrol..." should be assignment. Also, what the hell? Why is this "patrol(w1)" again!?
-guarantee( move_result == TRUE -> act == patrol(w1) and w1 !in W )
+guarantee( move_result == TRUE -> act == patrol(w1) and w1 !in w )
 }
 
 node Rosbridge
 {
-//input: output of A and output of As and output of Ms and output of Ws
-//output: msg
+// as.r, ms.r, ws.r...
+inputs (act : MISSING_TYPE , r : BOOl , r : BOOl , r : BOOl)
+outputs ( msg : MISSING_TYPE)
 
 topics()
 
 assume( Guarantee_of(A) and Guarantee_of(As) and Guarantee_of(Ms) and Guarantee_of(Ws) )
 
 //I think the "msg = ..." should be assignments
-guarantee(msg == act or msg == output_of(As) or msg == output_of(Ms) or msg == output_of(Ws) )
+// as.r, ms.r, ws.r...
+guarantee(msg == act or msg == r or msg == r or msg == r )
 }
 
 node ArmClient
 {
-//input: output of R and output of As
-//output: Amsg = (g, f, r)
+inputs ( msg : MISSING_TYPE , r: BOOL)
+outputs (a_msg : MessageType  )
 
 topics()
 
@@ -51,8 +59,8 @@ guarantee( g == act)
 node ArmServer
 {
 
-//input: output of Ac
-//output: r in {TRUE, FALSE}
+inputs ( a_msg : MessageType)
+outputs ( r : BOOl )
 
 topics()
 
@@ -63,8 +71,8 @@ guarantee(r == TRUE -> executed(g) == TRUE )
 
 node MastClient
 {
-//input: output of Or and output of Ms
-//output: Amsg = (g, f, r)
+inputs ( msg : MISSING_TYPE , r: BOOL)
+outputs (a_msg : MessageType  )
 
 topics()
 
@@ -77,8 +85,8 @@ guarantee(g == act)
 
 node MastServer
 {
-//input: output of Mc
-//output: r in {TRUE, FALSE}
+inputs ( a_msg : MessageType)
+outputs ( r : BOOl )
 
 topics()
 
@@ -89,8 +97,8 @@ guarantee(r == TRUE -> executed(g) == TRUE)
 
 node WheelsClient
 {
-//input: output of R and output of Ws
-//output: Amsg =(g, f, r)
+inputs ( msg : MISSING_TYPE , r: BOOL)
+outputs (a_msg : MessageType  )
 
 topics()
 
@@ -103,12 +111,12 @@ guarantee( g == act)
 
 node WheelsServer
 {
-//input: output of Wc
-//output: r in {TRUE, FALSE}
+inputs ( a_msg : MessageType)
+outputs ( r : BOOL)
 
 topics()
 
-assume(Guarantee_of(Wc) )
+assume( g == act)
 
 guarantee( r == TRUE -> executed(g) == TRUE )
 }

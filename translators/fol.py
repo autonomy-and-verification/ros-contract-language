@@ -239,6 +239,12 @@ class FOL(Interpreter):
         assert(tree.data == "set")
         pass
 
+    def sequence(self, tree):
+        """ TRanslates a sequence tree """
+        assert(tree.data == "sequence")
+
+        pass
+
     def string_literal(self, tree):
         """ Translate a string literal tree """
         assert(tree.data == "string_literal")

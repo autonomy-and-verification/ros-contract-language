@@ -40,10 +40,13 @@ class Latex_Translator(Translator):
 
         types_out = "\\item[Types]~\\\\\n\\begin{itemize} \n"
 
+        if not types_list:
+            types_out += "\t\t\\item No Types Declared \n"
+
         for t in types_list:
             types_out += "\t\t\\item $ " + self._translate_type(t) + " $\n"
 
-        types_out += "\t\\end{itemize}\n"
+        types_out += "\\end{itemize}\n"
         return types_out
 
     def _translate_type(self, type_declaration):
