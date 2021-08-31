@@ -69,20 +69,55 @@ class Latex_Translator(Translator):
         node_name = node.get_node_name()
         short_name = node_name[0].upper()
 
+        inputs = node.get_input_list()
+        outputs = node.get_output_list()
         topic_list = node.get_topic_list()
         assumes = node.get_assumes()
         guarantees = node.get_guarantees()
 
+        inputs_out = self._translate_io("inputs", inputs)
+        outputs_out = self._translate_io("outputs", outputs)
         topic_list_out = self._translate_topic_list(topic_list)
         assumes_out = self._translate_assumes(short_name, assumes)
         guarantees_out = self._translate_guarantees(short_name, guarantees)
 
-        return "\\item[" + node_name + "] ~\\\\\n\\begin{itemize} \n" + topic_list_out + "\n" + assumes_out + "\n" + guarantees_out + "\n\\end{itemize}\n"
+        return "\\item[" + node_name + "] ~\\\\\n\\begin{itemize} \n" +\
+            inputs_out + "\n" +\
+            outputs_out + "\n" +\
+            topic_list_out + "\n" +\
+            assumes_out + "\n" +\
+            guarantees_out +\
+            "\n\\end{itemize}\n"
+
+    def _translate_io(self, list_name, io_list):
+        assert(isinstance(io_list, list))
+
+        io_out = " \t\\item "
+        if io_list != []:
+            io_out += list_name + " ($ "
+
+            head, *tail = io_list
+
+            io_out += self._translate_io_var(head)
+
+            if tail is not None:
+                for io_var in tail:
+                    io_out += ", " + self._translate_io_var(io_var)
+
+            io_out += "$ )"
+            return io_out
+        else:
+            return io_out + list_name + " ()"
+
+    def _translate_io_var(self, io_var):
+
+        name, type = io_var
+        return name.replace('_', '\\_') + " : " + type.replace('_', '\\_')
 
     def _translate_topic_list(self, topic_list):
         assert(isinstance(topic_list, list))
 
-        topics_out = "  \\item "
+        topics_out = " \t \\item "
         if topic_list != []:
             topics_out += "topics ($ "
 
@@ -101,7 +136,7 @@ class Latex_Translator(Translator):
 
             return topics_out
         else:
-            return topics_out + "topics ()"
+            return topics_out + "topics () "
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
@@ -109,10 +144,13 @@ class Latex_Translator(Translator):
 
         if len(topic) == 3:
             type_name, topic_name, matches = topic
-            return type_name.replace('_', '\\_') + " " + topic_name.replace('_', '\\_') + " matches: " + matches.replace('_', '\\_')
+            return type_name.replace('_', '\\_') + " " + \
+                topic_name.replace('_', '\\_') + " matches: " + \
+                matches.replace('_', '\\_')
         elif len(topic) == 2:
             type_name, topic_name = topic
-            return type_name.replace('_', '\\_') + " " + topic_name.replace('_', '\\_')
+            return type_name.replace('_', '\\_') + " " +\
+                topic_name.replace('_', '\\_')
 
     def _translate_assumes(self, short_name, assumes):
         assert(isinstance(assumes, list))

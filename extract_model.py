@@ -37,21 +37,37 @@ class Extractor(object):
 
             self.extracted_contract.add_type(name, type)
 
-    def __node(self, node):
+    def __node(self, node_clause):
         """Traslates one node clause """
 
-        assert(isinstance(node[0], Token))
-        node_name = node[0]
+        assert(isinstance(node_clause, list))
+        assert(isinstance(node_clause[0], Token))
+        assert(node_clause[0].type == "NODE_NAME")
 
-        topic_list = node[3].children
-        assumes, guarantees = self._extract_assumes_and_gurantees(node[2:])
+        node_name = node_clause[0]
 
+        assert(isinstance(node_clause[1], Tree))
+        assert(node_clause[1].data == "inputs")
+        input_list = node_clause[1].children
+
+        assert(isinstance(node_clause[2], Tree))
+        assert(node_clause[2].data == "outputs")
+        output_list = node_clause[2].children
+
+        assert(isinstance(node_clause[3], Tree))
+        assert(node_clause[3].data == "topic_list")
+        topic_list = node_clause[3].children
+
+        assumes, guarantees = self._extract_assumes_and_gurantees(node_clause[4:])
+
+        input_list_out = self._extract_io(input_list)
+        output_list_out = self._extract_io(output_list)
         topic_list_out = self._extract_topic_list(topic_list)
         assumes_out = self._extract_assumes(assumes)
         guarantees_out = self._extract_guarantees(guarantees)
 
         self.extracted_contract.add_node(
-            node_name, topic_list_out, assumes_out, guarantees_out)
+            node_name, input_list_out, output_list_out, topic_list_out, assumes_out, guarantees_out)
 
     def _extract_assumes_and_gurantees(self, node_list):
 
@@ -67,6 +83,31 @@ class Extractor(object):
                 pass
 
         return assumes, guarantees
+
+    def _extract_io(self, io_list):
+        assert(isinstance(io_list, list))
+
+        if io_list != []:
+            io_out = []
+            head, *tail = io_list
+
+            io_out.append(self._extract_io_var(head.children[0]))
+
+            if tail is not None:
+                for io in tail:
+                    io_out.append(self._extract_io_var(io.children[0]))
+
+            return io_out
+        else:
+            return []
+
+    def _extract_io_var(self, io_var):
+        assert(isinstance(io_var, Tree))
+
+        print(io_var)
+        name, type = io_var.children
+
+        return (name, type)
 
     def _extract_topic_list(self, topic_list):
 
@@ -113,7 +154,7 @@ class Extractor(object):
         return guar_out
 
     def _extract_topic(self, topic):
-
+        assert(isinstance(topic, Tree))
         assert(len(topic.children) in {2, 3})
 
         if len(topic.children) == 3:
@@ -129,7 +170,7 @@ class Extractor(object):
 
 if __name__ == "__main__":
     from lark import Lark
-    test_name = "test_contract"
+    test_name = "navigation"
 
     parser = Lark(open("grammars/rcl.lark").read())
 

@@ -20,11 +20,11 @@ io_var : VAR_NAME ":" TYPE_NAME
 
 VAR_NAME : LOWER_NAME
 
-inputs : "inputs" "(" (input ("," input)*)?  ")" | ("input" "(" input ")")*
+inputs : "inputs" "(" (input ("," input)*)?  ")" 
 
 input : io_var
 
-outputs :  "outputs" "(" (output ("," output)*)?  ")" | ("output" "(" output ")")*
+outputs :  "outputs" "(" (output ("," output)*)?  ")"
 
 output : io_var
 

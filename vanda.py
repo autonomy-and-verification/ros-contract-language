@@ -17,10 +17,10 @@ import os
 
 VERSION_NUM = 0.1
 
-## Arguments
+# Arguments
 argParser = argparse.ArgumentParser(prog='Vanda')
 argParser.add_argument(
-    "grammar", help="The grammar to parse with.", default="rcl")
+    "grammar", help="The grammar to parse with.", default="rcl", nargs='?')
 argParser.add_argument("contract", help="The contract file to be parsed.")
 argParser.add_argument("-t", help="The translator to use",
                        choices=['mirror', 'rosmon_rml', 'latex'], default='mirror')
@@ -128,7 +128,7 @@ elif TRANSLATOR == "latex":
     latex_output = latex_translator.translate(contract_obj)
     print(latex_output)
 
-    latex_main_file = "\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{inputenc}\n\\usepackage[english]{babel}\n\\usepackage{amsmath}\n\\usepackage{lmodern}\n\\usepackage[left=4cm,right=4cm,top=4cm,bottom=4cm]{geometry}\n\\usepackage[UKenglish]{isodate}\n\\author{Vanda v"+str(
+    latex_main_file = "\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{inputenc}\n\\usepackage[english]{babel}\n\\usepackage{amsmath}\n\\usepackage{amsfonts}\n\\usepackage{lmodern}\n\\usepackage[left=4cm,right=4cm,top=4cm,bottom=4cm]{geometry}\n\\usepackage[UKenglish]{isodate}\n\\author{Vanda v"+str(
         VERSION_NUM)+"}\n\\title{Contract for: "+CONTRACT_NAME+"}\\begin{document}\n\\maketitle\n\n\input{" + CONTRACT_NAME+".tex}\n\\end{document}"
 
     output_file = open(OUTPUT_PATH+CONTRACT_NAME+".tex", "w")
