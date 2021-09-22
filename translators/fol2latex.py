@@ -289,12 +289,7 @@ class FOL2Latex(FOL):
         assert(tree.data == "function_declaration")
         assert(len(tree.children) == 2)
 
-        print(tree.children)
-
         inputs, outputs = tree.children
-
-        print(inputs)
-        print(outputs)
 
         inputs_out = ""
         head, *tail = inputs.children
@@ -313,16 +308,12 @@ class FOL2Latex(FOL):
         for input in tail:
             outputs_out += " \\times " + self.make_string((input))
 
-        print(inputs_out)
-
         return inputs_out + " \\rightarrow " + outputs_out
 
 # I think these are not being called
     def function_input(self, tree):
         """ Translates function_input tree """
         assert(tree.data == "function_input")
-
-        print("+++ FUNCTION INPUT")
 
         out = ""
 

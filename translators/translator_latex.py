@@ -53,12 +53,8 @@ class Latex_Translator(Translator):
         """ Translates one type declaration """
         assert(isinstance(type_declaration, Type))
 
-        print(type_declaration.get_type_definition())
-
         type_definition_out = self.visitor.visit(
             type_declaration.get_type_definition())
-
-        print(type_definition_out)
 
         return type_declaration.get_type_name() + " : " + type_definition_out
 
@@ -144,9 +140,21 @@ class Latex_Translator(Translator):
 
         if len(topic) == 3:
             type_name, topic_name, matches = topic
+            matches_out = ""
+
+            if len(matches.children) == 2:
+                pointer, match_name = matches.children
+                pointer = pointer.children[0]
+
+                matches_out = pointer + match_name
+
+            else:
+                matches_out = matches.children[0]
+
             return type_name.replace('_', '\\_') + " " + \
                 topic_name.replace('_', '\\_') + " matches: " + \
-                matches.replace('_', '\\_')
+                matches_out.replace('_', '\\_')
+
         elif len(topic) == 2:
             type_name, topic_name = topic
             return type_name.replace('_', '\\_') + " " +\

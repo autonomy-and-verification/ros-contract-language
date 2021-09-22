@@ -20,7 +20,7 @@ io_var : VAR_NAME ":" TYPE_NAME
 
 VAR_NAME : LOWER_NAME
 
-inputs : "inputs" "(" (input ("," input)*)?  ")" 
+inputs : "inputs" "(" (input ("," input)*)?  ")"
 
 input : io_var
 
@@ -30,8 +30,10 @@ output : io_var
 
 topic_list : "topics" "(" (topic ("," topic)*)? ")"
 
-topic: TYPE FOL_NAME ("matches" "(" FOL_NAME ")" )?
+topic: TYPE FOL_NAME ("matches" "(" topic_match_name ")" )?
 
+topic_match_name : io_pointer? FOL_NAME
+!io_pointer : "in." | "out."
 
 //ros types
 TYPE: "bool"
@@ -98,6 +100,7 @@ terms : term ("," term)*
 term : BOOLEAN
       | BUILTIN ("." BUILTIN)* -> term_builtins
       | VARIABLE
+      | topic_match_name
       | arith -> arithmetic
       | tuple
       | set

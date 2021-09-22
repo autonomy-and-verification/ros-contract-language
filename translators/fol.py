@@ -38,7 +38,6 @@ class FOL(Interpreter):
         """ Translate an atomic_formula tree """
         assert(tree.data == "atomic_formula")
 
-        print(tree)
         if isinstance(tree.children[0], Token):
             token = tree.children[0]
             if token.type == "BOOLEAN":
@@ -264,9 +263,20 @@ class FOL(Interpreter):
 
         return self.visit(tree.children[0])
 
+    def topic_match_name(self, tree):
+        """ Translated a topic_match_name tree """
+        assert(len(tree.children) in {1, 2})
+
+        if len(tree.children) == 2:
+            pointer, name = tree.children
+            topic_match_name_out = pointer.children[0]+str(name)
+        else:
+            topic_match_name_out = tree.children[0]
+
+        return topic_match_name_out
+
 
 # Helper Methods
-
 
     def binary_infix(self, tree):
         """ Helps translate any binary infix operator """
