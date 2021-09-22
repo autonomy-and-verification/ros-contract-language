@@ -209,13 +209,43 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = self.make_string(head)
+        if isinstance(head, Tree):
+            vars = self.make_string(self.visit(head))
+        else:
+            vars = self.make_string(head)
 
         for var in tail:
-            vars += ", " + self.make_string(var)
+            if isinstance(head, Tree):
+                vars += ", " + self.make_string(self.visit(var))
+            else:
+                vars += ", " + self.make_string(var)
 
         assert(isinstance(vars, str))
-        return "\{" + vars + "\}"
+        return "\\{" + vars + "\\}"
+
+    def sequence(self, tree):
+        """ Translates a sequence tree """
+        assert(tree.data == "sequence")
+
+        if len(tree.children) == 3:
+            #It's a collection, so use the helper method
+            vars = self.collection_range(tree)
+        else:
+            head, *tail = tree.children
+
+            if isinstance(head, Tree):
+                vars = self.make_string(self.visit(head))
+            else:
+                vars = self.make_string(head)
+
+            for var in tail:
+                if isinstance(head, Tree):
+                    vars += ", " + self.make_string(self.visit(var))
+                else:
+                    vars += ", " + self.make_string(var)
+
+        assert(isinstance(vars, str))
+        return "\\langle " + vars + " \\rangle"
 
     def empty_set(self, tree):
         """ Translates an empty_set tree """
@@ -243,25 +273,70 @@ class FOL2Latex(FOL):
         assert(isinstance(vars, str))
         return vars
 
-    def predicate(self, tree):
-        """ Translate a predicate tree """
-        assert(tree.data == "predicate")
+    def function_application(self, tree):
+        """ Translate a function_application tree """
+        assert(tree.data == "function_application")
         assert(len(tree.children) == 2)
 
         name, terms = tree.children
 
-        return self.make_string(name) + self.visit(terms)
+        terms = self.visit(tree.children[1])
 
-    def function(self, tree):
-        """ Translate a function tree """
-        assert(tree.data == "function")
+        return self.make_string(name) + "(" + self.make_string(terms) + ")"
+
+    def function_declaration(self, tree):
+        """ Translates a function_declaration tree """
+        assert(tree.data == "function_declaration")
         assert(len(tree.children) == 2)
 
-        name, terms = tree.children
+        print(tree.children)
 
-        return self.make_string(name) + self.visit(terms)
+        inputs, outputs = tree.children
 
+        print(inputs)
+        print(outputs)
 
+        inputs_out = ""
+        head, *tail = inputs.children
+        assert(isinstance(head, Token))
+        inputs_out += self.make_string(head)
+
+        for input in tail:
+            assert(isinstance(input, Token))
+            inputs_out += " \\times " + self.make_string((input))
+
+        outputs_out = ""
+        head, *tail = outputs.children
+        assert(isinstance(head, Token))
+        outputs_out += self.make_string(head)
+
+        for input in tail:
+            outputs_out += " \\times " + self.make_string((input))
+
+        print(inputs_out)
+
+        return inputs_out + " \\rightarrow " + outputs_out
+
+# I think these are not being called
+    def function_input(self, tree):
+        """ Translates function_input tree """
+        assert(tree.data == "function_input")
+
+        print("+++ FUNCTION INPUT")
+
+        out = ""
+
+        return out
+
+    def function_output(self, tree):
+        """ Translates function_output tree """
+        assert(tree.data == "function_output")
+
+        out = ""
+
+        return out
+
+        pass
 # Helper Methods
 
     def binary_infix(self, tree):
@@ -275,3 +350,21 @@ class FOL2Latex(FOL):
         assert(isinstance(right, str))
 
         return left, right
+
+    def collection_range(self, tree):
+        """ Helps translate a range in a collection_range
+            i.e. x upto y, in a set, sequence, or tuple """
+
+        first_elem = tree.children[0]
+        last_elem = tree.children[2]
+        if isinstance(first_elem, Tree):
+            vars = self.make_string(self.visit(first_elem))
+        else:
+            vars = self.make_string(first_elem)
+        vars += " upto "
+        if isinstance(last_elem, Tree):
+            vars += self.make_string(self.visit(last_elem))
+        else:
+            vars += self.make_string(last_elem)
+
+        return vars

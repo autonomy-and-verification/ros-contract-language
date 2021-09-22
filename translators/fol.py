@@ -193,7 +193,7 @@ class FOL(Interpreter):
         arith_tree = tree.children[0]
         assert(arith_tree.data == "arith")
 
-        #(VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
+        # (VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
 
         left = self.make_string(arith_tree.children[0])
         op = self.make_string(arith_tree.children[1])
@@ -237,28 +237,13 @@ class FOL(Interpreter):
     def set(self, tree):
         """Translates a set tree """
         assert(tree.data == "set")
-
         pass
 
-    def predicate(self, tree):
-        """ Translate a predicate tree """
-        assert(tree.data == "predicate")
+    def sequence(self, tree):
+        """ TRanslates a sequence tree """
+        assert(tree.data == "sequence")
 
-        assert(isinstance(tree.children[0], Token))
-        pred_name = self.make_string(tree.children[0])
-        pred_terms = self.visit(tree.children[1])
-
-        return pred_name + "(" + self.make_string(pred_terms) + ")"
-
-    def function(self, tree):
-        """ Translate a function tree """
-        assert(tree.data == "function")
-
-        assert(isinstance(tree.children[0], Token))
-        func_name = self.make_string(tree.children[0])
-        func_args = self.visit(tree.children[1])
-
-        return func_name + "(" + self.make_string(func_args) + ")"
+        pass
 
     def string_literal(self, tree):
         """ Translate a string literal tree """
@@ -272,7 +257,16 @@ class FOL(Interpreter):
 
         pass
 
+    def type_declaration_part(self, tree):
+        """ Translate a type_declaration_part tree """
+        assert(tree.data == "type_declaration_part")
+        assert(len(tree.children) == 1)
+
+        return self.visit(tree.children[0])
+
+
 # Helper Methods
+
 
     def binary_infix(self, tree):
         """ Helps translate any binary infix operator """

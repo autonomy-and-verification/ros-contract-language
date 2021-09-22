@@ -1,16 +1,32 @@
-start: node_clause+
+start: contract_clause+
+
+contract_clause: node_clause | type_clause
+
+type_clause : "types" "{" type_declaration+ "}"
+
+type_declaration : TYPE_NAME ":" type_declaration_part ";"
+
+TYPE_NAME :  UPPER_NAME
+type_declaration_part : function_declaration
+                      | set
+                      | sequence
+                      | tuple
 
 node_clause: "node" NODE_NAME "{" inputs outputs topic_list (assume)* (guarantee)+   "}"
 
 NODE_NAME: LETTER+
 
-inputs : "inputs" "(" (input ("," input))*  ")" | ("input" "(" input ")")*
+io_var : VAR_NAME ":" TYPE_NAME
 
-input : formula
+VAR_NAME : LOWER_NAME
 
-outputs :  "outputs" "(" (output ("," output))*  ")" | ("output" "(" output ")")*
+inputs : "inputs" "(" (input ("," input)*)?  ")" 
 
-output : formula
+input : io_var
+
+outputs :  "outputs" "(" (output ("," output)*)?  ")"
+
+output : io_var
 
 topic_list : "topics" "(" (topic ("," topic)*)? ")"
 
@@ -59,7 +75,13 @@ atomic_formula  : BOOLEAN
                 | term "<" term -> lt
                 | term ">" term -> gt
                 | term COMPARE_OP term COMPARE_OP term -> var_range
-                | PRED_NAME "(" terms ")" -> predicate
+                | FOL_NAME "(" terms ")" -> function_application
+
+
+
+function_declaration: function_input "-->" function_output
+function_input : BUILTIN ("x" BUILTIN)*
+function_output: BUILTIN ("x" BUILTIN)*
 
 COMPARE_OP : "<=" | ">=" | "<" | ">"
 
@@ -69,7 +91,7 @@ ARITH_OP: "+" | "-" | "*" | "/"
 
 BOOLEAN : "TRUE" | "FALSE"
 
-BUILTIN : "REAL" | "INTEGER" | "NATURAL"
+BUILTIN : "REAL" | "INTEGER" | "NATURAL" | "BOOL"
 
 terms : term ("," term)*
 
@@ -81,17 +103,22 @@ term : BOOLEAN
       | set
       | sequence
       | CONSTANT
-      | FUNC_NAME "(" terms ")" -> function
+      | function_application
       | "\""  FOL_NAME "\""  -> string_literal
 
+function_application : FOL_NAME "(" terms ")"
 
-set : "{" (VARIABLE|set) ("," (VARIABLE|set))* "}"
+set : "{" (VARIABLE|set|function_application) ("," (VARIABLE|set|function_application))* "}"
     | "{}" -> empty_set
 
-sequence : "<" VARIABLE ("," VARIABLE)* ">"
+UPTO : "upto"
+
+sequence : "<" VARIABLE ((UPTO VARIABLE)? |("," VARIABLE)*) ">"
         | "<>" -> empty_sequence
 
+
 tuple : "(" VARIABLE ("," VARIABLE)* ")"
+
 
 
 variables : "(" (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*  ")" -> tuple
@@ -105,12 +132,9 @@ formula_variables_part : variables "in" (set|BUILTIN|VARIABLE) ("," (set|BUILTIN
 VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME
 
-
-FUNC_NAME: (LCASE_LETTER|DIGIT) ("'"|"_"|LETTER|DIGIT)*
-PRED_NAME: (UCASE_LETTER|DIGIT) ("'"|"_"|LETTER|DIGIT)*
-
-
 FOL_NAME: ("'"|"_"|LETTER|DIGIT)("'"|"_"|LETTER|DIGIT)*
+LOWER_NAME: (LCASE_LETTER|DIGIT) ("'"|"_"|LETTER|DIGIT)*
+UPPER_NAME: (UCASE_LETTER|DIGIT) ("'"|"_"|LETTER|DIGIT)*
 
 %import common.DIGIT
 %import common.LETTER
