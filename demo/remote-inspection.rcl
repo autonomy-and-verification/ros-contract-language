@@ -1,14 +1,15 @@
 node agent
 {
 
+// in.var ??
 inputs( output_of(navigation), output_of(radiationSensor),
-  wayP : REAL x REAL --> NATURAL )
+  wayP : REAL x REAL --> NATURAL; matches(int16 wayP)  )
 
 outputs( command in {move(REAL, REAL), inspect(NATURAL) } )
 
 topics(
-gazebo_radiation_plugins/Command command matches(command),
-gazebo_radiation_plugins/Inspection inspected matches(inspected),
+gazebo_radiation_plugins/Command command matches(out.command),
+gazebo_radiation_plugins/Inspection inspected matches(in.inspected),
 gazebo_radiation_plugins/At at matches(at),
 int16 wayP matches(wayP),
 string radiationStatus matches(radiationStatus)
@@ -25,7 +26,8 @@ forall(x', y' in REAL, i in NATURAL |
   exists(x, y in REAL | wayP(x, y) == i + 1 and command == move(x, y) )
 
   //Kinda unhappy about the last ==, in my head it should be = or := but oh well.
-  and at(x', y') == TRUE and wayP(x', y') == i and inspected(i) == FALSE -> command == inspect(i)
+  // out.command because it goes on the output stream.
+  and at(x', y') == TRUE and wayP(x', y') == i and inspected(i) == FALSE -> out.command == inspect(i)
 
   and radiationStatus in {red, orange} or not exists( x, y in REAL | wayP(x, y) == i + 1 )
   -> exists (x'', y'' in REAL | wayP(x'', y'') == 0 and command == move(x'', y'') )
@@ -60,7 +62,7 @@ outputs( at: REAL x REAL --> BOOL )
 topics(
 gazebo_radiation_plugins/Command command matches(command),
 int16 currentLoc matches(position),
-gazebo_radiation_plugins/At at matches() at)
+gazebo_radiation_plugins/At at matches(at) )
 
 assume(exists_unique(x, y in REAL | position(x,y) == TRUE ) )
 
