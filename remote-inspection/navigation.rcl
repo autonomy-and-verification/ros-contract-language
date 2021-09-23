@@ -1,10 +1,14 @@
 node navigation
 {
 
+inputs( position : PositionType, command : CommandSet )
+
+outputs( at: AtType )
+
 topics(
-gazebo_radiation_plugins/Command command,
-int16 currentLoc,
-gazebo_radiation_plugins/At at)
+gazebo_radiation_plugins/Command command matches(command),
+int16 currentLoc matches(position),
+gazebo_radiation_plugins/At at matches(at))
 
 assume(exists_unique(x, y in REAL | position(x,y) == TRUE ) )
 

@@ -1,14 +1,17 @@
 node radiationSensor
 {
 
-topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r,
-gazebo_radiation_plugins/Command command,
-gazebo_radiation_plugins/Inspection inspected,
-string radiationStatus )
+inputs( r : REAL , command : CommandSet)
 
-assume(
-0 <= r
-)
+outputs( radiationStatus : RadStat, inspected : InspectedType  )
+
+
+topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r matches(r),
+gazebo_radiation_plugins/Command command matches(command),
+gazebo_radiation_plugins/Inspection inspected matches(inspected),
+string radiationStatus matches(radiationStatus) )
+
+assume( 0 <= r )
 
 guarantee(
 forall( i in NATURAL | command == inspect(i) ->
