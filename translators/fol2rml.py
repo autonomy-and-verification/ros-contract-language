@@ -27,15 +27,19 @@ class FOL2RML(FOL):
     def implies(self, tree):
         """ Translate an implies tree """
         assert(tree.data == "implies")
+
         event_type1 = self.visit(self.neg(tree.children[0]))
         event_type2 = self.visit(tree.children[1])
+
         return "(" + event_type1 + " \\/ " + event_type2 + ")"
 
     def equals(self, tree):
         """ Translate an equals tree """
         assert(tree.data == "equals")
+
         eq_left = self.visit(tree.children[0])
         eq_right = self.visit(tree.children[1])
+
         self.count = self.count + 1
         # if guarantee.children[0].data == "string_literal" and isinstance(guarantee.children[1], lexer.Token):
         if eq_right in self.variables:
@@ -99,17 +103,48 @@ class FOL2RML(FOL):
         assert(tree.data == "forall")
         vstr = ""
         first = True
+
         for v in tree.children[0].children:
-            self.variables.add(str(v))
+            print(v)
+            print(type(v))
+            vars = self.visit(v)
+            print("!!")
+            print(vars)
+        #    assert(False)
+            self.variables.add(str(vars))
             if first:
                 first = False
             else:
                 vstr += ","
-            vstr += str(v)
+            vstr += str(vars)
         event_type = self.visit(tree.children[1])
         for v in tree.children[0].children:
-            self.variables.remove(str(v))
+            vars = self.visit(v)
+            self.variables.remove(str(vars))
         return "{ let " + vstr + "; " + event_type + " }"
+
+# MATT COPIED THIS IN AND EDITED IT
+    def formula_variables_part(self, tree):
+        """ Translate a formula_variables_part tree """
+        assert(tree.data == "formula_variables_part")
+        assert(len(tree.children) == 2)
+
+        vars_extract, sets_extract = tree.children
+
+        print(vars_extract)
+        vars_out = ""
+        for var in vars_extract.children:
+            print("£")
+            print(str(var))
+            vars_out += str(var)
+
+#        if isinstance(sets_extract, Token):
+#            sets_out = self.make_string(sets_extract)
+#        elif isinstance(sets_extract, Tree):
+#            sets_out = self.visit(sets_extract)
+
+        return vars_out #+ " \\in " + sets_out
+###
 
     def exists(self, tree):
         """ Translate a exists tree """
@@ -117,36 +152,54 @@ class FOL2RML(FOL):
         vstr = ""
         first = True
         for v in tree.children[0].children:
-            self.variables.add(str(v))
+
+            vars = self.visit(v)
+            self.variables.add(str(vars))
             if first:
                 first = False
             else:
                 vstr += ","
-            vstr += str(v)
+            vstr += str(vars)
         event_type = self.visit(tree.children[1])
         for v in tree.children[0].children:
-            self.variables.remove(str(v))
+            vars = self.visit(v)
+            self.variables.remove(str(vars))
         return "{ let " + vstr + "; (" + event_type + " Any*) \\/ (Any)" + ") }"
 
-    def terms(self, tree):
-        """ Translate a terms tree """
-        assert(tree.data == "terms")
-        return self.visit(tree.children)
+## MATT Copied this from above, but it might need a different translation
+    def exists_unique(self, tree):
+        """ Translate a exists_unique tree """
+        assert(tree.data == "exists_unique")
+        assert(len(tree.children) == 2)
 
-    def term(self, tree):
-        """ Translate a term tree """
-        assert(tree.data == "term")
-        return tree.children[0]
+        vstr = ""
+        first = True
+        for v in tree.children[0].children:
 
-    def predicate(self, tree):
-        """ Translate a predicate tree """
-        assert(tree.data == "predicate")
-        pass
+            vars = self.visit(v)
+            self.variables.add(str(vars))
+            if first:
+                first = False
+            else:
+                vstr += ","
+            vstr += str(vars)
+        event_type = self.visit(tree.children[1])
+        for v in tree.children[0].children:
+            vars = self.visit(v)
+            self.variables.remove(str(vars))
+        return "{ let " + vstr + "; (" + event_type + " Any*) \\/ (Any)" + ") }"        
 
-    def function(self, tree):
-        """ Translate a function tree """
-        assert(tree.data == "function")
-        pass
+
+## REMOVED BY MATT
+#    def terms(self, tree):
+#       """ Translate a terms tree """
+#        assert(tree.data == "terms")
+#        return self.visit(tree.children)
+
+#    def term(self, tree):
+#        """ Translate a term tree """
+#        assert(tree.data == "term")
+#        return self.visit(tree.children[0])
 
     def sub_formula(self, tree):
         """ Translate a function tree """
@@ -197,5 +250,96 @@ class FOL2RML(FOL):
                 term.children[0] = term.children[0]
             elif term.data == "atom":
                 term.children[0] = self.neg(term.children[0])
+            #Matt added this bit, please check
+            elif term.data == "not_in":
+                term.data = "in_form"
+
 
             return term
+
+
+# MATT ADDED THESE
+#They're copied from fol2latex so please check
+    def function_application(self, tree):
+        """ Translate a function_application tree """
+        assert(tree.data == "function_application")
+        assert(len(tree.children) == 2)
+
+        name, terms = tree.children
+
+        terms = self.visit(tree.children[1])
+
+        return self.make_string(name) + "(" + self.make_string(terms) + ")"
+
+    def in_form(self, tree):
+        """ Translate an in tree """
+        assert(tree.data == "in_form")
+
+        in_left, in_right = self.binary_infix(tree)
+
+        return in_left + " \\in " + in_right
+
+    def not_in(self, tree):
+        """ Translate a not in tree """
+        assert(tree.data == "not_in")
+        assert(len(tree.children) == 2)
+
+        in_left, in_right = self.binary_infix(tree)
+
+        return in_left + " \\notin " + in_right
+
+    def set(self, tree):
+        """Translates a set tree """
+        assert(tree.data == "set")
+
+        head, *tail = tree.children
+
+        if isinstance(head, Tree):
+            vars = self.make_string(self.visit(head))
+        else:
+            vars = self.make_string(head)
+
+        for var in tail:
+            if isinstance(head, Tree):
+                vars += ", " + self.make_string(self.visit(var))
+            else:
+                vars += ", " + self.make_string(var)
+
+        assert(isinstance(vars, str))
+        return "\\{" + vars + "\\}"
+
+    def leq(self, tree):
+        """ Translate a leq tree """
+        assert(tree.data == "leq")
+        assert(len(tree.children) == 2)
+
+        left, right = self.binary_infix(tree)
+
+        return left + " \\leq " + right
+
+    def geq(self, tree):
+        """ Translate a geq tree """
+        assert(tree.data == "geq")
+        assert(len(tree.children) == 2)
+
+        left, right = self.binary_infix(tree)
+
+        return left + " \\geq " + right
+
+    def lt(self, tree):
+        """ Translate a lt tree """
+        assert(tree.data == "lt")
+        assert(len(tree.children) == 2)
+
+        left, right = self.binary_infix(tree)
+
+        return left + " < " + right
+
+    def gt(self, tree):
+        """ Translate a gt tree """
+        assert(tree.data == "gt")
+        assert(len(tree.children) == 2)
+
+        left, right = self.binary_infix(tree)
+
+        return left + " > " + right

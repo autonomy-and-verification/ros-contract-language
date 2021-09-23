@@ -253,7 +253,7 @@ class FOL(Interpreter):
     def variables(self, tree):
         """ Translate a variables tree """
         assert(tree.data == "variables")
-
+        print("$")
         pass
 
     def type_declaration_part(self, tree):
@@ -279,7 +279,8 @@ class FOL(Interpreter):
 # Helper Methods
 
     def binary_infix(self, tree):
-        """ Helps translate any binary infix operator """
+        """ Helps translate any binary infix operator.
+        Returns the left and right elements of the binary infix operator, as strings """
         assert(len(tree.children) == 2)
 
         left = self.visit(tree.children[0])

@@ -114,8 +114,9 @@ class ROSMon_Translator(Translator):
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
+        assert(len(topic) in {2, 3})
 
-        type, topic_name = topic.split(" ")
+        type, topic_name, *matches = topic
 
         self._add_monitor(type, topic_name)
 
