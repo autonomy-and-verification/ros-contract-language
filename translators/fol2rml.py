@@ -36,10 +36,10 @@ class FOL2RML(FOL):
     def equals(self, tree):
         """ Translate an equals tree """
         assert(tree.data == "equals")
-
+        print(tree)
         eq_left = self.visit(tree.children[0])
         eq_right = self.visit(tree.children[1])
-
+        print(eq_right)
         self.count = self.count + 1
         # if guarantee.children[0].data == "string_literal" and isinstance(guarantee.children[1], lexer.Token):
         if eq_right in self.variables:
@@ -187,7 +187,7 @@ class FOL2RML(FOL):
         for v in tree.children[0].children:
             vars = self.visit(v)
             self.variables.remove(str(vars))
-        return "{ let " + vstr + "; (" + event_type + " Any*) \\/ (Any)" + ") }"        
+        return "{ let " + vstr + "; (" + event_type + " Any*) \\/ (Any)" + ") }"
 
 
 ## REMOVED BY MATT
@@ -259,7 +259,7 @@ class FOL2RML(FOL):
 
 
 # MATT ADDED THESE
-#They're copied from fol2latex so please check
+#They're mostly just copied from fol2latex so please check
     def function_application(self, tree):
         """ Translate a function_application tree """
         assert(tree.data == "function_application")
@@ -343,3 +343,9 @@ class FOL2RML(FOL):
         left, right = self.binary_infix(tree)
 
         return left + " > " + right
+
+    def empty_set(self, tree):
+        """ Translates an empty_set tree """
+        assert(tree.data == "empty_set")
+
+        return "{}"
