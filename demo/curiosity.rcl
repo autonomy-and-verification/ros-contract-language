@@ -15,19 +15,27 @@ assume( Guarantee_of(R) )
 
 // equals or assignment?
 // Also...what the hell is this?
-guarantee( w == Wayp <=> w == {} )
+//guarantee( w == Wayp <=> w == {} )
 
 // I think "act = patrol.." here should be an assignment
 // from diagram: %when it receives start from rosbridge it sends the message to patrol the first waypoint
-//guarantee( start -> act = patrol(w1) and w1 !in W )
-guarantee( msg ==  start -> act == patrol(w1) and w1 !in w )
+//guarantee( start -> act = move_to(w1) and w1 !in W )
+//guarantee( msg ==  start -> act == move_to(w1) and w1 !in w )
 
 // from diagram: %when it receives a success move result message, then it sends the message to patrol the next waypoint
 // Again, I think "act = patrol..." should be assignment. Also, what the hell? Why is this "patrol(w1)" again!?
-guarantee( move_result == TRUE -> act == patrol(w1) and w1 !in w )
+//guarantee( move_result == TRUE -> act == move_to(w1) and w1 !in w )
+
+
+
+guarantee( windy(w) <->  arm_retract == TRUE and mast_down == TRUE )
+
+guarantee( move_to(w) <-> low_rad(w) )
+
+guarantee( forall(w in Wayp | move_to(w) -> wheels_result == TRUE ) ) // implicitly assumes that move_result relates to move_to(w)
 }
 
-node Rosbridge
+node EnvironmentInterface
 {
 // as.r, ms.r, ws.r...
 inputs (act : MISSING_TYPE , r : BOOl , r : BOOl , r : BOOl)
