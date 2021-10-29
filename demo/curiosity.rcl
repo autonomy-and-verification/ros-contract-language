@@ -5,6 +5,7 @@ constants
 
 types
 {
+Wayp = {wayA, wayB, wayC, origin } ;
   LowRad : Wayp --> BOOL ;
   Windy : Wayp --> BOOL ;
 
@@ -28,6 +29,7 @@ assume( TRUE )
 guarantee( forall(w in in.Wayp | (in.windy(w) == TRUE <->  out.arm_down == TRUE and out.mast_down == TRUE )
 and ( out.move_to(w) <-> in.arm_result == TRUE and in.mast_result == TRUE )
 ) )
+// out.move_to(w) seems to be how we say move_to(w) goes on the output stream (iff ... )
 
 
 guarantee( forall(w in in.Wayp | out.move_to(w) <-> in.low_rad(w) == TRUE  ) )
@@ -77,15 +79,17 @@ guarantee(in.wind(w) <= 5 -> out.windy(w) == FALSE ) // wind lower than "5" mean
 
 node ArmClient
 {
-inputs  (arm_down : BOOL)
+inputs  (arm_down : BOOL, arm_result : BOOL)
 
-outputs ( arm_result : BOOL )
+outputs (arm_down : BOOL , arm_result : BOOL )
 
 topics()
 
 assume(  )
 
-guarantee( in.done == TRUE -> out.arm_result == TRUE )
+guarantee( in.arm_down == out.arm_down ) // arm_down remains unchanged
+guarantee( out.arm_result == in.arm_result ) // arm_result (that we pass up) remains unchanged
+
 }
 
 node ArmServer
@@ -98,7 +102,7 @@ topics()
 
 assume( TRUE)
 
-guarantee( out.done == TRUE )
+guarantee( out.arm_result ) -- eventually outputs a result
 }
 
 node MastClient
