@@ -1,0 +1,13 @@
+ET1(i) matches { command : {inspect : [i]} };
+not_ET1(i) not matches ET1(i);
+ET2(i) matches { inspected : [i] };
+not_ET2(i) not matches ET2(i);
+ET3(i) matches { radiationStatus : green };
+not_ET3(i) not matches ET3(i);
+ET4(i) matches { radiationStatus : orange };
+not_ET4(i) not matches ET4(i);
+ET5(i) matches { radiationStatus : red };
+not_ET5(i) not matches ET5(i);
+Any matches {};
+
+Main = ({ let i; (not_ET1(i) \/ ((ET2(i) /\ ((0<=r<120 \/ ET3(i)) /\ (120<=r<250 \/ ET4(i)))) /\ (250 \leq r \/ ET5(i)))) }*);

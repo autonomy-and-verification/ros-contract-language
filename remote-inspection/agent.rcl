@@ -18,7 +18,7 @@ assume( radiationStatus in {red, orange, green} )
 guarantee(
 forall(x', y' in REAL, i in NATURAL |
 
-  at(x', y') == TRUE and wayP(x', y') == i and inspected(i) == TRUE and radiationStatus !in {red, orange} ->
+  at(x', y') == TRUE and i == wayP(x', y') and inspected(i) == TRUE and radiationStatus !in {red, orange} ->
   exists(x, y in REAL | wayP(x, y) == i + 1 and out.command == move(x, y) )
 
   //Kinda unhappy about the last ==, in my head it should be = or := but oh well.

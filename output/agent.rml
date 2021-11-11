@@ -1,0 +1,27 @@
+ET1(i,x'y') matches { at : [x', y'] };
+not_ET1(i,x'y') not matches ET1(i,x'y');
+ET2(i,x'y') matches { i : {wayP : [x', y']} };
+not_ET2(i,x'y') not matches ET2(i,x'y');
+ET3(i,x'y') matches { inspected : [i] };
+not_ET3(i,x'y') not matches ET3(i,x'y');
+ET4(i,xy,x'y') matches { {wayP : [x, y]} : i+1 };
+not_ET4(i,xy,x'y') not matches ET4(i,xy,x'y');
+ET5(i,xy,x'y') matches { out.command : {move : [x, y]} };
+not_ET5(i,xy,x'y') not matches ET5(i,xy,x'y');
+ET6(i,x'y') matches { at : [x', y'] };
+not_ET6(i,x'y') not matches ET6(i,x'y');
+ET7(i,x'y') matches { {wayP : [x', y']} : i };
+not_ET7(i,x'y') not matches ET7(i,x'y');
+ET8(i,x'y') matches { {inspected : [i]} : FALSE };
+not_ET8(i,x'y') not matches ET8(i,x'y');
+ET9(i,x'y') matches { out.command : {inspect : [i]} };
+not_ET9(i,x'y') not matches ET9(i,x'y');
+ET10(i,xy,x'y') matches { {wayP : [x, y]} : i+1 };
+not_ET10(i,xy,x'y') not matches ET10(i,xy,x'y');
+ET11(i,x'y',x''y'') matches { {wayP : [x'', y'']} : 0 };
+not_ET11(i,x'y',x''y'') not matches ET11(i,x'y',x''y'');
+ET12(i,x'y',x''y'') matches { out.command : {move : [x'', y'']} };
+not_ET12(i,x'y',x''y'') not matches ET12(i,x'y',x''y'');
+Any matches {};
+
+Main = ({ let x'y',i; (((ET1(i,x'y') /\ ((ET2(i,x'y') /\ ET3(i,x'y')) /\ (radiationStatus \in \{red, orange\} \/ { let xy; ((ET4(i,xy,x'y') /\ ET5(i,xy,x'y')) Any*) \/ (Any)) }))) /\ ET6(i,x'y')) /\ ((ET7(i,x'y') /\ (not_ET8(i,x'y') \/ ET9(i,x'y'))) /\ (radiationStatus \in \{red, orange\} \/ ({ let xy; (ET10(i,xy,x'y') Any*) \/ (Any)) } /\ { let x''y''; (not_ET11(i,x'y',x''y'') \/ not_ET12(i,x'y',x''y'')) })))) }*);

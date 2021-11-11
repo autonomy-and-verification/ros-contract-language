@@ -16,6 +16,7 @@ class ROSMon_Translator(Translator):
 
         self.nodes = []
         self.monitors = []
+        self.dict_names = {}
 
         self.run_translate = False
         self.rml = None
@@ -68,6 +69,8 @@ class ROSMon_Translator(Translator):
                 rml += " /\\ "
             rml += "(" + t + "*)"
         rml += ";\n"
+        for dn in self.dict_names:
+            rml = rml.replace(dn, self.dict_names[dn])
         return yaml.dump(self.rosmon_config), rml
 
 
@@ -84,8 +87,12 @@ class ROSMon_Translator(Translator):
 
         topic_list_out = self._translate_topic_list(topic_list)
         self.rml = self._translate_guarantees(guarantees)
+        rmlstr = str(self.rml)
+        for dn in self.dict_names:
+            rmlstr = rmlstr.replace(dn, self.dict_names[dn])
+            topic_list_out = topic_list_out.replace(dn, self.dict_names[dn])
 
-        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + str(self.rml) + "\n}"
+        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + rmlstr + "\n}"
 
 
     def _translate_topic_list(self, topic_list):
@@ -114,9 +121,10 @@ class ROSMon_Translator(Translator):
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
-        assert(len(topic) in {2, 3})
-
-        type, topic_name, *matches = topic
+        type = str(topic[0])
+        topic_name = str(topic[1])
+        matches_name = str(topic[2].children[0])
+        self.dict_names[matches_name] = topic_name
 
         self._add_monitor(type, topic_name)
 
