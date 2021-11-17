@@ -1,10 +1,12 @@
 start: contract_clause+
 
-contract_clause: node_clause | type_clause
+contract_clause: node_clause | context_clause
 
-type_clause : "types" "{" type_declaration+ "}"
+context_clause : "context" "{" (type_declaration|constant_declaration)+ "}"
 
 type_declaration : TYPE_NAME ":" type_declaration_part ";"
+
+constant_declaration : TYPE_NAME "=" type_declaration_part ";"
 
 TYPE_NAME :  UPPER_NAME
 type_declaration_part : function_declaration
@@ -77,17 +79,17 @@ atomic_formula  : BOOLEAN
                 | term "<" term -> lt
                 | term ">" term -> gt
                 | term COMPARE_OP term COMPARE_OP term -> var_range
-                | FOL_NAME "(" terms ")" -> function_application
+                | variable_reference "(" terms ")" -> function_application
 
 
 
 function_declaration: function_input "-->" function_output
-function_input : BUILTIN ("x" BUILTIN)*
-function_output: BUILTIN ("x" BUILTIN)*
+function_input : (variable_reference| BUILTIN) ("x" (variable_reference| BUILTIN))*
+function_output: (variable_reference| BUILTIN) ("x" (variable_reference| BUILTIN))*
 
 COMPARE_OP : "<=" | ">=" | "<" | ">"
 
-arith : (VARIABLE|NUMBER) ARITH_OP (VARIABLE|NUMBER)
+arith : (variable_reference|NUMBER) ARITH_OP (variable_reference|NUMBER)
 
 ARITH_OP: "+" | "-" | "*" | "/"
 
@@ -99,7 +101,7 @@ terms : term ("," term)*
 
 term : BOOLEAN
       | BUILTIN ("." BUILTIN)* -> term_builtins
-      | VARIABLE
+      | variable_reference
       | topic_match_name
       | arith -> arithmetic
       | tuple
@@ -109,29 +111,29 @@ term : BOOLEAN
       | function_application
       | "\""  FOL_NAME "\""  -> string_literal
 
-function_application : FOL_NAME "(" terms ")"
+function_application : variable_reference "(" terms ")"
 
-set : "{" (VARIABLE|set|function_application) ("," (VARIABLE|set|function_application))* "}"
+set : "{" (variable_reference|set|function_application) ("," (variable_reference|set|function_application))* "}"
     | "{}" -> empty_set
 
 UPTO : "upto"
 
-sequence : "<" VARIABLE ((UPTO VARIABLE)? |("," VARIABLE)*) ">"
+sequence : "<" variable_reference ((UPTO variable_reference)? |("," variable_reference)*) ">"
         | "<>" -> empty_sequence
 
 
-tuple : "(" VARIABLE ("," VARIABLE)* ")"
+tuple : "(" variable_reference ("," variable_reference)* ")"
 
 
 
-variables : "(" (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*  ")" -> tuple
-          | (VARIABLE| BUILTIN) ("," (VARIABLE| BUILTIN))*
+variables : "(" (variable_reference| BUILTIN) ("," (variable_reference| BUILTIN))*  ")" -> tuple
+          | (variable_reference| BUILTIN) ("," (variable_reference| BUILTIN))*
 
 formula_variables : formula_variables_part (", " formula_variables_part)*
 
-formula_variables_part : variables "in" (set|BUILTIN|VARIABLE) ("," (set|BUILTIN|VARIABLE))*
+formula_variables_part : variables "in" (set|BUILTIN|variable_reference) ("," (set|BUILTIN|variable_reference))*
 
-
+variable_reference : io_pointer? VARIABLE
 VARIABLE : FOL_NAME
 CONSTANT: FOL_NAME
 
