@@ -37,7 +37,11 @@ class FOL2RML(FOL):
         """ Translate an equals tree """
         assert(tree.data == "equals")
         eq_left = self.visit(tree.children[0])
+        print("+++ eq_right")
+        print(tree.children[1])
+        print("+++")
         eq_right = self.visit(tree.children[1])
+        print(eq_right)
         self.count = self.count + 1
         # if guarantee.children[0].data == "string_literal" and isinstance(guarantee.children[1], lexer.Token):
         if eq_right != 'TRUE':
@@ -95,6 +99,9 @@ class FOL2RML(FOL):
     def atom(self, tree):
         """ Translate an atom tree """
         assert(tree.data == "atom")
+        print("+++")
+        print(tree)#
+        print("+++")
         return self.visit(tree.children[0])
 
     def negation(self, tree):
@@ -131,11 +138,11 @@ class FOL2RML(FOL):
         first = True
 
         for v in tree.children[0].children:
-            print(v)
-            print(type(v))
+            #print(v)
+            #print(type(v))
             vars = self.visit(v)
-            print("!!")
-            print(vars)
+            #print("!!")
+            #print(vars)
         #    assert(False)
             self.variables.add(str(vars))
             if first:
@@ -157,12 +164,9 @@ class FOL2RML(FOL):
 
         vars_extract, sets_extract = tree.children
 
-        print(vars_extract)
         vars_out = ""
         for var in vars_extract.children:
-            print("£")
-            print(str(var))
-            vars_out += str(var)
+            vars_out += self.visit(var)
 
 #        if isinstance(sets_extract, Token):
 #            sets_out = self.make_string(sets_extract)
@@ -230,7 +234,7 @@ class FOL2RML(FOL):
     def sub_formula(self, tree):
         """ Translate a function tree """
         assert(tree.data == "sub_formula")
-        print(tree.children[0])
+        #print(tree.children[0])
         return self.visit(tree.children[0])
 
     def string_literal(self, tree):
@@ -291,7 +295,7 @@ class FOL2RML(FOL):
         assert(tree.data == "function_application")
         assert(len(tree.children) == 2)
         res = '{'
-        res = res + str(tree.children[0]) + ' : ['
+        res = res + self.visit(tree.children[0]) + ' : ['
         first = True
         for arg in tree.children[1].children:
             # if arg.children[0][0].isalpha():
@@ -382,3 +386,26 @@ class FOL2RML(FOL):
         assert(tree.data == "empty_set")
 
         return "{}"
+
+    def variable_reference(self, tree):
+        """Translates a reference to a variable, which may have an
+         'in.' or 'out.' decoration. """
+        assert(tree.data == "variable_reference")
+
+
+
+        numberOfChildren = len(tree.children)
+        assert(numberOfChildren in {1, 2})
+
+        if numberOfChildren == 1:
+            return tree.children[0]
+        else:
+
+            decoration, name = tree.children
+            ## MATT: Ignoring the decoration, not needed for RML?
+        #    decoration_out = self.visit(decoration)
+
+        #    print("decoration =" + decoration_out)
+            #print("name =" + name)
+            return self.make_string(name)
+            # This seems to be escaped elsewhere.

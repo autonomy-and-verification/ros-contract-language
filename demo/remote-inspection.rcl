@@ -19,9 +19,9 @@ outputs( command : CommandSet  )
 topics(
 gazebo_radiation_plugins/Command command matches(out.command),
 gazebo_radiation_plugins/Inspection inspected matches(in.inspected),
-gazebo_radiation_plugins/At at matches(at),
-int16 wayP matches(wayP),
-string radiationStatus matches(radiationStatus)
+gazebo_radiation_plugins/At at matches(in.at),
+int16 wayP matches(in.wayP),
+string radiationStatus matches(in.radiationStatus)
 )
 
 assume( in.radiationStatus in {red, orange, green} )
