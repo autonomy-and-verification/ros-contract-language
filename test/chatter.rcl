@@ -1,8 +1,13 @@
 node talker
 {
 
+inputs(chatter : String)
+
+outputs(count : INTEGER)
+
 topics(string chatter, int32 count)
 
-guarantee(not(forall (x; (chatter == x and count != 10))))
+
+guarantee(not(forall (x in String | (chatter == x and count != 10))))
 
 }
