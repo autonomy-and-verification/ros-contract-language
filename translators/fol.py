@@ -275,6 +275,12 @@ class FOL(Interpreter):
 
         return topic_match_name_out
 
+    def io_pointer(self, tree):
+        """Translates an io_pointer: either "in." or "out." """
+        assert(tree.data == "io_pointer")
+        assert(len(tree.children) == 1)
+        return str(tree.children[0])
+
 
 # Helper Methods
 
@@ -292,4 +298,19 @@ class FOL(Interpreter):
         return left, right
 
     def make_string(self, to_string):
-        return str(to_string).replace('_', '\\_')
+        """ Checks if you've given it a Tree or a Token.
+        If Token, return as a string with the underscores escaped.
+        If Tree, visit and then return the resulting value as a string, also
+        with the underscores escpaed. """
+
+        to_string_out = ""
+
+        if isinstance(to_string, Tree):
+            to_string_out = str(self.visit(to_string))
+        else:
+            to_string_out = str(to_string)
+        # Bit of a mess, but works for now
+        if "\_" not in to_string_out:
+            return to_string_out.replace('_', '\\_')
+        else:
+            return to_string_out

@@ -108,7 +108,7 @@ outputs (a_msg : MessageType  )
 
 topics()
 
-assume(Guarantee_of(R) and Guarantee_of(Ms) )
+assume(Guarantee_of(R) and r == TRUE -> executed(g) == TRUE )
 
 // I think this should be an assignment
 // What is "g"
@@ -122,7 +122,7 @@ outputs ( r : BOOl )
 
 topics()
 
-assume(Guarantee_of(Mc))
+assume(g == act)
 
 guarantee(r == TRUE -> executed(g) == TRUE)
 }
@@ -134,7 +134,7 @@ outputs (a_msg : MessageType  )
 
 topics()
 
-assume(Guarantee_of(R) and Guarantee_of(Ws) )
+assume(Guarantee_of(R) and r == TRUE -> executed(g) == TRUE )
 
 // I think this should be an assignment
 // What is "g"

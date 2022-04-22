@@ -38,7 +38,7 @@ class Latex_Translator(Translator):
         """ Translates the list of types declared in the contract """
         assert(isinstance(types_list, list))
 
-        types_out = "\\item[Types]~\\\\\n\\begin{itemize} \n"
+        types_out = "\\item[Context]~\\\\\n\\begin{itemize} \n"
 
         if not types_list:
             types_out += "\t\t\\item No Types Declared \n"

@@ -7,6 +7,7 @@ from translators.translator import Translator
 
 """ Mirror translator, which should output the input contract """
 
+
 class Mirror(Translator):
 
     def __init__(self):
@@ -16,7 +17,7 @@ class Mirror(Translator):
 
         contract.get_contract_name()
 
-        output =""
+        output = ""
 
         for n in contract.get_nodes():
             output += self._translate_node(n)
@@ -50,12 +51,11 @@ class Mirror(Translator):
             topics_out += self._translate_topic(head)
 
             if tail != None:
-                if(isinstance(tail,list)):
+                if(isinstance(tail, list)):
                     for topic in tail:
                         topics_out += ", " + self._translate_topic(topic)
                 else:
                     topics_out += ", " + self._translate_topic(tail)
-
 
             topics_out += ")"
 
@@ -65,10 +65,10 @@ class Mirror(Translator):
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
+        print(topic)
+        type, topic_name = topic
 
-        type, topic_name = topic.split(" ")
-
-        return type +" "+ topic_name
+        return type + " " + topic_name
 
     def _translate_assumes(self, assumes):
         assert(isinstance(assumes, list))
@@ -78,7 +78,7 @@ class Mirror(Translator):
 
         for ass in assumes:
 
-            ass_out += "A (" + visitor.visit(ass)  + ")\n"
+            ass_out += "A (" + visitor.visit(ass) + ")\n"
 
         return ass_out
 
@@ -94,16 +94,8 @@ class Mirror(Translator):
 
         return guar_out
 
-
-
-
-
-
-
-
-
-
     # This has been replaced
+
     def _translate_fol(self, fol_statement):
         """ Translate a fol guarantee statement """
 
@@ -134,7 +126,7 @@ class Mirror(Translator):
                 return self._translate_fol(fol_statement.children[0])
             elif statement == "predicate":
 
-                return self._translate_fol(fol_statement.children[0]) + "("+ self._translate_fol(fol_statement.children[1]) +")"
+                return self._translate_fol(fol_statement.children[0]) + "(" + self._translate_fol(fol_statement.children[1]) + ")"
             elif statement == "terms":
                 return self._translate_fol(fol_statement.children)
             elif statement == "term":
