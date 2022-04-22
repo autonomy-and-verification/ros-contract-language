@@ -1,4 +1,4 @@
-types
+context
 {
  WayP : REAL x REAL --> NATURAL ;
  RadStat : {red, orange, green} ;
@@ -24,23 +24,27 @@ int16 wayP matches(wayP),
 string radiationStatus matches(radiationStatus)
 )
 
-assume( radiationStatus in {red, orange, green} )
+assume( in.radiationStatus in {red, orange, green} )
 
 guarantee(
 forall(x', y' in REAL, i in NATURAL |
-
-  at(x', y') == TRUE and wayP(x', y') == i and inspected(i) == TRUE and radiationStatus !in {red, orange} ->
-  exists(x, y in REAL | wayP(x, y) == i + 1 and out.command == move(x, y) )
-
-  //Kinda unhappy about the last ==, in my head it should be = or := but oh well.
-  // out.command because it goes on the output stream.
-  and at(x', y') == TRUE and wayP(x', y') == i and inspected(i) == FALSE -> out.command == inspect(i)
-
-  and radiationStatus in {red, orange} or not exists( x, y in REAL | wayP(x, y) == i + 1 )
-  -> exists (x'', y'' in REAL | wayP(x'', y'') == 0 and out.command == move(x'', y'') )
-  )
+  in.at(x', y') == TRUE and in.wayP(x', y') == i and in.inspected(i) == TRUE and in.radiationStatus !in {red, orange} ->
+  exists(x, y in REAL | in.wayP(x, y) == i + 1 and out.command == move(x, y) )
+)
 )
 
+guarantee(
+forall(x', y' in REAL, i in NATURAL |
+  in.at(x', y') == TRUE and in.wayP(x', y') == i and in.inspected(i) == FALSE -> out.command == inspect(i)
+)
+)
+
+guarantee(
+forall(x', y' in REAL, i in NATURAL |
+  in.radiationStatus in {red, orange} or not exists( x, y in REAL | in.wayP(x, y) == i + 1 )
+  -> exists (x'', y'' in REAL | in.wayP(x'', y'') == 0 and out.command == move(x'', y'') )
+  )
+)
 }
 
 
@@ -67,13 +71,13 @@ inputs( position : PositionType, command : CommandSet )
 outputs( at: AtType )
 
 topics(
-gazebo_radiation_plugins/Command command matches(command),
-int16 currentLoc matches(position),
-gazebo_radiation_plugins/At at matches(at))
+gazebo_radiation_plugins/Command command matches(in.command),
+int16 currentLoc matches(in.position),
+gazebo_radiation_plugins/At at matches(out.at))
 
-assume(exists_unique(x, y in REAL | position(x,y) == TRUE ) )
+assume(exists_unique(x, y in REAL | in.position(x,y) == TRUE ) )
 
-guarantee(forall(x, y in REAL | command == move(x, y) and position(x, y) == TRUE <=> at(x, y) == TRUE) )
+guarantee(forall(x, y in REAL | in.command == move(x, y) and in.position(x, y) == TRUE <=> out.at(x, y) == TRUE) )
 
 }
 
@@ -87,18 +91,18 @@ outputs( radiationStatus : RadStat, inspected : InspectedType  )
 
 
 topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r matches(r),
-gazebo_radiation_plugins/Command command matches(command),
+gazebo_radiation_plugins/Command command matches(in.command),
 gazebo_radiation_plugins/Inspection inspected matches(inspected),
-string radiationStatus matches(radiationStatus) )
+string radiationStatus matches(out.radiationStatus) )
 
-assume( 0 <= r )
+assume( 0 <= in.r )
 
 guarantee(
-forall( i in NATURAL | command == inspect(i) ->
-(inspected(i) == TRUE
-and 0 <= r < 120 -> radiationStatus == green
-and 120 <= r < 250 -> radiationStatus == orange
-and 250 <= r -> radiationStatus == red )
+forall( i in NATURAL | in.command == inspect(i) ->
+(out.inspected(i) == TRUE
+and 0 <= in.r < 120 -> out.radiationStatus == green
+and 120 <= in.r < 250 -> out.radiationStatus == orange
+and 250 <= in.r -> out.radiationStatus == red )
 )
 )
 
