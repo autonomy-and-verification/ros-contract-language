@@ -55,11 +55,11 @@ inputs()
 outputs( position : PositionType )
 
 //input or output?
-topics(geometry_msgs/PoseWithCovarianceStamped amcl_pose )
+topics(geometry_msgs/PoseWithCovarianceStamped amcl_pose matches(out.position))
 
 assume(TRUE)
 
-guarantee( exists_unique(x, y in REAL | Position(x, y) ) )
+guarantee( exists_unique(x, y in REAL | out.position(x, y) ) )
 
 }
 

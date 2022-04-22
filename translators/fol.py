@@ -275,6 +275,28 @@ class FOL(Interpreter):
 
         return topic_match_name_out
 
+    def variable_reference(self, tree):
+        """Translates a reference to a variable, which may have an
+         'in.' or 'out.' decoration. """
+        assert(tree.data == "variable_reference")
+
+        print("VARIABLE REFERENCE")
+
+        numberOfChildren = len(tree.children)
+        assert(numberOfChildren in {1, 2})
+
+        if numberOfChildren == 1:
+            return tree.children[0]
+        else:
+
+            decoration, name = tree.children
+            decoration_out = self.visit(decoration)
+
+            print("decoration =" + decoration_out)
+            print("name =" + name)
+            return str(decoration_out) + self.make_string(name)
+            # This seems to be escaped elsewhere.    
+
     def io_pointer(self, tree):
         """Translates an io_pointer: either "in." or "out." """
         assert(tree.data == "io_pointer")
@@ -291,6 +313,10 @@ class FOL(Interpreter):
 
         left = self.visit(tree.children[0])
         right = self.visit(tree.children[1])
+
+        print("####")
+        print(left)
+        print("####")
 
         assert(isinstance(left, str))
         assert(isinstance(right, str))

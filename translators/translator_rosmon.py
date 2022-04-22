@@ -121,6 +121,7 @@ class ROSMon_Translator(Translator):
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
+
         type = str(topic[0])
         topic_name = str(topic[1])
         matches_name = str(topic[2].children[0])
