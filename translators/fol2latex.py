@@ -118,7 +118,7 @@ class FOL2Latex(FOL):
 
         and_left, and_right = self.binary_infix(tree)
 
-        return and_left + " \land " + and_right
+        return and_left + " \\land " + and_right
 
     def or_form(self, tree):
         """ Translate a or tree """
@@ -126,7 +126,7 @@ class FOL2Latex(FOL):
 
         and_left, and_right = self.binary_infix(tree)
 
-        return and_left + " \lor " + and_right
+        return and_left + " \\lor " + and_right
 
     def iff(self, tree):
         """ Translate a iff tree """
@@ -135,7 +135,7 @@ class FOL2Latex(FOL):
 
         iff_left, iff_right = self.binary_infix(tree)
 
-        return iff_left + " \iff " + iff_right
+        return iff_left + " \\iff " + iff_right
 
     def forall(self, tree):
         """ Translate a forall tree """
@@ -265,10 +265,16 @@ class FOL2Latex(FOL):
 
         head, *tail = tree.children
 
-        vars = self.make_string(head)
+        if isinstance(head, Tree):
+            vars = self.make_string(self.visit(head))
+        else:
+            vars = self.make_string(head)
 
         for var in tail:
-            vars += ", " + self.make_string(var)
+            if isinstance(head, Tree):
+                vars += ", " + self.make_string(self.visit(var))
+            else:
+                vars += ", " + self.make_string(var)
 
         assert(isinstance(vars, str))
         return vars
@@ -279,10 +285,16 @@ class FOL2Latex(FOL):
         assert(len(tree.children) == 2)
 
         name, terms = tree.children
+        print("function_application, name = ")
+        print(name)
+        print(type(name))
+        name_out = self.variable_reference(name)
+        #terms = self.visit(tree.children[1])
+        print("function_application, name_out = ")
+        print(name_out)
+        print(type(name_out))
 
-        terms = self.visit(tree.children[1])
-
-        return self.make_string(name) + "(" + self.make_string(terms) + ")"
+        return self.make_string(name_out) + "(" + self.make_string(terms) + ")"
 
     def function_declaration(self, tree):
         """ Translates a function_declaration tree """
@@ -293,7 +305,6 @@ class FOL2Latex(FOL):
 
         inputs_out = ""
         head, *tail = inputs.children
-        assert(isinstance(head, Token))
         inputs_out += self.make_string(head)
 
         for input in tail:
@@ -302,7 +313,6 @@ class FOL2Latex(FOL):
 
         outputs_out = ""
         head, *tail = outputs.children
-        assert(isinstance(head, Token))
         outputs_out += self.make_string(head)
 
         for input in tail:
@@ -310,7 +320,32 @@ class FOL2Latex(FOL):
 
         return inputs_out + " \\rightarrow " + outputs_out
 
+    def variable_reference(self, tree):
+        """Translates a reference to a variable, which may have an
+         'in.' or 'out.' decoration. """
+        assert(tree.data == "variable_reference")
+
+        print("VARIABLE REFERENCE")
+
+        numberOfChildren = len(tree.children)
+        assert(numberOfChildren in {1, 2})
+
+        if numberOfChildren == 1:
+            return tree.children[0]
+        else:
+
+            decoration, name = tree.children
+            decoration_out = self.visit(decoration)
+
+            print("decoration =" + decoration_out)
+            print("name =" + name)
+            return str(decoration_out) + self.make_string(name)
+            # This seems to be escaped elsewhere.
+
+
 # I think these are not being called
+
+
     def function_input(self, tree):
         """ Translates function_input tree """
         assert(tree.data == "function_input")

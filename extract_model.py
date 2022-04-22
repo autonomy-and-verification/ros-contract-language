@@ -22,7 +22,7 @@ class Extractor(object):
             inner = t.children[0]
             if(inner.data == 'node_clause'):
                 self.__node(inner.children)
-            elif(inner.data == "type_clause"):
+            elif(inner.data == "context_clause"):
                 self.__type_clause(inner.children)
 
         return self.extracted_contract
@@ -58,7 +58,8 @@ class Extractor(object):
         assert(node_clause[3].data == "topic_list")
         topic_list = node_clause[3].children
 
-        assumes, guarantees = self._extract_assumes_and_gurantees(node_clause[4:])
+        assumes, guarantees = self._extract_assumes_and_gurantees(
+            node_clause[4:])
 
         input_list_out = self._extract_io(input_list)
         output_list_out = self._extract_io(output_list)

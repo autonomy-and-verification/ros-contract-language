@@ -1,72 +1,104 @@
-types
+context
 {
-  MessageType : (g, f, r) ;
-  Wayp : < w1 upto wn > ;
+  Wayp = {wayA, wayB, wayC, origin } ; //CONSTANT
+  LowRad : Wayp --> BOOL ; // TYPE
+  Windy : Wayp --> BOOL ; // TYPE
+
+
+//  Arms : Up | Down ;
+//  Mast : Up | Down ;
+
 }
 
 node Agent
 {
-inputs (msg : MISSING_TYPE , n : NATURAL , w : Wayp)
-outputs (act : MISSING_TYPE)
+// is this right, or is this Wayp is an empty set??
+
+inputs ( arm_result : BOOL, mast_result : BOOL, wheels_result : BOOL, low_rad : LowRad, windy : Windy )
+outputs( move_to : Wayp, arm_down : BOOL, mast_down : BOOL  )
 
 topics()
 
-assume( Guarantee_of(R) )
+assume( TRUE )
+
+
+guarantee( forall(w in in.Wayp | (in.windy(w) == TRUE <=>  out.arm_down == TRUE and out.mast_down == TRUE )
+and ( out.move_to(w) <=> in.arm_result == TRUE and in.mast_result == TRUE )
+) )
+// out.move_to(w) seems to be how we say move_to(w) goes on the output stream (iff ... )
+
+
+guarantee( forall(w in in.Wayp | out.move_to(w) <=> in.low_rad(w) == TRUE  ) )
+
+guarantee( forall(w in in.Wayp | out.move_to(w) -> in.wheels_result == TRUE ) ) // implicitly assumes that move_result relates to move_to(w)
+
+
+
 
 // equals or assignment?
 // Also...what the hell is this?
-guarantee( w == Wayp <=> w == {} )
+//guarantee( w == Wayp <=> w == {} )
 
 // I think "act = patrol.." here should be an assignment
 // from diagram: %when it receives start from rosbridge it sends the message to patrol the first waypoint
-//guarantee( start -> act = patrol(w1) and w1 !in W )
-guarantee( msg ==  start -> act == patrol(w1) and w1 !in w )
+//guarantee( start -> act = move_to(w1) and w1 !in W )
+//guarantee( msg ==  start -> act == move_to(w1) and w1 !in w )
 
 // from diagram: %when it receives a success move result message, then it sends the message to patrol the next waypoint
 // Again, I think "act = patrol..." should be assignment. Also, what the hell? Why is this "patrol(w1)" again!?
-guarantee( move_result == TRUE -> act == patrol(w1) and w1 !in w )
+//guarantee( move_result == TRUE -> act == move_to(w1) and w1 !in w )
+
+
 }
 
-node Rosbridge
+node EnvironmentInterface
 {
-// as.r, ms.r, ws.r...
-inputs (act : MISSING_TYPE , r : BOOl , r : BOOl , r : BOOl)
-outputs ( msg : MISSING_TYPE)
+// rad and wind are 'internal inputs' ?
+inputs (move_to : Wayp, arm_down : BOOL, mast_down : BOOL, rad: REAL, wind : REAL, wheels_result : BOOL)
+outputs ( move_to : Wayp, arm_down : BOOL, mast_down : BOOL, wheels_result : BOOL, low_rad : LowRad, windy : Windy )
 
 topics()
 
-assume( Guarantee_of(A) and Guarantee_of(As) and Guarantee_of(Ms) and Guarantee_of(Ws) )
+assume( in.rad >= 0  )
+assume( in.wind >= 0 )
 
-//I think the "msg = ..." should be assignments
-// as.r, ms.r, ws.r...
-guarantee(msg == act or msg == r or msg == r or msg == r )
+//Abstraction for this?
+guarantee(out.mast_down == in.mast_down ) // mast_down remains unchanged
+guarantee(out.arm_down == in.arm_down  ) // arm_down remains unchanged
+guarantee(out.wheels_result == in.wheels_result ) // wheels_result remains unchanged
+guarantee(out.move_to == in.move_to ) // wheels_result remains unchanged
+
+guarantee(in.rad(w) <= 5 ->  out.low_rad(w) == TRUE  ) // radiation lower than "5" means low_rad is TRUE
+guarantee(in.wind(w) <= 5 -> out.windy(w) == FALSE ) // wind lower than "5" means windy is FALSE
+
 }
 
 node ArmClient
 {
-inputs ( msg : MISSING_TYPE , r: BOOL)
-outputs (a_msg : MessageType  )
+inputs  (arm_down : BOOL, arm_result : BOOL)
+
+outputs (arm_down : BOOL , arm_result : BOOL )
 
 topics()
 
-assume( Guarantee_of(R) and Guarantee_of(As) )
+assume( TRUE ) // Really?
 
-// I think this should be an assignment
-// What is "g"
-guarantee( g == act)
+guarantee( in.arm_down == out.arm_down ) // arm_down remains unchanged
+guarantee( out.arm_result == in.arm_result ) // arm_result (that we pass up) remains unchanged
+
 }
 
 node ArmServer
 {
 
-inputs ( a_msg : MessageType)
-outputs ( r : BOOl )
+inputs ( arm_down : BOOL)
+outputs ( arm_result : BOOL )
 
 topics()
 
-assume(Guarantee_of(Ac))
+assume( TRUE)
 
-guarantee(r == TRUE -> executed(g) == TRUE )
+guarantee( out.arm_result == TRUE ) // this should more be 'eventually outputs a result'
 }
 
 node MastClient
@@ -76,7 +108,7 @@ outputs (a_msg : MessageType  )
 
 topics()
 
-assume(Guarantee_of(R) and Guarantee_of(Ms) )
+assume(Guarantee_of(R) and r == TRUE -> executed(g) == TRUE )
 
 // I think this should be an assignment
 // What is "g"
@@ -90,7 +122,7 @@ outputs ( r : BOOl )
 
 topics()
 
-assume(Guarantee_of(Mc))
+assume(g == act)
 
 guarantee(r == TRUE -> executed(g) == TRUE)
 }
@@ -102,7 +134,7 @@ outputs (a_msg : MessageType  )
 
 topics()
 
-assume(Guarantee_of(R) and Guarantee_of(Ws) )
+assume(Guarantee_of(R) and r == TRUE -> executed(g) == TRUE )
 
 // I think this should be an assignment
 // What is "g"
