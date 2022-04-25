@@ -196,12 +196,10 @@ class FOL2Latex(FOL):
 
         for term in tree.children:
             assert(isinstance(term, Token))
-            if self.make_string(term) == "REAL":
-                return "\\mathbb{R}"
-            elif self.make_string(term) == "INTEGER":
-                return "\\mathbb{Z}"
-            elif self.make_string(term) == "NATURAL":
-                return "\\mathbb{N}"
+            return self.translate_builtin_token(term)
+
+
+
 
     def set(self, tree):
         """Translates a set tree """
@@ -305,18 +303,18 @@ class FOL2Latex(FOL):
 
         inputs_out = ""
         head, *tail = inputs.children
-        inputs_out += self.make_string(head)
+        inputs_out += self.translate_builtin_token(self.make_string(head))
 
         for input in tail:
             assert(isinstance(input, Token))
-            inputs_out += " \\times " + self.make_string((input))
+            inputs_out += " \\times " + self.translate_builtin_token(self.make_string(input))
 
         outputs_out = ""
         head, *tail = outputs.children
-        outputs_out += self.make_string(head)
+        outputs_out += self.translate_builtin_token(self.make_string(head))
 
         for input in tail:
-            outputs_out += " \\times " + self.make_string((input))
+            outputs_out += " \\times " + self.translate_builtin_token(self.make_string(input))
 
         return inputs_out + " \\rightarrow " + outputs_out
 
@@ -325,21 +323,25 @@ class FOL2Latex(FOL):
          'in.' or 'out.' decoration. """
         assert(tree.data == "variable_reference")
 
-        print("VARIABLE REFERENCE")
+        #print("VARIABLE REFERENCE")
 
         numberOfChildren = len(tree.children)
         assert(numberOfChildren in {1, 2})
 
         if numberOfChildren == 1:
-            return tree.children[0]
+            assert(isinstance(tree.children[0], Token))
+
+            return self.translate_builtin_token(tree.children[0])
         else:
 
             decoration, name = tree.children
             decoration_out = self.visit(decoration)
 
-            print("decoration =" + decoration_out)
-            print("name =" + name)
-            return str(decoration_out) + self.make_string(name)
+            assert(isinstance(name, Token))
+
+            #print("decoration =" + decoration_out)
+            #print("name =" + name)
+            return str(decoration_out) + self.translate_builtin_token(self.make_string(name))
             # This seems to be escaped elsewhere.
 
 
@@ -362,7 +364,7 @@ class FOL2Latex(FOL):
 
         return out
 
-        pass
+
 # Helper Methods
 
     def binary_infix(self, tree):
@@ -394,3 +396,15 @@ class FOL2Latex(FOL):
             vars += self.make_string(last_elem)
 
         return vars
+
+    def translate_builtin_token(self, term):
+        if self.make_string(term) == "REAL":
+            return "\\mathbb{R}"
+        elif self.make_string(term) == "INTEGER":
+            return "\\mathbb{Z}"
+        elif self.make_string(term) == "NATURAL":
+            return "\\mathbb{N}"
+        elif self.make_string(term) == "BOOL":
+            return "\\mathbb{B}"
+        else:
+            return term

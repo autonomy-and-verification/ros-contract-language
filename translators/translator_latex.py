@@ -56,6 +56,10 @@ class Latex_Translator(Translator):
         type_definition_out = self.visitor.visit(
             type_declaration.get_type_definition())
 
+        print(type_declaration)
+        print(type_definition_out)
+
+
         return type_declaration.get_type_name() + " : " + type_definition_out
 
     def _translate_node(self, node):
@@ -124,9 +128,9 @@ class Latex_Translator(Translator):
             if tail is not None:
                 if(isinstance(tail, list)):
                     for topic in tail:
-                        topics_out += ", " + self._translate_topic(topic)
+                        topics_out += ", \\\\" + self._translate_topic(topic)
                 else:
-                    topics_out += ", " + self._translate_topic(tail)
+                    topics_out += ", \\\\" + self._translate_topic(tail)
 
             topics_out += " $ )"
 
@@ -151,13 +155,13 @@ class Latex_Translator(Translator):
             else:
                 matches_out = matches.children[0]
 
-            return type_name.replace('_', '\\_') + " " + \
-                topic_name.replace('_', '\\_') + " matches: " + \
+            return type_name.replace('_', '\\_') + "~" + \
+                topic_name.replace('_', '\\_') + "~matches:~" + \
                 matches_out.replace('_', '\\_')
 
         elif len(topic) == 2:
             type_name, topic_name = topic
-            return type_name.replace('_', '\\_') + " " +\
+            return type_name.replace('_', '\\_') + "~" +\
                 topic_name.replace('_', '\\_')
 
     def _translate_assumes(self, short_name, assumes):
