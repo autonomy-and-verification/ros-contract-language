@@ -1,9 +1,0 @@
-monitors:
-- monitor:
-    id: monitor_Position
-    log: ./Position_log.txt
-    silent: false
-    topics:
-    - {action: log, name: Position, type: std_msgs.msg.geometry_msgs/PoseWithCovarianceStamped}
-nodes:
-- node: {name: localisation}

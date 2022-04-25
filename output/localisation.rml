@@ -1,3 +1,0 @@
-Any matches {};
-
-Main = ({ let xy; ({Position : [x, y]} Any*) \/ (Any)) }*);
