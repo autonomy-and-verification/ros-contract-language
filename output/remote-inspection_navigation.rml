@@ -1,0 +1,9 @@
+ET1(x,y) matches { command : {move : [x, y]} };
+not_ET1(x,y) not matches ET1(x,y);
+ET2(x,y) matches { position : [x, y] };
+not_ET2(x,y) not matches ET2(x,y);
+ET3(x,y) matches { at : [x, y] };
+not_ET3(x,y) not matches ET3(x,y);
+Any matches {};
+
+Main = ({ let x,y; (ET1(x,y) /\ ((ET2(x,y) /\ ET3(x,y)) \/ (not_ET2(x,y) /\ not_ET3(x,y)))) }*);

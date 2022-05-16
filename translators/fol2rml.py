@@ -136,13 +136,12 @@ class FOL2RML(FOL):
         assert(tree.data == "forall")
         vstr = ""
         first = True
-
         for v in tree.children[0].children:
-            #print(v)
+            # print(v)
             #print(type(v))
             vars = self.visit(v)
             #print("!!")
-            #print(vars)
+            # print(vars)
         #    assert(False)
             self.variables.add(str(vars))
             if first:
@@ -165,7 +164,10 @@ class FOL2RML(FOL):
         vars_extract, sets_extract = tree.children
 
         vars_out = ""
+        first = True
         for var in vars_extract.children:
+            if first: first = False
+            else: vars_out += ','
             vars_out += self.visit(var)
 
 #        if isinstance(sets_extract, Token):
@@ -205,7 +207,6 @@ class FOL2RML(FOL):
         vstr = ""
         first = True
         for v in tree.children[0].children:
-
             vars = self.visit(v)
             self.variables.add(str(vars))
             if first:
@@ -313,8 +314,10 @@ class FOL2RML(FOL):
         assert(tree.data == "in_form")
 
         in_left, in_right = self.binary_infix(tree)
+        self.count = self.count + 1
+        self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + in_left + " : " + in_right.replace('\\', '') + " };")
 
-        return in_left + " \\in " + in_right
+        return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
     def not_in(self, tree):
         """ Translate a not in tree """
@@ -351,8 +354,13 @@ class FOL2RML(FOL):
         assert(len(tree.children) == 2)
 
         left, right = self.binary_infix(tree)
+        self.count = self.count + 1
+        if left.isalpha():
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + left + " : v } with v <= " + right + ";")
+        else:
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + right + " : v } with " + left + " <= v;")
 
-        return left + " \\leq " + right
+        return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
     def geq(self, tree):
         """ Translate a geq tree """
@@ -360,8 +368,13 @@ class FOL2RML(FOL):
         assert(len(tree.children) == 2)
 
         left, right = self.binary_infix(tree)
+        self.count = self.count + 1
+        if left.isalpha():
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + left + " : v } with v >= " + right + ";")
+        else:
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + right + " : v } with " + left + " >= v;")
 
-        return left + " \\geq " + right
+        return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
     def lt(self, tree):
         """ Translate a lt tree """
@@ -369,8 +382,13 @@ class FOL2RML(FOL):
         assert(len(tree.children) == 2)
 
         left, right = self.binary_infix(tree)
+        self.count = self.count + 1
+        if left.isalpha():
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + left + " : v } with v < " + right + ";")
+        else:
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + right + " : v } with " + left + " < v;")
 
-        return left + " < " + right
+        return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
     def gt(self, tree):
         """ Translate a gt tree """
@@ -378,8 +396,13 @@ class FOL2RML(FOL):
         assert(len(tree.children) == 2)
 
         left, right = self.binary_infix(tree)
+        self.count = self.count + 1
+        if left.isalpha():
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + left + " : v } with v > " + right + ";")
+        else:
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + right + " : v } with " + left + " > v;")
 
-        return left + " > " + right
+        return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
     def empty_set(self, tree):
         """ Translates an empty_set tree """

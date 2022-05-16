@@ -1,0 +1,39 @@
+monitors:
+  monitor_agent:
+    id: monitor_monitor_agent
+    log: ./monitor_agent_log.txt
+    silent: false
+    topics:
+    - {action: log, name: command, type: std_msgs.msg.gazebo_radiation_plugins/Command}
+    - {action: log, name: inspected, type: std_msgs.msg.gazebo_radiation_plugins/Inspection}
+    - {action: log, name: at, type: std_msgs.msg.gazebo_radiation_plugins/At}
+    - {action: log, name: wayP, type: std_msgs.msg.int16}
+    - {action: log, name: radiationStatus, type: std_msgs.msg.string}
+  monitor_localisation:
+    id: monitor_monitor_localisation
+    log: ./monitor_localisation_log.txt
+    silent: false
+    topics:
+    - {action: log, name: amcl_pose, type: std_msgs.msg.geometry_msgs/PoseWithCovarianceStamped}
+  monitor_navigation:
+    id: monitor_monitor_navigation
+    log: ./monitor_navigation_log.txt
+    silent: false
+    topics:
+    - {action: log, name: command, type: std_msgs.msg.gazebo_radiation_plugins/Command}
+    - {action: log, name: currentLoc, type: std_msgs.msg.int16}
+    - {action: log, name: at, type: std_msgs.msg.gazebo_radiation_plugins/At}
+  monitor_radiationSensor:
+    id: monitor_monitor_radiationSensor
+    log: ./monitor_radiationSensor_log.txt
+    silent: false
+    topics:
+    - {action: log, name: r, type: std_msgs.msg.gazebo_radiation_plugins/Simulated_Radiation_Msg}
+    - {action: log, name: command, type: std_msgs.msg.gazebo_radiation_plugins/Command}
+    - {action: log, name: inspected, type: std_msgs.msg.gazebo_radiation_plugins/Inspection}
+    - {action: log, name: radiationStatus, type: std_msgs.msg.string}
+nodes:
+- node: {name: agent}
+- node: {name: localisation}
+- node: {name: navigation}
+- node: {name: radiationSensor}

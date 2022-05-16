@@ -15,7 +15,7 @@ class ROSMon_Translator(Translator):
         self.rosmon_config = {"nodes":[], "monitors":[]}
 
         self.nodes = []
-        self.monitors = []
+        self.monitors = {}
         self.dict_names = {}
 
         self.run_translate = False
@@ -27,10 +27,14 @@ class ROSMon_Translator(Translator):
 
         self.nodes.append( {"node":{"name":str(node_name)}} )
 
-    def _add_monitor(self, type, topic_name):
-        #print("adding monitor for " +str(type) + " " + str(topic_name))
+    def _add_monitor(self, monitor_id):
+        self.monitors[monitor_id] = {"id":"monitor_"+monitor_id, "log": "./"+monitor_id+"_log.txt", "silent": False, 'topics': []}
+        self.monitor_id = monitor_id
 
-        self.monitors.append( {"monitor":{"id":"monitor_"+str(topic_name), "log": "./"+str(topic_name)+"_log.txt", "silent": False, "topics":[{"name": str(topic_name), "type": "std_msgs.msg."+str(type), "action":"log"}]     }   } )
+    def _add_topic(self, monitor, type, topic_name):
+        #print("adding monitor for " +str(type) + " " + str(topic_name))
+        self.monitors[monitor]['topics'].append({"name": str(topic_name), "type": "std_msgs.msg."+str(type), "action":"log"})
+        # self.monitors.append( {"monitor":{"id":"monitor_"+str(topic_name), "log": "./"+str(topic_name)+"_log.txt", "silent": False, "topics":[{"name": str(topic_name), "type": "std_msgs.msg."+str(type), "action":"log"}]     }   } )
 
 
     def _prep_config(self):
@@ -54,24 +58,26 @@ class ROSMon_Translator(Translator):
         if self.run_translate:
             pass
         else:
-            self.translate(self.contract)
-
-        self._prep_config()
-        rml = ""
-        for et in self.rml["event_types"]:
-            rml += et + "\n"
-        first = True
-        rml += "\nMain = "
-        for t in self.rml["terms"]:
-            if first:
-                first = False
-            else:
-                rml += " /\\ "
-            rml += "(" + t + "*)"
-        rml += ";\n"
-        for dn in self.dict_names:
-            rml = rml.replace(dn, self.dict_names[dn])
-        return yaml.dump(self.rosmon_config), rml
+            rml = {}
+            for n in self.contract.get_nodes():
+                s = ''
+                self._translate_node(n)
+                self._prep_config()
+                for et in self.rml["event_types"]:
+                    s += et + "\n"
+                first = True
+                s += "\nMain = "
+                for t in self.rml["terms"]:
+                    if first:
+                        first = False
+                    else:
+                        s += " /\\ "
+                    s += "(" + t + "*)"
+                s += ";\n"
+                for dn in self.dict_names:
+                    s = s.replace(dn, self.dict_names[dn])
+                rml[self.monitor_id[8:]] = s
+            return yaml.dump(self.rosmon_config), rml
 
 
     def _translate_node(self, node):
@@ -84,6 +90,7 @@ class ROSMon_Translator(Translator):
         guarantees = node.get_guarantees()
 
         self._add_node(node_name)
+        self._add_monitor('monitor_' + node_name)
 
         topic_list_out = self._translate_topic_list(topic_list)
         self.rml = self._translate_guarantees(guarantees)
@@ -127,7 +134,7 @@ class ROSMon_Translator(Translator):
         matches_name = str(topic[2].children[0])
         self.dict_names[matches_name] = topic_name
 
-        self._add_monitor(type, topic_name)
+        self._add_topic(self.monitor_id, type, topic_name)
 
         return type +" "+ topic_name
 

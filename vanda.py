@@ -118,9 +118,10 @@ elif TRANSLATOR == "rosmon_rml":
     output_file.write(rosmon_config)
     output_file.close()
 
-    output_file = open(RML_PATH, "w")
-    output_file.write(rml)
-    output_file.close()
+    for n in rml:
+        output_file = open(RML_PATH[:-4]+'_'+str(n)+'.rml', "w")
+        output_file.write(rml[n])
+        output_file.close()
 
 elif TRANSLATOR == "latex":
 

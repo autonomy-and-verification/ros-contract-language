@@ -100,8 +100,8 @@ assume( 0 <= in.r )
 guarantee(
 forall( i in NATURAL | in.command == inspect(i) ->
 (out.inspected(i) == TRUE
-and 0 <= in.r < 120 -> out.radiationStatus == green
-and 120 <= in.r < 250 -> out.radiationStatus == orange
+and 0 <= in.r and in.r < 120 -> out.radiationStatus == green
+and 120 <= in.r and in.r < 250 -> out.radiationStatus == orange
 and 250 <= in.r -> out.radiationStatus == red )
 )
 )
