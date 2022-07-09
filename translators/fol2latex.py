@@ -198,9 +198,6 @@ class FOL2Latex(FOL):
             assert(isinstance(term, Token))
             return self.translate_builtin_token(term)
 
-
-
-
     def set(self, tree):
         """Translates a set tree """
         assert(tree.data == "set")
@@ -283,14 +280,8 @@ class FOL2Latex(FOL):
         assert(len(tree.children) == 2)
 
         name, terms = tree.children
-        print("function_application, name = ")
-        print(name)
-        print(type(name))
         name_out = self.variable_reference(name)
         #terms = self.visit(tree.children[1])
-        print("function_application, name_out = ")
-        print(name_out)
-        print(type(name_out))
 
         return self.make_string(name_out) + "(" + self.make_string(terms) + ")"
 
@@ -307,14 +298,16 @@ class FOL2Latex(FOL):
 
         for input in tail:
             assert(isinstance(input, Token))
-            inputs_out += " \\times " + self.translate_builtin_token(self.make_string(input))
+            inputs_out += " \\times " + \
+                self.translate_builtin_token(self.make_string(input))
 
         outputs_out = ""
         head, *tail = outputs.children
         outputs_out += self.translate_builtin_token(self.make_string(head))
 
         for input in tail:
-            outputs_out += " \\times " + self.translate_builtin_token(self.make_string(input))
+            outputs_out += " \\times " + \
+                self.translate_builtin_token(self.make_string(input))
 
         return inputs_out + " \\rightarrow " + outputs_out
 
@@ -322,8 +315,6 @@ class FOL2Latex(FOL):
         """Translates a reference to a variable, which may have an
          'in.' or 'out.' decoration. """
         assert(tree.data == "variable_reference")
-
-        #print("VARIABLE REFERENCE")
 
         numberOfChildren = len(tree.children)
         assert(numberOfChildren in {1, 2})
@@ -339,8 +330,6 @@ class FOL2Latex(FOL):
 
             assert(isinstance(name, Token))
 
-            #print("decoration =" + decoration_out)
-            #print("name =" + name)
             return str(decoration_out) + self.translate_builtin_token(self.make_string(name))
             # This seems to be escaped elsewhere.
 

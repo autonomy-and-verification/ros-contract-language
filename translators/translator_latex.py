@@ -56,10 +56,6 @@ class Latex_Translator(Translator):
         type_definition_out = self.visitor.visit(
             type_declaration.get_type_definition())
 
-        print(type_declaration)
-        print(type_definition_out)
-
-
         return type_declaration.get_type_name() + " : " + type_definition_out
 
     def _translate_node(self, node):

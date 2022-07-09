@@ -6,11 +6,12 @@
 from translators.fol import FOL
 from lark import *
 
+
 class FOL2RML(FOL):
 
     def __init__(self):
         super(FOL, self).__init__()
-        self.rml = {"event_types":[], "terms": []}
+        self.rml = {"event_types": [], "terms": []}
         self.count = 0
         self.variables = set()
 
@@ -37,32 +38,38 @@ class FOL2RML(FOL):
         """ Translate an equals tree """
         assert(tree.data == "equals")
         eq_left = self.visit(tree.children[0])
-        print("+++ eq_right")
-        print(tree.children[1])
-        print("+++")
+
         eq_right = self.visit(tree.children[1])
-        print(eq_right)
+
         self.count = self.count + 1
         # if guarantee.children[0].data == "string_literal" and isinstance(guarantee.children[1], lexer.Token):
         if eq_right != 'TRUE':
             if self.variables:
-                self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + eq_left + " : " + eq_right + " };")
-                self.rml["event_types"].append("not_ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " not matches ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + ";")
+                self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                    self.variables) + ")" + " matches { " + eq_left + " : " + eq_right + " };")
+                self.rml["event_types"].append("not_ET" + str(self.count) + "(" + ','.join(
+                    self.variables) + ")" + " not matches ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + ";")
                 return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
             else:
-                self.rml["event_types"].append("ET" + str(self.count) + " matches { " + eq_left + " : " + eq_right + " };")
-                self.rml["event_types"].append("not_ET" + str(self.count) + " not matches ET" + str(self.count) + ";")
+                self.rml["event_types"].append(
+                    "ET" + str(self.count) + " matches { " + eq_left + " : " + eq_right + " };")
+                self.rml["event_types"].append(
+                    "not_ET" + str(self.count) + " not matches ET" + str(self.count) + ";")
                 return "ET" + str(self.count)
         else:
             if eq_left.startswith('{'):
                 eq_left = eq_left[1:len(eq_left)-1]
             if self.variables:
-                self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + eq_left + " };")
-                self.rml["event_types"].append("not_ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " not matches ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + ";")
+                self.rml["event_types"].append(
+                    "ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + eq_left + " };")
+                self.rml["event_types"].append("not_ET" + str(self.count) + "(" + ','.join(
+                    self.variables) + ")" + " not matches ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + ";")
                 return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
             else:
-                self.rml["event_types"].append("ET" + str(self.count) + " matches { " + eq_left + " };")
-                self.rml["event_types"].append("not_ET" + str(self.count) + " not matches ET" + str(self.count) + ";")
+                self.rml["event_types"].append(
+                    "ET" + str(self.count) + " matches { " + eq_left + " };")
+                self.rml["event_types"].append(
+                    "not_ET" + str(self.count) + " not matches ET" + str(self.count) + ";")
                 return "ET" + str(self.count)
         # if eq_right in self.variables:
         #     self.rml["event_types"].append("ET" + str(self.count) + "(" + eq_right + ")" + " matches { " + eq_left + " : " + eq_right + " };")
@@ -80,12 +87,16 @@ class FOL2RML(FOL):
         eq_right = self.visit(tree.children[1])
         self.count = self.count + 1
         if self.variables:
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + eq_left + " : " + eq_right + " };")
-            self.rml["event_types"].append("not_ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " not matches ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + ";")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + eq_left + " : " + eq_right + " };")
+            self.rml["event_types"].append("not_ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " not matches ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + ";")
             return "not_ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
         else:
-            self.rml["event_types"].append("ET" + str(self.count) + " matches { " + eq_left + " : " + eq_right + " };")
-            self.rml["event_types"].append("not_ET" + str(self.count) + " not matches ET" + str(self.count) + ";")
+            self.rml["event_types"].append(
+                "ET" + str(self.count) + " matches { " + eq_left + " : " + eq_right + " };")
+            self.rml["event_types"].append(
+                "not_ET" + str(self.count) + " not matches ET" + str(self.count) + ";")
             return "not_ET" + str(self.count)
         # if eq_right in self.variables:
         #     self.rml["event_types"].append("ET" + str(self.count) + "(" + eq_right + ")" + " matches { " + eq_left + " : " + eq_right + " };")
@@ -99,9 +110,7 @@ class FOL2RML(FOL):
     def atom(self, tree):
         """ Translate an atom tree """
         assert(tree.data == "atom")
-        print("+++")
-        print(tree)#
-        print("+++")
+
         return self.visit(tree.children[0])
 
     def negation(self, tree):
@@ -138,9 +147,9 @@ class FOL2RML(FOL):
         first = True
         for v in tree.children[0].children:
             # print(v)
-            #print(type(v))
+            # print(type(v))
             vars = self.visit(v)
-            #print("!!")
+            # print("!!")
             # print(vars)
         #    assert(False)
             self.variables.add(str(vars))
@@ -166,8 +175,10 @@ class FOL2RML(FOL):
         vars_out = ""
         first = True
         for var in vars_extract.children:
-            if first: first = False
-            else: vars_out += ','
+            if first:
+                first = False
+            else:
+                vars_out += ','
             vars_out += self.visit(var)
 
 #        if isinstance(sets_extract, Token):
@@ -175,7 +186,7 @@ class FOL2RML(FOL):
 #        elif isinstance(sets_extract, Tree):
 #            sets_out = self.visit(sets_extract)
 
-        return vars_out #+ " \\in " + sets_out
+        return vars_out  # + " \\in " + sets_out
 ###
 
     def exists(self, tree):
@@ -235,7 +246,7 @@ class FOL2RML(FOL):
     def sub_formula(self, tree):
         """ Translate a function tree """
         assert(tree.data == "sub_formula")
-        #print(tree.children[0])
+        # print(tree.children[0])
         return self.visit(tree.children[0])
 
     def string_literal(self, tree):
@@ -252,8 +263,9 @@ class FOL2RML(FOL):
                 term.children[1] = self.neg(term.children[1])
             elif term.data == "iff":
                 term.data = "and_form"
-                left = Tree("or_form", [self.neg(term.children[0]),self.neg(term.children[1])])
-                right = Tree("or_form", [term.children[0],term.children[1]])
+                left = Tree("or_form", [self.neg(
+                    term.children[0]), self.neg(term.children[1])])
+                right = Tree("or_form", [term.children[0], term.children[1]])
                 term.children[0] = left
                 term.children[1] = right
             elif term.data == "and_form":
@@ -285,12 +297,13 @@ class FOL2RML(FOL):
             elif term.data == "not_in":
                 term.data = "in_form"
 
-
             return term
 
 
 # MATT ADDED THESE
 #They're mostly just copied from fol2latex so please check
+
+
     def function_application(self, tree):
         """ Translate a function_application tree """
         assert(tree.data == "function_application")
@@ -315,7 +328,8 @@ class FOL2RML(FOL):
 
         in_left, in_right = self.binary_infix(tree)
         self.count = self.count + 1
-        self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + in_left + " : " + in_right.replace('\\', '') + " };")
+        self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+            self.variables) + ")" + " matches { " + in_left + " : " + in_right.replace('\\', '') + " };")
 
         return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
@@ -356,9 +370,11 @@ class FOL2RML(FOL):
         left, right = self.binary_infix(tree)
         self.count = self.count + 1
         if left.isalpha():
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + left + " : v } with v <= " + right + ";")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + left + " : v } with v <= " + right + ";")
         else:
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + right + " : v } with " + left + " <= v;")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + right + " : v } with " + left + " <= v;")
 
         return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
@@ -370,9 +386,11 @@ class FOL2RML(FOL):
         left, right = self.binary_infix(tree)
         self.count = self.count + 1
         if left.isalpha():
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + left + " : v } with v >= " + right + ";")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + left + " : v } with v >= " + right + ";")
         else:
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + right + " : v } with " + left + " >= v;")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + right + " : v } with " + left + " >= v;")
 
         return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
@@ -384,9 +402,11 @@ class FOL2RML(FOL):
         left, right = self.binary_infix(tree)
         self.count = self.count + 1
         if left.isalpha():
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + left + " : v } with v < " + right + ";")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + left + " : v } with v < " + right + ";")
         else:
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + right + " : v } with " + left + " < v;")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + right + " : v } with " + left + " < v;")
 
         return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
@@ -398,9 +418,11 @@ class FOL2RML(FOL):
         left, right = self.binary_infix(tree)
         self.count = self.count + 1
         if left.isalpha():
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + left + " : v } with v > " + right + ";")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + left + " : v } with v > " + right + ";")
         else:
-            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(self.variables) + ")" + " matches { " + right + " : v } with " + left + " > v;")
+            self.rml["event_types"].append("ET" + str(self.count) + "(" + ','.join(
+                self.variables) + ")" + " matches { " + right + " : v } with " + left + " > v;")
 
         return "ET" + str(self.count) + "(" + ','.join(self.variables) + ")"
 
@@ -415,8 +437,6 @@ class FOL2RML(FOL):
          'in.' or 'out.' decoration. """
         assert(tree.data == "variable_reference")
 
-
-
         numberOfChildren = len(tree.children)
         assert(numberOfChildren in {1, 2})
 
@@ -429,6 +449,6 @@ class FOL2RML(FOL):
         #    decoration_out = self.visit(decoration)
 
         #    print("decoration =" + decoration_out)
-            #print("name =" + name)
+            # print("name =" + name)
             return self.make_string(name)
             # This seems to be escaped elsewhere.
