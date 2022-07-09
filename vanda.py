@@ -130,7 +130,7 @@ elif TRANSLATOR == "latex":
     print(latex_output)
 
     latex_main_file = "\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{inputenc}\n\\usepackage[english]{babel}\n\\usepackage{amsmath}\n\\usepackage{amsfonts}\n\\usepackage{lmodern}\n\\usepackage[left=4cm,right=4cm,top=4cm,bottom=4cm]{geometry}\n\\usepackage[UKenglish]{isodate}\n\\author{Vanda v"+str(
-        VERSION_NUM)+"}\n\\title{Contract for: "+CONTRACT_NAME+"}\\begin{document}\n\\maketitle\n\n\input{" + CONTRACT_NAME+".tex}\n\\end{document}"
+        VERSION_NUM)+"}\n\\title{Contract for: "+CONTRACT_NAME+"}\\begin{document}\n\\maketitle\n\n\\input{" + CONTRACT_NAME+".tex}\n\\end{document}"
 
     output_file = open(OUTPUT_PATH+CONTRACT_NAME+".tex", "w")
     output_file.write(latex_output)

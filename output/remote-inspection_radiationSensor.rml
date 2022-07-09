@@ -15,4 +15,4 @@ ET10(i) matches { radiationStatus : red };
 not_ET10(i) not matches ET10(i);
 Any matches {};
 
-Main = ({ let i; (not_ET1(i) \/ (((ET2(i) /\ ET3(i)) /\ (ET4(i) \/ ET5(i))) /\ (ET6(i) /\ ((ET7(i) \/ ET8(i)) /\ (ET9(i) \/ ET10(i)))))) }*);
+Main = ({ let i; (not_ET1(i) \/ (((ET2(i) /\ ET3(i)) /\ (((ET4(i) \/ ET5(i)) /\ ET6(i)) /\ (ET7(i) \/ ET8(i)))) /\ (ET9(i) \/ ET10(i)))) }*);
