@@ -52,7 +52,7 @@ forall(x', y' in REAL, i in NATURAL |
 node localisation
 {
 
-inputs( sensors: SensorsType ) // want this to be {} but that doesn't work
+inputs( sensors: SensorsType )
 outputs( position : PositionType )
 
 //input or output?
