@@ -1,7 +1,8 @@
 # ros-contract-language
 A contract language for ROS nodes and a parsing tool `Vanda`.
 
-`Vanda`. is written in Python3.
+`Vanda` is written in Python3. 
+The tool has, so far, only been tested on Ubuntu.
 
 ## Installation
 
