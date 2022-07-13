@@ -1,7 +1,7 @@
 # ros-contract-language
-A contract language for ROS nodes and a parsing tool `**Vanda**`..
+A contract language for ROS nodes and a parsing tool `Vanda`..
 
-`**Vanda**`. is written in Python3.
+`Vanda`. is written in Python3.
 
 ## Installation
 
@@ -15,7 +15,7 @@ The basic usage is as follows:
 ```
 python3 vanda.py rcl test/chatter.rcl -t latex
 ```
-This runs `**Vanda**` using the `rcl` grammar on the contract `test/chatter.rcl` using the `latex` translator, which simply returns the original contract as a LaTeX document. This will display the original contract, under `+++ Input File = +++`; the output from the extraction (pre-processing) step, under `+++ Extractor Output +++`; and the output from the translation step, under `+++ Translator Output +++`.
+This runs `Vanda` using the `rcl` grammar on the contract `test/chatter.rcl` using the `latex` translator, which simply returns the original contract as a LaTeX document. This will display the original contract, under `+++ Input File = +++`; the output from the extraction (pre-processing) step, under `+++ Extractor Output +++`; and the output from the translation step, under `+++ Translator Output +++`.
 
 
 The full usage details (as shown by running `python3 vanda.py -h`) are:
