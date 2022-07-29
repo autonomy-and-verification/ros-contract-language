@@ -15,7 +15,7 @@ from lark import Lark
 import argparse
 import os
 
-VERSION_NUM = 0.1
+VERSION_NUM = 0.3
 
 # Arguments
 argParser = argparse.ArgumentParser(prog='Vanda')
