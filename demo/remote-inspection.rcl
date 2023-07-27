@@ -30,7 +30,10 @@ assume( in.radiationStatus in {red, orange, green} )
 guarantee(
 forall(x', y' in REAL, i in NATURAL |
   in.at(x', y') == TRUE and in.wayP(x', y') == i and in.inspected(i) == TRUE and in.radiationStatus !in {red, orange} ->
-  exists(x, y in REAL | in.wayP(x, y) == i + 1 and out.command == move(x, y) )
+  exists(x, y in REAL |
+    (in.wayP(x, y) == i + 1  or (forall( x'', y'' in REAL | in.wayP (x'', y'') != i+1 and in.wayP(x, y) == 0)))
+    and out.command == move(x, y)
+  )
 )
 )
 
