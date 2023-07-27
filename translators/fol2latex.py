@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-""" Superclass of the FOL translators, using Lark Interpreters """
-
 from lark.lexer import Token
 from lark import Tree
 from translators.fol import FOL
@@ -49,7 +47,7 @@ class FOL2Latex(FOL):
 
         eq_left, eq_right = self.binary_infix(tree)
 
-        return eq_left + " \neq " + eq_right
+        return eq_left + " \\neq " + eq_right
 
     def in_form(self, tree):
         """ Translate an in tree """
