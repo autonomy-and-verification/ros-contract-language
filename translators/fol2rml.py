@@ -5,6 +5,7 @@
 
 from translators.fol import FOL
 from lark import *
+from lark import lexer
 
 
 class FOL2RML(FOL):
