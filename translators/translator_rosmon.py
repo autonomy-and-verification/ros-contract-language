@@ -81,7 +81,7 @@ class ROSMon_Translator(Translator):
 
 
     def _translate_node(self, node):
-        """Traslates one node """
+        """ Translates one node """
         assert(isinstance(node, Node))
 
         node_name = node.get_node_name()

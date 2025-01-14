@@ -55,6 +55,7 @@ class FOL(Interpreter):
 
         for term in tail:
             vars_out += ", " + self.visit(term)
+        # TODO Fix this. Assertion error when running mirror, vars_out is None
 
         assert(isinstance(vars_out, str))
         return vars_out
