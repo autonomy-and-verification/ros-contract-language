@@ -63,7 +63,7 @@ topics(gazebo_radiation_plugins/Snapshot position matches(out.position))
 
 assume(TRUE)
 
-guarantee( exists_unique(x, y in REAL | out.position(x, y) ) )
+guarantee( exists_unique(x, y in REAL | out.position(x, y) == TRUE ) )
 
 }
 

@@ -1,0 +1,5 @@
+ET1(x,y) matches {  topic : 'std_msgs.msg.gazebo_radiation_plugins/Snapshot', position : [x, y] };
+not_ET1(x,y) not matches ET1(x,y);
+Any matches {};
+
+Main = ({ let x,y; (ET1(x,y) Any*) \/ (Any)) }*);

@@ -276,7 +276,8 @@ class FOL(Interpreter):
 
         return topic_match_name_out
 
-
+    def topic_list(self, tree):
+        pass
 
     def io_pointer(self, tree):
         """Translates an io_pointer: either "in." or "out." """

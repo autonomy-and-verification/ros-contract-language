@@ -76,7 +76,10 @@ class ROSMon_Translator(Translator):
                 s += ";\n"
                 for dn in self.dict_names:
                     s = s.replace(dn, self.dict_names[dn])
-                rml[self.monitor_id[8:]] = s
+                s = s.replace("'''", '3').replace("''", '2').replace("'", '1')
+                for t in self.rosmon_config['monitors'][self.monitor_id]['topics']:
+                    s = s.replace(t['name'] + ' :', ' topic : \'' + t['type'] + '\', ' + t['name'] + ' :')
+                rml[self.monitor_id[8:]] = s                
             return yaml.dump(self.rosmon_config), rml
 
 

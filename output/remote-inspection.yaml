@@ -1,0 +1,69 @@
+monitors:
+  monitor_agent:
+    id: monitor_monitor_agent
+    log: ./monitor_agent_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: command
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: inspected
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: at
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: wayPNow
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: radiationStatus
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+  monitor_localisation:
+    id: monitor_monitor_localisation
+    log: ./monitor_localisation_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: position
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+  monitor_navigation:
+    id: monitor_monitor_navigation
+    log: ./monitor_navigation_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: command
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: currentLoc
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: at
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+  monitor_radiationSensor:
+    id: monitor_monitor_radiationSensor
+    log: ./monitor_radiationSensor_log.txt
+    silent: false
+    topics:
+    - action: log
+      name: r
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: command
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: inspected
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+    - action: log
+      name: radiationStatus
+      type: std_msgs.msg.gazebo_radiation_plugins/Snapshot
+nodes:
+- node:
+    name: agent
+- node:
+    name: localisation
+- node:
+    name: navigation
+- node:
+    name: radiationSensor
