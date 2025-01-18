@@ -18,11 +18,11 @@ inputs( wayP : WayP, at : AtType, radiationStatus : RadStat, inspected : Inspect
 outputs( command : CommandSet  )
 
 topics(
-gazebo_radiation_plugins/Command command matches(out.command),
-gazebo_radiation_plugins/Inspection inspected matches(in.inspected),
-gazebo_radiation_plugins/At at matches(in.at),
-int16 wayP matches(in.wayP),
-string radiationStatus matches(in.radiationStatus)
+gazebo_radiation_plugins/Snapshot command matches(out.command),
+gazebo_radiation_plugins/Snapshot inspected matches(in.inspected),
+gazebo_radiation_plugins/Snapshot at matches(in.at),
+gazebo_radiation_plugins/Snapshot wayPNow matches(wayP),
+gazebo_radiation_plugins/Snapshot radiationStatus matches(in.radiationStatus)
 )
 
 assume( in.radiationStatus in {red, orange, green} )
@@ -59,7 +59,7 @@ inputs( sensors: SensorsType )
 outputs( position : PositionType )
 
 //input or output?
-topics(geometry_msgs/PoseWithCovarianceStamped amcl_pose matches(out.position))
+topics(gazebo_radiation_plugins/Snapshot position matches(out.position))
 
 assume(TRUE)
 
@@ -75,9 +75,9 @@ inputs( position : PositionType, command : CommandSet )
 outputs( at: AtType )
 
 topics(
-gazebo_radiation_plugins/Command command matches(in.command),
-int16 currentLoc matches(in.position),
-gazebo_radiation_plugins/At at matches(out.at))
+gazebo_radiation_plugins/Snapshot command matches(in.command),
+gazebo_radiation_plugins/Snapshot currentLoc matches(in.position),
+gazebo_radiation_plugins/Snapshot at matches(out.at))
 
 assume(exists_unique(x, y in REAL | in.position(x,y) == TRUE ) )
 
@@ -94,10 +94,10 @@ inputs( r : REAL , command : CommandSet)
 outputs( radiationStatus : RadStat, inspected : InspectedType  )
 
 
-topics(gazebo_radiation_plugins/Simulated_Radiation_Msg r matches(r),
-gazebo_radiation_plugins/Command command matches(in.command),
-gazebo_radiation_plugins/Inspection inspected matches(inspected),
-string radiationStatus matches(out.radiationStatus) )
+topics(gazebo_radiation_plugins/Snapshot r matches(r),
+gazebo_radiation_plugins/Snapshot command matches(in.command),
+gazebo_radiation_plugins/Snapshot inspected matches(inspected),
+gazebo_radiation_plugins/Snapshot radiationStatus matches(out.radiationStatus) )
 
 assume( 0 <= in.r )
 
