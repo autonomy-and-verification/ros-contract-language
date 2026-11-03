@@ -1,8 +1,10 @@
 # ros-contract-language
-A contract language for ROS nodes and a parsing tool `Vanda`.
 
-`Vanda` is written in Python3. 
-The tool has, so far, only been tested on Ubuntu.
+A contract language for ROS nodes and a parsing tool `Vanda`. Contracts are written in First-Order Logic and can capture the input and output variables for a node, which are linked to the ROS topics that they correspond to. The link to ROS topics enables synthesis of runtime monitors. 
+
+`Vanda` is written in Python3 and has, so far, only been tested on Ubuntu.
+
+The work that led to this language and tool is (finally) published in [A compositional approach to verifying modular robotic systems](https://www.sciencedirect.com/science/article/pii/S092188902600320) by Matt Luckcuck, Marie Farrell, Angelo Ferrando, Rafael C. Cardoso, Louise A. Dennis, and Michael Fisher.
 
 ## Installation
 
@@ -36,6 +38,12 @@ optional arguments:
   --version             show program's version number and exit
 
 ```
+
+## The ROS Contract Language
+
+A contract written in the ROS Contract Language (RCL) is a combination of a `context` clause, which defines the types and constants used in the contracts; and `node` clauses, which define the: inputs, outputs, ROS topics, assumptions, and guarantees that make up the contract.
+
+
 
 ## Writing a New Translator
 

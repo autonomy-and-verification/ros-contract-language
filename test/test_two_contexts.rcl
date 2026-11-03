@@ -1,0 +1,9 @@
+// Defines two sets, in different context clauses; testing how it handles two contexts. The Translators should show no contracts (because there are no node clauses)
+
+context{
+CommandSet : { move(REAL, REAL), inspect(NATURAL) };
+}
+
+context{
+CommandSet' : { move(REAL, REAL), inspect(NATURAL) };
+}

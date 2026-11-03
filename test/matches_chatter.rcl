@@ -1,0 +1,14 @@
+// Simple contract for ROSMonitoring's chatter program, with matches clauses in the topics.
+
+node talker
+{
+
+inputs(chatter : String)
+
+outputs(count : INTEGER)
+
+topics(string chatter matches(chatter), int32 count matches(count))
+
+guarantee(not(forall (x in String | (chatter == x and count != 10))))
+
+}

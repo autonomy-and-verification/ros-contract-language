@@ -191,6 +191,23 @@ class FOL2Text(FOL):
 
         return "exists_unique (" + variables_out + " | " + formula_out + ")"
 
+
+    def formula_variables_part(self, tree):
+        """ Translate a formula_variables_part tree """
+        assert(tree.data == "formula_variables_part")
+        assert(len(tree.children) == 2)
+
+        vars_extract, sets_extract = tree.children
+
+        vars_out = self.visit(vars_extract)
+
+        if isinstance(sets_extract, Token):
+            sets_out = self.make_string(sets_extract)
+        elif isinstance(sets_extract, Tree):
+            sets_out = self.visit(sets_extract)
+
+        return vars_out + " in " + sets_out
+
     def term_builtins(self, tree):
         assert(tree.data == "term_builtins")
 
@@ -253,6 +270,40 @@ class FOL2Text(FOL):
 
         return func_name + "(" + str(func_args) + ")"
 
+    def function_application(self, tree):
+        """ Translate a function_application tree """
+        assert(tree.data == "function_application")
+        assert(len(tree.children) == 2)
+
+        name, terms = tree.children
+
+        name_out = self.variable_reference(name)
+        terms = self.visit(tree.children[1])
+
+        return str(name_out) + "(" + str(terms) + ")"
+
+    def variable_reference(self, tree):
+        """Translates a reference to a variable, which may have an
+         'in.' or 'out.' decoration. """
+        assert(tree.data == "variable_reference")
+
+        numberOfChildren = len(tree.children)
+        assert(numberOfChildren in {1, 2})
+
+        if numberOfChildren == 1:
+            assert(isinstance(tree.children[0], Token))
+
+            return self.translate_builtin_token(tree.children[0])
+        else:
+
+            decoration, name = tree.children
+            decoration_out = self.visit(decoration)
+
+            assert(isinstance(name, Token))
+
+            return str(decoration_out) + self.translate_builtin_token(self.make_string(name))
+            # This seems to be escaped elsewhere.
+
     def string_literal(self, tree):
         """ Translate a string literal tree """
         assert(tree.data == "string_literal")
@@ -262,13 +313,32 @@ class FOL2Text(FOL):
     def variables(self, tree):
         """ Translate a variables tree """
         assert(tree.data == "variables")
-
+        
         head, *tail = tree.children
 
-        vars = str(head)
+        if isinstance(head, Tree):
+            vars = str(self.visit(head))
+        else:
+            vars = str(head)
 
         for var in tail:
-            vars += ", " + str(var)
+            if isinstance(head, Tree):
+                vars += ", " + str(self.visit(var))
+            else:
+                vars += ", " + str(var)
 
         assert(isinstance(vars, str))
         return vars
+
+
+    def translate_builtin_token(self, term):
+        if self.make_string(term) == "REAL":
+            return "R"
+        elif self.make_string(term) == "INTEGER":
+            return "Z"
+        elif self.make_string(term) == "NATURAL":
+            return "N"
+        elif self.make_string(term) == "BOOL":
+            return "B"
+        else:
+            return term

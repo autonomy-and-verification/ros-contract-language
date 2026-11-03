@@ -1,3 +1,5 @@
+// Simple contract for ROSMonitoring's chatter program
+
 node talker
 {
 

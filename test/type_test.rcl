@@ -1,3 +1,0 @@
-types{
-CommandSet : { move(REAL, REAL), inspect(NATURAL) };
-}

@@ -11,13 +11,14 @@ from translators.translator import Translator
 class Mirror(Translator):
 
     def __init__(self):
-        pass
+        self.fol_visitor = FOL2Text()
+        
 
     def translate(self, contract):
 
-        contract.get_contract_name()
+        contract_name = contract.get_contract_name()
 
-        output = ""
+        output = "\nContract: " + contract_name + "\n"
 
         for n in contract.get_nodes():
             output += self._translate_node(n)
@@ -38,13 +39,13 @@ class Mirror(Translator):
         assumes_out = self._translate_assumes(assumes)
         guarantees_out = self._translate_guarantees(guarantees)
 
-        return "node " + node_name + "\n{\n" + topic_list_out + "\n" + assumes_out + "\n" + guarantees_out + "\n}"
+        return "node " + node_name + "\n{\n" + topic_list_out + "\n\n" + assumes_out + "\n\n" + guarantees_out + "}"
 
     def _translate_topic_list(self, topic_list):
 
         assert(isinstance(topic_list, list))
         if topic_list != []:
-            topics_out = "topics ("
+            topics_out = "Topics ("
 
             head, *tail = topic_list
 
@@ -65,20 +66,36 @@ class Mirror(Translator):
 
     def _translate_topic(self, topic):
         """Translate one topic statement """
-        print(topic)
-        type, topic_name = topic
+        assert(len(topic) in {2, 3})
 
-        return type + " " + topic_name
+        
+        if len(topic) == 3:
+            topic_type, topic_name, matches = topic
+            matches_out = ""
+
+            if len(matches.children) == 2:
+                pointer, match_name = matches.children
+                pointer = pointer.children[0]
+
+                matches_out = pointer + match_name
+
+            else:
+                matches_out = matches.children[0]
+
+            return topic_type + " " + topic_name + " matches " + matches_out
+        elif len(topic) == 2:
+            topic_type, topic_name = topic
+            return topic_type + " " + topic_name
+        
 
     def _translate_assumes(self, assumes):
         assert(isinstance(assumes, list))
 
         ass_out = ""
-        visitor = FOL2Text()
-
+    
         for ass in assumes:
 
-            ass_out += "A (" + visitor.visit(ass) + ")\n"
+            ass_out += "Assumes (" + self.fol_visitor.visit(ass) + ")\n"
 
         return ass_out
 
@@ -86,11 +103,10 @@ class Mirror(Translator):
         assert(isinstance(guarantees, list))
 
         guar_out = ""
-        visitor = FOL2Text()
-
+    
         for guar in guarantees:
 
-            guar_out += "G (" + visitor.visit(guar) + ")\n"
+            guar_out += "Guarantees (" + self.fol_visitor.visit(guar) + ")\n"
 
         return guar_out
 

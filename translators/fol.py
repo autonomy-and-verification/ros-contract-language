@@ -49,14 +49,20 @@ class FOL(Interpreter):
     def formula_variables(self, tree):
         """ Translate a formula_variables tree """
         assert(tree.data == "formula_variables")
+        
 
         head, *tail = tree.children
+
+     
+
         vars_out = self.visit(head)
+
+        
 
         for term in tail:
             vars_out += ", " + self.visit(term)
         # TODO Fix this. Assertion error when running mirror, vars_out is None
-
+        
         assert(isinstance(vars_out, str))
         return vars_out
 
@@ -64,6 +70,7 @@ class FOL(Interpreter):
         """ Translate a formula_variables_part tree """
         assert(tree.data == "formula_variables_part")
 
+       
         pass
 
     def equals(self, tree):
@@ -170,18 +177,25 @@ class FOL(Interpreter):
         assert(tree.data == "forall")
         assert(len(tree.children) == 2)
 
+        # Unsure why this is empty
+
         pass
 
     def exists(self, tree):
         """ Translate a exists tree """
         assert(tree.data == "exists")
         assert(len(tree.children) == 2)
+
+        # Unsure why this is empty
+
         pass
 
     def exists_unique(self, tree):
         """ Translate a exists_unique tree """
         assert(tree.data == "exists_unique")
         assert(len(tree.children) == 2)
+
+        # Unsure why this is empty
 
         pass
 
@@ -208,6 +222,8 @@ class FOL(Interpreter):
     def tuple(self, tree):
         """Translates a tuple tree """
         assert(tree.data == "tuple")
+ 
+        # Unsure why this is empty
 
         pass
 
@@ -215,6 +231,7 @@ class FOL(Interpreter):
         """ Translate a terms tree """
         assert(tree.data == "terms")
 
+       
         head, *tail = tree.children
         terms_out = self.visit(head)
 
@@ -230,31 +247,37 @@ class FOL(Interpreter):
 
         assert(len(tree.children) == 1)
         if (isinstance(tree.children[0], Token)):
+            
             return self.make_string(tree.children[0])
         elif (isinstance(tree.children[0], Tree)):
+            
             return self.visit(tree.children[0])
 
     def set(self, tree):
         """Translates a set tree """
         assert(tree.data == "set")
+        # I think this is empty, waiting for abstract implementation that can help the child classes.
+    
         pass
 
     def sequence(self, tree):
         """ TRanslates a sequence tree """
         assert(tree.data == "sequence")
 
+        # I think this is empty, waiting for abstract implementation that can help the child classes.
+
         pass
 
     def string_literal(self, tree):
         """ Translate a string literal tree """
         assert(tree.data == "string_literal")
-
+        # I think this is empty, waiting for abstract implementation that can help the child classes.
         pass
 
     def variables(self, tree):
         """ Translate a variables tree """
         assert(tree.data == "variables")
-
+        # I think this is empty, waiting for abstract implementation that can help the child classes.
         pass
 
     def type_declaration_part(self, tree):
@@ -285,6 +308,8 @@ class FOL(Interpreter):
         assert(len(tree.children) == 1)
         return str(tree.children[0])
 
+    
+
 
 # Helper Methods
 
@@ -293,6 +318,7 @@ class FOL(Interpreter):
         Returns the left and right elements of the binary infix operator, as strings """
         assert(len(tree.children) == 2)
 
+        
         left = self.visit(tree.children[0])
         right = self.visit(tree.children[1])
 

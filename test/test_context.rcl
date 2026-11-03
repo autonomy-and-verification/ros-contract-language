@@ -1,0 +1,5 @@
+// Just defines a set. The Translators should show no contracts (because there are no node clauses)
+
+context{
+CommandSet : { move(REAL, REAL), inspect(NATURAL) };
+}
