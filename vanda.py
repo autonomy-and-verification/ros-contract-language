@@ -15,7 +15,12 @@ from lark import Lark
 import argparse
 import os
 
-VERSION_NUM = 0.3
+try:
+    VERSION_NUM = open("VERSION").read()
+except FileNotFoundError:
+    print("VERSION file not found.")
+
+#VERSION_NUM = 0.3
 
 # Arguments
 argParser = argparse.ArgumentParser(prog='Vanda')
