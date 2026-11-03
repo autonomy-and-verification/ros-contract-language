@@ -16,27 +16,30 @@ The work that led to this language and tool is (finally) published in [A composi
 
 The basic usage is as follows:
 ```bash
-python3 vanda.py rcl test/chatter.rcl -t latex
+python3 vanda.py rcl test/chatter.rcl latex
 ```
 This runs `Vanda` using the `rcl` grammar on the contract `test/chatter.rcl` using the `latex` translator, which simply returns the original contract as a LaTeX document. This will display the original contract, under `+++ Input File = +++`; the output from the extraction (pre-processing) step, under `+++ Extractor Output +++`; and the output from the translation step, under `+++ Translator Output +++`.
 
 
 The full usage details (as shown by running `python3 vanda.py -h`) are:
 ```
-usage: Vanda [-h] [-t {mirror,rosmon_rml,latex}] [-o O] [-p P] [--version] [grammar] contract
+usage: Vanda [-h] [-o O] [-p P] [--version]
+             [grammar] contract [{mirror,rosmon_rml,latex}]
 
 positional arguments:
   grammar               The grammar to parse with.
   contract              The contract file to be parsed.
+  {mirror,rosmon_rml,latex}
+                        The translator to use: mirror simply prints the
+                        contract you give it, rosmon_rml translates the
+                        contract into the Runtime Monitoring Language (RML),
+                        and latex translates the contract into LaTeX.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -t {mirror,rosmon_rml,latex}
-                        The translator to use
   -o O                  The path to the output folder for the translation
   -p P                  Print the parse tree
   --version             show program's version number and exit
-
 ```
 
 ## The ROS Contract Language
