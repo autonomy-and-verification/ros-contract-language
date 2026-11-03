@@ -285,6 +285,8 @@ class FOL(Interpreter):
         assert(tree.data == "type_declaration_part")
         assert(len(tree.children) == 1)
 
+        print("\n\n TDP = " + str(tree))
+
         return self.visit(tree.children[0])
 
     def topic_match_name(self, tree):

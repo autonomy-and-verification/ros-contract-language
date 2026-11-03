@@ -18,12 +18,43 @@ class Mirror(Translator):
 
         contract_name = contract.get_contract_name()
 
-        output = "\nContract: " + contract_name + "\n"
+        output = "\nContract: " + contract_name + "\n\n"
+
+        output += self._translate_types(contract.get_types())
 
         for n in contract.get_nodes():
             output += self._translate_node(n)
 
         return output
+
+    def _translate_types(self, types_list):
+        """ Translates the list of types declared in the contract """
+        assert(isinstance(types_list, list))
+
+        types_out = "Context\n{\n"
+
+        if not types_list:
+            types_out += "No Types Declared \n"
+        else: 
+            for t in types_list:
+                types_out += self._translate_type(t) + "\n"
+
+        types_out += "}\n\n"
+        return types_out
+
+    def _translate_type(self, type_declaration):
+        """ Translates one type declaration """
+        assert(isinstance(type_declaration, Type))
+
+        print("\n\ntype_declaration = " + str(type_declaration))
+
+        type_definition_out = self.fol_visitor.visit(type_declaration.get_type_definition())
+
+        print("\n\nget_type_declaration = " + str(type_declaration.get_type_definition()))
+
+        assert(isinstance(type_definition_out, str))
+
+        return type_declaration.get_type_name() + " : " + type_definition_out
 
     def _translate_node(self, node):
         """Traslates one node """
@@ -110,8 +141,9 @@ class Mirror(Translator):
 
         return guar_out
 
-    # This has been replaced
 
+
+    # This has been replaced
     def _translate_fol(self, fol_statement):
         """ Translate a fol guarantee statement """
 

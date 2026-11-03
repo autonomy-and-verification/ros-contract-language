@@ -5,5 +5,5 @@ CommandSet : { move(REAL, REAL), inspect(NATURAL) };
 }
 
 context{
-CommandSet' : { move(REAL, REAL), inspect(NATURAL) };
+WayP : REAL x REAL --> NATURAL ;
 }

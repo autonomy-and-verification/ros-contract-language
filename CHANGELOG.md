@@ -1,3 +1,11 @@
+# 0.3.3
+
+* Checking rosmon_rml and latex parses, minor fixes.
+* Making Mirror parser output the context clause as well, this lead to a few new methods and tweaks needed in the parsing files.
+* Made the translator non-optional/positional: grammar, file, translator. If translator is not specified the 'mirror' is the default (as it was before).
+
+
+
 # 0.3.2
 
 Fixes Mirror translator and updates test contracts to match new (i.e. the current) grammar.

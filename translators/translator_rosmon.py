@@ -130,16 +130,32 @@ class ROSMon_Translator(Translator):
             return "topics ()"
 
     def _translate_topic(self, topic):
-        """Translate one topic statement """
+        """Translate one topic statement, with optional matches clause."""
+        assert(isinstance(topic, tuple))
 
-        type = str(topic[0])
-        topic_name = str(topic[1])
-        matches_name = str(topic[2].children[0])
-        self.dict_names[matches_name] = topic_name
+        print("\n\nTopic = " + str(topic))
 
-        self._add_topic(self.monitor_id, type, topic_name)
+        if len(topic) == 3:
+            type = str(topic[0])
+            topic_name = str(topic[1])
+            matches_name = str(topic[2].children[0])
+            self.dict_names[matches_name] = topic_name
 
-        return type +" "+ topic_name
+            self._add_topic(self.monitor_id, type, topic_name)
+            return type +" "+ topic_name
+
+        elif len(topic) == 2:
+            type = str(topic[0])
+            topic_name = str(topic[1])  
+            # Trying to infer the topic name from the name used (no matches clause)          
+            self.dict_names[topic_name] = topic_name
+
+            self._add_topic(self.monitor_id, type, topic_name)
+
+            return type +" "+ topic_name
+
+
+
 
     def _translate_guarantees(self, guarantees):
         assert(isinstance(guarantees, list))

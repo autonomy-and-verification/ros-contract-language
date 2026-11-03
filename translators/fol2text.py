@@ -213,12 +213,21 @@ class FOL2Text(FOL):
 
         head, *tail = tree.children
 
-        builtins_out = self.visit(head)
+        builtins_out = ""
+        
+        if isinstance(head, Token):
+            builtins_out += self.translate_builtin_token(head)
+        elif isinstance(head, Tree):
+            builtins_out += self.visit(head)
 
+        
         if tail != None:
             for b in tail:
                 builtins_out += "."
-                builtins_out += self.visit(b)
+                if isinstance(b, Token):
+                    builtins_out += str(b)
+                elif isinstance(b, Tree):
+                    builtins_out += self.visit(b)
 
         return builtins_out
 
@@ -232,19 +241,28 @@ class FOL2Text(FOL):
 
         return pred_name + "(" + str(pred_terms) + ")"
 
+
     def set(self, tree):
         """Translates a set tree """
         assert(tree.data == "set")
 
+        print("\n\nSET")
+
         head, *tail = tree.children
 
-        vars = str(head)
+        vars = str(self.visit(head))
 
         for var in tail:
-            vars += ", " + str(var)
+            vars += ", " + str(self.visit(var))
 
         assert(isinstance(vars, str))
         return "{" + vars + "}"
+
+    def empty_set(self, tree):
+        """ Translates an empty_set tree """
+        assert(tree.data == "empty_set")
+
+        return "{}"
 
     def tuple(self, tree):
         """Translates a tuple tree """
@@ -277,10 +295,44 @@ class FOL2Text(FOL):
 
         name, terms = tree.children
 
+        print("\n\nFunc App = " + str(tree.children))
+
         name_out = self.variable_reference(name)
         terms = self.visit(tree.children[1])
 
         return str(name_out) + "(" + str(terms) + ")"
+
+    
+    def function_declaration(self, tree):
+        """ Translates a function_declaration tree """
+        assert(tree.data == "function_declaration")
+        assert(len(tree.children) == 2)
+
+        inputs, outputs = tree.children
+
+        inputs_out = ""
+        head, *tail = inputs.children
+
+        print("\n\n Func Decl Head = " + str(head))
+
+        if isinstance(head, Token):
+            inputs_out += self.translate_builtin_token(str(head))
+        elif isinstance(head, Tree):         
+            inputs_out += self.translate_builtin_token(self.vist(head)[0])
+
+        for input in tail:
+            assert(isinstance(input, Token))
+            inputs_out += " X " + self.translate_builtin_token(str(input))
+
+        outputs_out = ""
+        head, *tail = outputs.children
+        outputs_out += self.translate_builtin_token(str(head))
+
+        for input in tail:
+            outputs_out += " X " + \
+                self.translate_builtin_token(str(input))
+
+        return inputs_out + " -> " + outputs_out
 
     def variable_reference(self, tree):
         """Translates a reference to a variable, which may have an
@@ -290,18 +342,21 @@ class FOL2Text(FOL):
         numberOfChildren = len(tree.children)
         assert(numberOfChildren in {1, 2})
 
+        print("\n\n Var Ref: " + str(tree))
+        print("children = " + str(numberOfChildren))
+
         if numberOfChildren == 1:
             assert(isinstance(tree.children[0], Token))
-
+            print("1 child")
             return self.translate_builtin_token(tree.children[0])
         else:
-
+            print("2 child")
             decoration, name = tree.children
             decoration_out = self.visit(decoration)
-
+            
             assert(isinstance(name, Token))
 
-            return str(decoration_out) + self.translate_builtin_token(self.make_string(name))
+            return str(decoration_out) + self.translate_builtin_token(str(name))
             # This seems to be escaped elsewhere.
 
     def string_literal(self, tree):
@@ -332,6 +387,7 @@ class FOL2Text(FOL):
 
 
     def translate_builtin_token(self, term):
+        print("\n\n T Built in Token term = " + term)
         if self.make_string(term) == "REAL":
             return "R"
         elif self.make_string(term) == "INTEGER":

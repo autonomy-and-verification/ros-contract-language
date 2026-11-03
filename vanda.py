@@ -29,8 +29,8 @@ argParser.add_argument(
     "grammar", help="The grammar to parse with.", default="rcl", nargs='?')
 argParser.add_argument("contract", help="The contract file to be parsed.")
 
-argParser.add_argument("-t", help="The translator to use: mirror simply prints the contract you give it, rosmon_rml translates the contract into the Runtime Monitoring Language (RML), and latex translates the contract into LaTeX.",
-                       choices=['mirror', 'rosmon_rml', 'latex'], default='mirror')
+argParser.add_argument("translator", help="The translator to use: mirror simply prints the contract you give it, rosmon_rml translates the contract into the Runtime Monitoring Language (RML), and latex translates the contract into LaTeX.",
+                       choices=['mirror', 'rosmon_rml', 'latex'], default='mirror', nargs='?')
 
 argParser.add_argument(
     "-o", help="The path to the output folder for the translation")
@@ -80,7 +80,7 @@ RML_PATH = OUTPUT_PATH + rml_name
 if not os.path.exists(OUTPUT_PATH):
     os.mkdir(OUTPUT_PATH)
 
-TRANSLATOR = args.t
+TRANSLATOR = args.translator
 PRINT = args.p
 
 
