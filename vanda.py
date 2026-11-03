@@ -14,6 +14,7 @@ except NameError:
 from lark import Lark
 import argparse
 import os
+import sys
 
 try:
     VERSION_NUM = open("VERSION").read()
@@ -40,7 +41,7 @@ argParser.add_argument('--version', action='version',
 print("++++++++++++++++++++++++++++++++++++++++++++++")
 print("+++++++++++++++++++ Vanda ++++++++++++++++++++")
 print("++++++ ROS Contract Language Translator ++++++")
-print("++++++++++++++++ version " + str(VERSION_NUM) + " +++++++++++++++++")
+print("++++++++++++++++ version " + str(VERSION_NUM) + " +++++++++++++++")
 print("+++++++++++++++ Matt Luckcuck ++++++++++++++++")
 print("++++++++++++++++++++++++++++++++++++++++++++++")
 print("")
@@ -50,9 +51,20 @@ args = argParser.parse_args()
 
 grammar_loc = "grammars/" + args.grammar + ".lark"
 
-GRAMMAR = open(grammar_loc).read()
-CONTRACT = open(args.contract).read()
-CONTRACT_NAME = get_contract_name(args.contract)
+try:
+    GRAMMAR = open(grammar_loc).read()
+except FileNotFoundError:
+    print("Grammar file not found at: " + grammar_loc) 
+    sys.exit("Exiting...Unknown Grammar")    
+
+try:
+    CONTRACT = open(args.contract).read()
+    CONTRACT_NAME = get_contract_name(args.contract)
+except FileNotFoundError:
+    print("Contract file not found at: " + args.contract) 
+    sys.exit("Exiting...Unknown Contract")   
+
+    
 
 if args.o:
     OUTPUT_PATH = args.o
@@ -72,6 +84,13 @@ PRINT = args.p
 
 # Add the GRAMMAR to the parser
 parser = Lark(GRAMMAR)
+
+print("")
+print("Grammer = " + grammar_loc)
+print("Contract = " + CONTRACT_PATH)
+print("Translator = " + TRANSLATOR)
+print("")
+
 
 print("+++ Input File = +++")
 print(CONTRACT)
